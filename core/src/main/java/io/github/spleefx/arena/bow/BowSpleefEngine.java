@@ -61,8 +61,7 @@ public class BowSpleefEngine extends BaseArenaEngine<BowSpleefArena> {
      * @param player Player to retrieve necessary information from
      * @return The placeholders map
      */
-    @Override
-    protected Map<String, Supplier<String>> getScoreboardMap(Player player) {
+    @Override public Map<String, Supplier<String>> getScoreboardMap(Player player) {
         Map<String, Supplier<String>> map = super.getScoreboardMap(player);
         map.put("{triple_arrows}", () -> Integer.toString(abilityCount.get(player.getUniqueId()).getOrDefault(GameAbility.TRIPLE_ARROWS, 0)));
         return map;

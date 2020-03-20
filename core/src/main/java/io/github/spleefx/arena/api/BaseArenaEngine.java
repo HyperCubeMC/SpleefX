@@ -15,7 +15,6 @@
  */
 package io.github.spleefx.arena.api;
 
-import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.arena.ArenaStage;
@@ -50,10 +49,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static io.github.spleefx.SpleefX.getPlugin;
 import static io.github.spleefx.compatibility.CompatibilityHandler.getProtocol;
 import static io.github.spleefx.util.plugin.PluginSettings.*;
 
 public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngine {
+
+    private static final EnumMap<GameAbility, Integer> DEFAULT_MAP = new EnumMap<>(GameAbility.class);
 
     protected Map<UUID, EnumMap<GameAbility, Integer>> abilityCount = new HashMap<>();
 
@@ -282,7 +284,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void lose(ArenaPlayer player, GameTeam team) {
         Player p = player.getPlayer();
         dead.add(ArenaPlayer.adapt(p));
-        SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.LOSSES, p, arena.getExtension(), 1);
+        getPlugin().getDataProvider().add(PlayerStatistic.LOSSES, p, arena.getExtension(), 1);
         load(player);
 //        playerTeams.get(player).getAlive().remove(player.getPlayer());
         if (team != null && team.getAlive() != null)
@@ -304,7 +306,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     @Override
     public void win(ArenaPlayer p, GameTeam team) {
         Player player = p.getPlayer();
-        SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
+        getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL)
             dead.add(p);
         else
@@ -323,7 +325,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         getPlayerTeams().keySet().forEach(p -> {
             load(p);
             arena.getExtension().getGameTitles().get(GameEvent.DRAW).display(p.getPlayer());
-            SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.DRAWS, p.getPlayer(), arena.getExtension(), 1);
+            getPlugin().getDataProvider().add(PlayerStatistic.DRAWS, p.getPlayer(), arena.getExtension(), 1);
         });
         end(false);
     }
@@ -373,7 +375,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             player.teleport(arena.getSpawnPoints().get(team.getColor()));
         player.getInventory().clear();
         arena.getExtension().getItemsToAdd().forEach((slot, item) -> player.getInventory().setItem(slot, item.factory().create()));
-        SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.GAMES_PLAYED, player, arena.getExtension(), 1);
+        arena.getExtension().getArmorToAdd().forEach((slot, item) -> slot.set(player, item.factory().create()));
+        getPlugin().getDataProvider().add(PlayerStatistic.GAMES_PLAYED, player, arena.getExtension(), 1);
         DataHolder doubleJumpSettings = arena.getExtension().getDoubleJumpSettings();
         if (!doubleJumpSettings.isEnabled()) return;
         if (doubleJumpSettings.getDefaultAmount() > 0) {
@@ -387,7 +390,6 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                     perk.giveToPlayer(arenaPlayer);
             }
         });
-        displayScoreboard(arenaPlayer);
     }
 
     public void addDoubleJumpItems(ArenaPlayer player, boolean newState) {
@@ -406,15 +408,14 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (countdownTask != null && !BukkitTaskUtils.isCancelled(countdownTask)) return;
         setArenaStage(ArenaStage.COUNTDOWN);
         if (ARENA_REGENERATE_BEFORE_COUNTDOWN.get())
-            SpleefX.getPlugin().getArenaManager().regenerateArena(arena.getKey());
+            getPlugin().getArenaManager().regenerateArena(arena.getKey());
 
         playerTeams.forEach((p, team) -> MessageKey.GAME_STARTING.send(p.getPlayer(), arena, team.getColor(), null, p.getPlayer(), null, null, countdown, arena.getExtension()));
 
         Map<String, String> numbersToDisplay = TITLE_ON_COUNTDOWN_NUMBERS.get();
-        countdownTask = Bukkit.getScheduler().runTaskTimer(SpleefX.getPlugin(), () -> {
+        countdownTask = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
             countdown--;
             playerTeams.forEach((p, value) -> {
-                displayScoreboard(p);
                 if (DISPLAY_COUNTDOWN_ON_EXP_BAR.get())
                     p.getPlayer().setLevel(countdown);
                 String title = numbersToDisplay.get(Integer.toString(countdown));
@@ -458,7 +459,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (getArenaStage() != ArenaStage.ACTIVE) return;
         Map<String, String> numbers = TIME_OUT_WARN.get();
         try {
-            timerTask = Bukkit.getScheduler().runTaskTimer(SpleefX.getPlugin(), () -> {
+            timerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
                 timeLeft--;
                 String m = numbers.get(Integer.toString(timeLeft));
                 playerTeams.forEach((p, team) -> {
@@ -467,7 +468,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                 });
             }, 20, 20);
 
-            gameTask = Bukkit.getScheduler().runTaskTimer(SpleefX.getPlugin(), () -> {
+            gameTask = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
                 if (timeLeft == 0)
                     draw();
                 if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
@@ -573,7 +574,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void regenerate() {
         ArenaStage oldStage = getArenaStage();
         setArenaStage(ArenaStage.REGENERATING);
-        SpleefX.getPlugin().getArenaManager().regenerateArena(arena.getKey());
+        getPlugin().getArenaManager().regenerateArena(arena.getKey());
         setArenaStage(oldStage);
         getSignManager().update();
     }
@@ -585,7 +586,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      */
     @Override
     public void save(ArenaPlayer player) {
-        Metas.set(player.getPlayer(), "spleefx.data", new FixedMetadataValue(SpleefX.getPlugin(), new PlayerContext(player.getPlayer())));
+        Metas.set(player.getPlayer(), "spleefx.data", new FixedMetadataValue(getPlugin(), new PlayerContext(player.getPlayer())));
     }
 
     /**
@@ -601,9 +602,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             context = Metas.get(player, "spleefx.data");
             if (context != null)
                 context.load(player);
-            player.removeMetadata("spleefx.data", SpleefX.getPlugin());
+            player.removeMetadata("spleefx.data", getPlugin());
         }
-        player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard()); // remove scoreboard
         ArenaPlayer.adapt(player).setCurrentArena(null).setState(ArenaPlayerState.NOT_INGAME);
         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
             arena.getFFAManager().remove(player);
@@ -612,6 +612,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (context != null)
             player.setAllowFlight(context.allowFlight);
         player.setFallDistance(-500);
+        getPlugin().getAssemble().getBoards().remove(player.getUniqueId());
+        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
     /**
@@ -623,13 +625,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void displayScoreboard(ArenaPlayer p) {
         if (p == null) return;
         Player player = p.getPlayer();
-        ScoreboardHolder scoreboard = arena.getExtension().getScoreboard().get(arena.stage);
+        ScoreboardHolder scoreboard = arena.getExtension().getScoreboard().get(getArenaStage());
         if (scoreboard == null || !scoreboard.isEnabled()) return;
-        scoreboard.scoreboard(ArenaPlayer.adapt(player), getScoreboardMap(player), arena)
-                .ifPresent(s -> {
-                    s.build();
-                    player.setScoreboard(s.getScoreboard());
-                });
+        scoreboard.createScoreboard(ArenaPlayer.adapt(player));
     }
 
     /**
@@ -638,9 +636,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      * @param player Player to retrieve necessary information from
      * @return The placeholders map
      */
-    protected Map<String, Supplier<String>> getScoreboardMap(Player player) {
+    public Map<String, Supplier<String>> getScoreboardMap(Player player) {
+        if (!player.isOnline()) return Collections.emptyMap();
         Map<String, Supplier<String>> map = new HashMap<>();
-        map.put("{double_jumps}", () -> Integer.toString(abilityCount.get(player.getUniqueId()).get(GameAbility.DOUBLE_JUMP)));
+        map.put("{double_jumps}", () -> Integer.toString(abilityCount.getOrDefault(player.getUniqueId(), DEFAULT_MAP).get(GameAbility.DOUBLE_JUMP)));
         return map;
     }
 
@@ -703,4 +702,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         return abilityCount;
     }
 
+    static {
+        for (GameAbility ability : GameAbility.values()) {
+            DEFAULT_MAP.put(ability, 0);
+        }
+    }
 }

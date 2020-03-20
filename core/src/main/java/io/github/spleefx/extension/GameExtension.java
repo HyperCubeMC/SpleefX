@@ -26,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.lang.reflect.Field;
@@ -70,6 +71,9 @@ public class GameExtension {
 
     @Expose
     private Map<Integer, ItemHolder> itemsToAdd = Collections.emptyMap(); // DONE
+
+    @Expose
+    private Map<ArmorSlots, ItemHolder> armorToAdd = Collections.emptyMap(); // DONE
 
     @Expose
     private Map<GameEvent, ExtensionTitle> gameTitles = new LinkedHashMap<>(); // DONE
@@ -134,6 +138,10 @@ public class GameExtension {
 
     public Map<Integer, ItemHolder> getItemsToAdd() {
         return itemsToAdd;
+    }
+
+    public Map<ArmorSlots, ItemHolder> getArmorToAdd() {
+        return armorToAdd;
     }
 
     public Map<GameEvent, ExtensionTitle> getGameTitles() {
@@ -324,6 +332,31 @@ public class GameExtension {
         public GameExtension deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             return ExtensionsManager.getByKey(json.getAsString());
         }
+    }
+
+    public enum ArmorSlots {
+        helmet {
+            @Override public void set(Player player, ItemStack itemStack) {
+                player.getInventory().setHelmet(itemStack);
+            }
+        },
+        chestplate {
+            @Override public void set(Player player, ItemStack itemStack) {
+                player.getInventory().setChestplate(itemStack);
+            }
+        },
+        leggings {
+            @Override public void set(Player player, ItemStack itemStack) {
+                player.getInventory().setLeggings(itemStack);
+            }
+        },
+        boots {
+            @Override public void set(Player player, ItemStack itemStack) {
+                player.getInventory().setBoots(itemStack);
+            }
+        };
+
+        public abstract void set(Player player, ItemStack itemStack);
     }
 
 }

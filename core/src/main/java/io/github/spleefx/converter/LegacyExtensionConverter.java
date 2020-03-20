@@ -15,12 +15,15 @@
  */
 package io.github.spleefx.converter;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.ArenaData;
+import io.github.spleefx.extension.GameExtension.ArmorSlots;
 import io.github.spleefx.extension.GameExtension.SenderType;
+import io.github.spleefx.extension.ItemHolder;
 import io.github.spleefx.extension.ability.DoubleJumpHandler.DataHolder;
 import io.github.spleefx.extension.ability.TripleArrowsAbility.Settings;
 import io.github.spleefx.scoreboard.ScoreboardHolder;
@@ -253,6 +256,10 @@ public class LegacyExtensionConverter implements Runnable {
             if (!d.contains("giveDroppedItems")) {
                 d.set("giveDroppedItems", true);
                 changed.add("Added giveDroppedItems option");
+            }
+            if (!d.contains("armorToAdd")) {
+                d.set("armorToAdd", ImmutableMap.of(ArmorSlots.helmet, new ItemHolder().setType("diamond_helmet").setUnbreakable(true)));
+                changed.add("Added armorToAdd option");
             }
             if (d.contains("scoreboard") && d.getMap("scoreboard").containsKey("enabled")) { // old scoreboard format
                 ScoreboardHolder holder = d.get("scoreboard", ScoreboardHolder.class, ArenaData.GSON);
