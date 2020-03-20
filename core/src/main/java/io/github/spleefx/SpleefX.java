@@ -36,6 +36,8 @@ import io.github.spleefx.listeners.SignListener;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.perk.GamePerk;
 import io.github.spleefx.perk.PerkShop;
+import io.github.spleefx.scoreboard.GameScoreboardAdapter;
+import io.github.spleefx.scoreboard.ScoreboardListener;
 import io.github.spleefx.util.io.CopyStore;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.menu.GameMenu;
@@ -43,6 +45,8 @@ import io.github.spleefx.util.plugin.DelayExecutor;
 import io.github.spleefx.util.plugin.PluginSettings;
 import io.github.spleefx.util.plugin.Protocol;
 import io.github.spleefx.vault.VaultHandler;
+import io.github.thatkawaiisam.assemble.Assemble;
+import io.github.thatkawaiisam.assemble.AssembleStyle;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -152,6 +156,8 @@ public final class SpleefX extends JavaPlugin implements Listener {
      * Join gui config
      */
     private SelectableConfiguration joinGuiFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("gui" + separator + "join-gui.json")), false, AdapterBuilder.GSON);
+
+    private Assemble assemble;
 
     /**
      * The folder that contains arena schematics and arenas.json
@@ -312,6 +318,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
             //PluginSettings.save();
         }, 24000, 24000); // 20 minutes
         getServer().getPluginManager().registerEvents(new DoubleJumpHandler(abilityDelays), this);
+        getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
         getServer().getPluginManager().registerEvents(new GameMenu.MenuListener(), this);
         getServer().getPluginManager().registerEvents(new BoosterFactory.BoosterListener(), this);
         PERKS.values().stream().filter(v -> v instanceof Listener).forEach(v -> getServer().getPluginManager().registerEvents((Listener) v, this));
@@ -325,6 +332,11 @@ public final class SpleefX extends JavaPlugin implements Listener {
             }
         });
         boosterConsumer.start(this);
+
+        assemble = new Assemble(this, new GameScoreboardAdapter());
+        assemble.setTicks(((Number) PluginSettings.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
+        assemble.setAssembleStyle(AssembleStyle.KOHI);
+
     }
 
     @Override
@@ -362,6 +374,10 @@ public final class SpleefX extends JavaPlugin implements Listener {
      */
     public File getArenasFolder() {
         return arenasFolder;
+    }
+
+    public Assemble getAssemble() {
+        return assemble;
     }
 
     public static ActiveBoosterLoader getActiveBoosterLoader() {

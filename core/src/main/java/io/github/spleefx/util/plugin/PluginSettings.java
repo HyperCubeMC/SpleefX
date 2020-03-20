@@ -27,6 +27,7 @@ public enum PluginSettings {
     ARENA_MELTING_BLOCKS("Arena.Melting.MeltableBlocks", Collections.singletonList("SNOW_BLOCK")),
     ARENA_REGENERATE_BEFORE_COUNTDOWN("Arena.RegenerateBeforeGameStarts", true),
     SIGN_UPDATE_INTERVAL("Arena.SignUpdateInterval", 40),
+    SCOREBOARD_UPDATE_INTERVAL("Arena.ScoreboardUpdateInterval", 10),
 
     DISPLAY_COUNTDOWN_ON_EXP_BAR("Countdown.DisplayOnExpBar", true),
     COUNTDOWN_ON_ENOUGH_PLAYERS("Countdown.OnEnoughPlayers", 20),
