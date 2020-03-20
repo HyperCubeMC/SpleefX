@@ -226,7 +226,7 @@ public enum MessageKey {
             message = message.replace("{command}", command);
         }
         if (countdownValue != -1) {
-            message = message.replace("{countdown}", countdown == null ? "" + countdownValue : countdown)
+            message = message.replace("{countdown}", countdown == null ? Integer.toString(countdownValue) : countdown)
                     .replace("{plural}", countdownValue == 1 ? "" : "s");
         }
         if (extension != null) {
@@ -239,6 +239,19 @@ public enum MessageKey {
             message = PlaceholderAPI.setPlaceholders(player, message);
         }
         Chat.prefix(sender, extension, message);
+    }
+
+    public static String formatTime(int seconds) {
+        int secondsLeft = seconds % 3600 % 60;
+        int minutes = (int) Math.floor((float) seconds % 3600 / 60);
+        int hours = (int) Math.floor((float) seconds / 3600);
+
+        String hoursFormat = ((hours < 10) ? "0" : "") + hours;
+        String minutesFormat = ((minutes < 10) ? "0" : "") + minutes;
+        String secondsFormat = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
+        if (hours <= 0)
+            return minutesFormat + ":" + secondsFormat;
+        return hoursFormat + ":" + minutesFormat + ":" + secondsFormat;
     }
 
     public void sendBooster(CommandSender sender, BoosterInstance booster) {
