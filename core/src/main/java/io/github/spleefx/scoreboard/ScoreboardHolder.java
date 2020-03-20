@@ -22,14 +22,19 @@ import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.team.GameTeam;
+import io.github.spleefx.util.game.Chat;
+import io.github.thatkawaiisam.assemble.AssembleBoard;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.function.Supplier;
+
+import static io.github.spleefx.SpleefX.getPlugin;
+import static io.github.spleefx.message.MessageKey.formatTime;
 
 public class ScoreboardHolder {
 
@@ -54,33 +59,26 @@ public class ScoreboardHolder {
         return text;
     }
 
-    public Optional<SimpleScoreboard> scoreboard(ArenaPlayer player, Map<String, Supplier<String>> placeholders, GameArena arena) {
-        if (!isEnabled()) return Optional.empty();
-        SimpleScoreboard scoreboard = new SimpleScoreboard(getTitle());
-
-        getText().forEach((score, text) -> {
-            text = replacePlaceholders(player, text, arena);
-            for (String s : placeholders.keySet()) {
-                if (text.contains(s)) text = text.replace(s, String.valueOf(placeholders.get(s).get()));
-            }
-            scoreboard.add(text.trim().isEmpty() ? String.valueOf(ChatColor.COLOR_CHAR) + score : text, score);
-        });
-        return Optional.of(scoreboard);
+    public void createScoreboard(ArenaPlayer p) {
+        if (!isEnabled()) return;
+        getPlugin().getAssemble().getBoards().put(p.getPlayer().getUniqueId(), new AssembleBoard(p.getPlayer(), getPlugin().getAssemble()));
     }
 
-    private String replacePlaceholders(ArenaPlayer player, String message, GameArena arena) {
+    public String replacePlaceholders(ArenaPlayer player, String message, GameArena arena, Map<String, Supplier<String>> placeholders) {
         BaseArenaEngine<? extends GameArena> engine = (BaseArenaEngine<? extends GameArena>) arena.getEngine();
         Location location = player.getPlayer().getLocation();
+        for (Entry<String, Supplier<String>> placeholder : placeholders.entrySet())
+            message = message.replace(placeholder.getKey(), placeholder.getValue().get());
         if (arena != null) {
             message = message
                     .replace("{arena}", arena.getKey())
                     .replace("{arena_displayname}", arena.getDisplayName())
-                    .replace("{arena_time_left}", Integer.toString(engine.timeLeft))
+                    .replace("{arena_time_left}", formatTime(engine.timeLeft))
                     .replace("{arena_playercount}", Integer.toString(arena.getEngine().getPlayerTeams().size()))
                     .replace("{arena_minimum}", Integer.toString(arena.getMinimum()))
                     .replace("{arena_maximum}", Integer.toString(arena.getMaximum()))
                     .replace("{arena_stage}", arena.getEngine().getArenaStage().getState())
-                    .replace("{countdown}", String.valueOf(engine.countdown))
+                    .replace("{countdown}", formatTime(engine.countdown))
                     .replace("{plural}", engine.countdown == 1 ? "" : "s");
             if (arena.getArenaType() == ArenaType.TEAMS) {
                 GameTeam team = engine.getPlayerTeams().get(player);
@@ -96,7 +94,9 @@ public class ScoreboardHolder {
                 .replace("{player}", player.getPlayer().getName())
                 .replace("{extension_key}", arena.getExtension().getKey())
                 .replace("{extension_chat_prefix}", arena.getExtension().getChatPrefix())
-                .replace("{extension}", arena.getExtension().getDisplayName());
+                .replace("{extension}", arena.getExtension().getDisplayName())
+                .replace("{extension_without_colors}", ChatColor.stripColor(Chat.colorize(arena.getExtension().getDisplayName())))
+                .replace("{extension_name}", arena.getExtension().getDisplayName());
         if (MessageKey.PAPI) {
             message = PlaceholderAPI.setPlaceholders(player.getPlayer(), message);
         }

@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "key": "spleef",
-  "displayName": "&9Spleef",
+  "displayName": "&b&lSpleef",
   "chatPrefix": "&7[&bSpleef&7]&e ",
   "preventItemDropping": true,
   "giveDroppedItems": true,
@@ -90,6 +90,16 @@
       "unbreakable": true
     }
   },
+  "armorToAdd": {
+    "helmet": {
+      "type": "diamond_helmet",
+      "count": 1,
+      "displayName": "{}",
+      "lore": [],
+      "itemFlags": [],
+      "unbreakable": true
+    }
+  },
   "gameTitles": {
     "win": {
       "enabled": true,
@@ -148,34 +158,47 @@
       "enabled": true,
       "title": "&9&lSPLEEF",
       "text": {
-        "6": "&eWaiting for players... ({arena_playercount}/{arena_maximum})",
+        "9": "",
+        "8": "Map: &a{arena_displayname}",
+        "7": "",
+        "6": "Players: &a{arena_playercount}/{arena_maximum}",
         "5": "",
-        "4": "&7Need at least &e{arena_minimum} players",
-        "3": "&eto start the game.",
+        "4": "Waiting...",
         "2": "",
-        "1": "   www.example.com"
+        "1": "&bwww.example.com"
       }
     },
     "COUNTDOWN": {
       "enabled": true,
       "title": "&9&lSPLEEF",
       "text": {
-        "6": "&bThe game will",
-        "5": "&bstart in &e{countdown} &bsecond{plural}",
+        "12": "",
+        "11": "Map: &a{arena_displayname}",
+        "10": "",
+        "9": "Players: &a{arena_playercount}/{arena_maximum}",
+        "8": "",
+        "7": "Starting in &e{countdown} &fto",
+        "6": "allow time for",
+        "5": "additional players",
         "4": "",
-        "3": "   www.example.com"
+        "3": "Game: &a{extension_without_colors}",
+        "2": "",
+        "1": "&bwww.example.com"
       }
     },
     "ACTIVE": {
       "enabled": true,
       "title": "&9&lSPLEEF",
       "text": {
-        "6": "&ePlayers Alive: &7{arena_playercount}",
-        "5": "&eDouble Jumps: &7{double_jumps}/5",
+        "9": "",
+        "8": "Map: &a{arena_displayname}",
+        "7": "",
+        "6": "&fPlayers Alive: &a{arena_playercount}",
+        "5": "&fDouble Jumps: &a{double_jumps}&7/5",
         "4": "",
-        "3": "&eTime left: &7{arena_time_left}",
+        "3": "Time left: &a{arena_time_left}",
         "2": "",
-        "1": "   www.example.com"
+        "1": "&bwww.example.com"
       }
     }
   },

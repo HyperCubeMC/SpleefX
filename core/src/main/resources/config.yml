@@ -99,6 +99,16 @@ Arena:
   # Every 1 second = 20 ticks
   SignUpdateInterval: 40
 
+  # The update interval of scoreboards (in ticks). This is the interval in which the content of every scoreboard
+  # is updated.
+  #
+  # Values should not exceed 20 ticks, as this will lead to timers displaying and updating incorrectly on the
+  # player's screen.
+  #
+  # Default value: 20 (1 second)
+  # Every 1 second = 20 ticks
+  ScoreboardUpdateInterval: 20
+
 # Timing out settings (regarding the arena's maximum time)
 TimeOut:
 
