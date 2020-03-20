@@ -29,10 +29,17 @@ import java.util.Collection;
  */
 public class PlayerContext {
 
+    private static final ItemStack[] EMPTY_ARMOR = new ItemStack[4];
+
     /**
      * The player's items
      */
     private ItemStack[] items;
+
+    /**
+     * The player's armor
+     */
+    private ItemStack[] armor;
 
     /**
      * The player's potion effects
@@ -79,6 +86,7 @@ public class PlayerContext {
      */
     public PlayerContext(Player player) {
         items = player.getInventory().getContents();
+        armor = player.getInventory().getArmorContents();
         effects = player.getActivePotionEffects();
         xp = player.getLevel();
         exp = player.getExp();
@@ -92,6 +100,7 @@ public class PlayerContext {
 
         player.getActivePotionEffects().forEach(e -> player.removePotionEffect(e.getType()));
         player.getInventory().clear();
+        player.getInventory().setArmorContents(EMPTY_ARMOR);
         player.setLevel(0);
         player.setExp(0);
         player.setFoodLevel(20);
@@ -107,6 +116,7 @@ public class PlayerContext {
      */
     public void load(Player player) {
         player.getInventory().setContents(items);
+        player.getInventory().setArmorContents(armor);
 
         player.getActivePotionEffects().forEach(p -> player.removePotionEffect(p.getType()));
         effects.forEach(player::addPotionEffect);

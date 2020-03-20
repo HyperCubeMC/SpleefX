@@ -24,6 +24,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,25 +39,25 @@ public class ItemHolder {
     private String type;
 
     @Expose
-    private int count;
+    private int count = 1;
 
     @Expose
     private Map<Enchantment, Integer> enchantments;
 
     @Expose
-    private String displayName;
+    private String displayName = "{}";
 
     @Expose
-    private List<String> lore;
+    private List<String> lore = Collections.emptyList();
 
     @Expose
-    private List<ItemFlag> itemFlags;
+    private List<ItemFlag> itemFlags = Collections.emptyList();
 
     @Expose
-    private String color;
+    private String color = null;
 
     @Expose
-    private boolean unbreakable;
+    private boolean unbreakable = false;
 
     public ItemFactory factory() {
         type = CompatibilityHandler.getMaterialCompatibility().mapMaterial(type);
