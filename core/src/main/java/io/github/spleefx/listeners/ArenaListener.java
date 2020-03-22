@@ -151,7 +151,7 @@ public class ArenaListener implements Listener {
                     Collection<ItemStack> oldDrops = event.getBlock().getDrops();
                     event.getBlock().setType(Material.AIR);
                     if (arena.getExtension().isGiveDroppedItems())
-                        p.getPlayer().getInventory().addItem((ItemStack[]) oldDrops.toArray());
+                        p.getPlayer().getInventory().addItem(oldDrops.toArray(new ItemStack[0]));
                 }
                 plugin.getDataProvider().add(PlayerStatistic.BLOCKS_MINED, p.getPlayer(), arena.getExtension(), 1);
             }
