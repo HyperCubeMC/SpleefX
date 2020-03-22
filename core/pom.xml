@@ -2,16 +2,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>core</artifactId>
-    <version>3.7-SNAPSHOT</version>
+    <version>3.7.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>io.github.spleefx</groupId>
         <artifactId>parent</artifactId>
-        <version>3.7-SNAPSHOT</version>
+        <version>3.7.2-SNAPSHOT</version>
     </parent>
 
     <dependencies>
+        <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
@@ -24,6 +25,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- WorldEdit -->
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
@@ -31,14 +34,15 @@
             <scope>provided</scope>
         </dependency>
 
-
+        <!-- Assemble Scoreboards -->
         <dependency>
             <groupId>io.github.thatkawaiisam</groupId>
             <artifactId>assemble</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
+        <!-- Apache Commons IO -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -101,21 +105,26 @@
     </dependencies>
 
     <repositories>
+
+        <!-- PlaceholderAPI Repository -->
         <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
+        <!-- EngineHub Repository (WG/WE) -->
         <repository>
             <id>enginehub-maven</id>
             <url>http://maven.enginehub.org/repo/</url>
         </repository>
 
+        <!-- Spigot Repository-->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
 
+        <!-- JitPack for publishing -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>

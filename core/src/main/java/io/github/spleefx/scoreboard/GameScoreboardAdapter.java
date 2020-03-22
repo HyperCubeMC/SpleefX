@@ -28,7 +28,11 @@ public class GameScoreboardAdapter implements AssembleAdapter {
 
     @Override
     public String getTitle(Player player) {
-        return Chat.colorize(getScoreboardHolder(ArenaPlayer.adapt(player)).getTitle());
+        try {
+            return Chat.colorize(getScoreboardHolder(ArenaPlayer.adapt(player)).getTitle());
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     @Override
