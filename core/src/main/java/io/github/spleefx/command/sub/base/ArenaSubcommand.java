@@ -376,7 +376,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             });
                             return true;
                         case "deathlevel":
-                            parseThen(arena, sender, args[3], Integer.MIN_VALUE, (e, v) -> {
+                            parseThen(arena, sender, args[3], 1, (e, v) -> {
                                 arena.setDeathLevel(v);
                                 Chat.prefix(sender, arena, "&aArena &e" + arena.getKey() + "&a's death level has been set to &e" + v);
                             });

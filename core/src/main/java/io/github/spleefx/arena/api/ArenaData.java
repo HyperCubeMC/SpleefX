@@ -268,7 +268,7 @@ public abstract class ArenaData {
     }
 
     public int getDeathLevel() {
-        return deathLevel;
+        return deathLevel < 1 ? deathLevel = 1 : deathLevel;
     }
 
     public int getMinimum() {
@@ -295,7 +295,7 @@ public abstract class ArenaData {
         return enabled;
     }
 
-    Location getLobby() {
+    public Location getLobby() {
         return lobby;
     }
 
