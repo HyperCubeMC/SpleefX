@@ -147,6 +147,7 @@ public class GameMenu {
         if (event.getRawSlot() > event.getInventory().getSize() || event.getSlotType() == InventoryType.SlotType.OUTSIDE)
             return;
         if (!event.getView().getTitle().equals(title)) return;
+		if (event.getCurrentItem() == null) return;
         if (event.getCurrentItem().isSimilar(scenery)) {
             event.setCancelled(true);
             return;

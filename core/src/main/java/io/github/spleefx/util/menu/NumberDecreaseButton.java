@@ -40,8 +40,8 @@ public class NumberDecreaseButton extends Button {
 
     public NumberDecreaseButton register(int minimum, NumberIncreaseButton increaseButton, ItemStack decreaseItem, BiConsumer<InventoryClickEvent, Integer> valueChange) {
         ItemStack increaseItem = increaseButton.getItem();
-        increaseButton.getItem().setAmount(value.getValue());
-        decreaseItem.setAmount(value.getValue());
+        increaseButton.getItem().setAmount(value.getValue() < 1 ? 1 : value.getValue());
+        decreaseItem.setAmount(value.getValue() < 1 ? 1 : value.getValue());
         addAction(event -> {
             int decrease = event.isRightClick() ? 5 : 1;
             if (value.getValue() - decrease <= minimum) {
@@ -54,8 +54,8 @@ public class NumberDecreaseButton extends Button {
             }
             value.setValue(value.getValue() - decrease);
             valueChange.accept(event, value.getValue());
-            event.getCurrentItem().setAmount(value.getValue());
-            event.getInventory().getItem(increaseButton.getSlot()).setAmount(value.getValue());
+            event.getCurrentItem().setAmount(value.getValue() < 1 ? 1 : value.getValue());
+            event.getInventory().getItem(increaseButton.getSlot()).setAmount(value.getValue() < 1 ? 1 : value.getValue());
         });
         addAction(CANCEL_ACTION);
         return this;
