@@ -37,7 +37,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -62,6 +61,10 @@ public class ArenaListener implements Listener {
                 handleTeamDamage(p, (EntityDamageByEntityEvent) event);
             if (arena.getExtension().getCancelledDamage().contains(event.getCause()))
                 event.setCancelled(true);
+            if (damaged.getHealth() - event.getDamage() < 1) {
+                event.setCancelled(true);
+                arena.getEngine().lose(p, arena.getEngine().getPlayerTeams().get(p));
+            }
         }
     }
 
@@ -72,15 +75,6 @@ public class ArenaListener implements Listener {
             GameArena arena = p.getCurrentArena();
             if (arena.getExtension().isPreventItemDropping())
                 event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        ArenaPlayer player = ArenaPlayer.adapt(event.getEntity());
-        if (player.getState() == ArenaPlayerState.IN_GAME) {
-            GameArena arena = player.getCurrentArena();
-            arena.getEngine().lose(player, arena.getEngine().getPlayerTeams().get(player));
         }
     }
 
