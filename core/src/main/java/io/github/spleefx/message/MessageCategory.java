@@ -69,7 +69,12 @@ public enum MessageCategory {
     /**
      * Splegg upgrades category
      */
-    SPLEGG_UPGRADES(ChatColor.BLACK + "Splegg Upgrades");
+    SPLEGG_UPGRADES(ChatColor.BLACK + "Splegg Upgrades"),
+
+    /**
+     * Bets category
+     */
+    BETS(ChatColor.DARK_PURPLE + "Bets");
 
     /**
      * Values of all categories

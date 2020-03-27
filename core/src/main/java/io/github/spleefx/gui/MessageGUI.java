@@ -54,7 +54,7 @@ public class MessageGUI extends GameMenu {
      * Creates a new menu
      */
     public MessageGUI(MessageCategory category) {
-        super(category.getTitle(), 3);
+        super(category.getTitle() + ChatColor.RESET, 4);
         List<MessageKey> messages = MessageKey.byCategory(category);
         for (int i = 0; i < messages.size(); i++) {
             MessageKey m = messages.get(i);

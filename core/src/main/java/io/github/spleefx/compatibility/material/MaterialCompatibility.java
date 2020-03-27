@@ -34,6 +34,8 @@ public interface MaterialCompatibility {
     String DIAMOND_SHOVEL = "dshovel";
     String SIGN = "sign";
     String SNOWBALL = "snowball";
+    String SUNFLOWER = "sunflower";
+    String CAULDRON = "cauldron";
 
     /**
      * Returns the appropriate material that represents this wool color

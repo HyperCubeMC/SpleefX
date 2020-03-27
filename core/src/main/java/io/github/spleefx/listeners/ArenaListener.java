@@ -25,6 +25,7 @@ import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.data.PlayerStatistic;
 import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -43,6 +44,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ArenaListener implements Listener {
 
@@ -63,7 +65,35 @@ public class ArenaListener implements Listener {
                 event.setCancelled(true);
             if (damaged.getHealth() - event.getDamage() < 1) {
                 event.setCancelled(true);
-                arena.getEngine().lose(p, arena.getEngine().getPlayerTeams().get(p));
+                ArenaEngine engine = arena.getEngine();
+                if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
+                    GameTeam ffa = arena.getGameTeams().get(0);
+                    engine.lose(p, ffa);
+                    if (engine.getAlive().size() == 1) {
+                        ArenaPlayer winner = ArenaPlayer.adapt(engine.getAlive().get(0));
+                        engine.win(winner, ffa);
+                        engine.end(true);
+                    }
+                } else {
+                    GameTeam team1 = engine.getPlayerTeams().get(p);
+                    engine.lose(p, team1);
+                    if (team1.getAlive().size() == 0) {
+                        engine.getPlayerTeams().keySet().forEach(e -> MessageKey.TEAM_ELIMINATED.send(e.getPlayer(), arena, team1.getColor(), null, null, null, null, -1, arena.getExtension()));
+                        engine.getDeadTeams().add(team1);
+                    }
+                    List<GameTeam> teamsLeft =
+                            arena.getGameTeams().stream().filter(team -> !team.isEliminated())
+                                    .collect(Collectors.toList());
+                    if (teamsLeft.size() == 1) {
+                        GameTeam team = teamsLeft.get(0);
+                        team.getAlive().forEach(winner -> {
+                            ArenaPlayer player = ArenaPlayer.adapt(winner);
+                            engine.win(player, team);
+                        });
+                        engine.end(true);
+                    }
+
+                }
             }
         }
     }

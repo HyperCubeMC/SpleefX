@@ -114,7 +114,12 @@ public enum MessageKey {
     PINK("pink", MessageCategory.TEAMS, "Pink team", "Displayed in chat when representing the pink team"),
     GRAY("gray", MessageCategory.TEAMS, "Gray team", "Displayed in chat when representing the gray team"),
 
-    /* Economy */
+    /* Bets messages */
+    BET_TAKEN("betTaken", MessageCategory.BETS, "Bet taken", "Sent to the player when they participate in an arena that takes bets"),
+    WON_GAME_BET("wonGameBet", MessageCategory.BETS, "Won the game bet", "Sent when the player wins the bet (or a part of it in case of teams) from a game"),
+    NOT_ENOUGH_TO_BET("notEnoughToBet", MessageCategory.BETS, "Not enough money to bet", "Sent when a player attempts to join an arena which requires betting, but does not have enough money")
+
+    /* Economy */,
     MONEY_GIVEN("moneyGiven", MessageCategory.ECONOMY, "Money given", "Sent when a player is given money"),
     MONEY_TAKEN("moneyTaken", MessageCategory.ECONOMY, "Money taken", "Sent when money is taken from a player"),
     BOOSTER_GIVEN("boosterGiven", MessageCategory.ECONOMY, "Booster given", "Sent when a player is given a booster"),
@@ -195,13 +200,21 @@ public enum MessageKey {
      * @param countdownValue The string representation of the countdown. Can be null
      * @param extension      The extension to get prefix from. Can be null
      */
-    public void send(CommandSender sender, GameArena arena, TeamColor team, Location location, Player player, String command, String countdown, int countdownValue, GameExtension extension) {
+    public void send(CommandSender sender, GameArena arena, TeamColor team, Location location, Player player, String command, String countdown, int countdownValue, GameExtension extension, Object... replacements) {
         String message = getText();
-        if (message.equals("{}")) return;
+        if (message == null || message.equals("{}")) return;
+        if (replacements != null && replacements.length != 0 && replacements.length % 2 == 0) {
+            for (int i = 0; i < replacements.length; i += 2) {
+                Object key = replacements[i];
+                Object value = replacements[i + 1];
+                message = message.replace(key == null ? "" : key.toString(), value == null ? "" : value.toString());
+            }
+        }
         if (arena != null) {
             message = message
                     .replace("{arena}", arena.getKey())
                     .replace("{arena_displayname}", arena.getDisplayName())
+                    .replace("{arena_bet}", FORMAT.format(arena.getBet()))
                     .replace("{arena_time_left}", Integer.toString(((BaseArenaEngine<? extends GameArena>) arena.getEngine()).timeLeft))
                     .replace("{arena_playercount}", Integer.toString(arena.getEngine().getPlayerTeams().size()))
                     .replace("{arena_minimum}", Integer.toString(arena.getMinimum()))

@@ -18,6 +18,7 @@ package io.github.spleefx.extension;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.extension.ability.DoubleJumpHandler;
 import io.github.spleefx.extension.ability.DoubleJumpHandler.DataHolder;
@@ -307,11 +308,15 @@ public class GameExtension {
     public enum SenderType {
         PLAYER {
             @Override public void run(Player player, String command) {
+                ArenaPlayer p = ArenaPlayer.adapt(player);
+                command = ScoreboardHolder.replacePlaceholders(p, command, p.getCurrentArena(), Collections.emptyMap());
                 player.performCommand(command.replace("{winner}", player.getName()).replace("{player}", player.getName()));
             }
         },
         CONSOLE {
             @Override public void run(Player player, String command) {
+                ArenaPlayer p = ArenaPlayer.adapt(player);
+                command = ScoreboardHolder.replacePlaceholders(p, command, p.getCurrentArena(), Collections.emptyMap());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{winner}", player.getName())
                         .replace("{player}", player.getName()));
             }

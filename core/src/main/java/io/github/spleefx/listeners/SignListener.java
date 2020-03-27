@@ -18,6 +18,7 @@ package io.github.spleefx.listeners;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
+import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.sign.BlockLocation;
 import io.github.spleefx.util.game.Chat;
@@ -85,7 +86,10 @@ public class SignListener implements Listener {
             if (arena == null) return; // Not an arena sign
             player = ArenaPlayer.adapt(event.getPlayer());
             if (arena.getSigns().contains(BlockLocation.at(sign.getLocation()))) {
-                arena.getEngine().join(player);
+                if (arena.getArenaType() == ArenaType.FREE_FOR_ALL)
+                    arena.getEngine().join(player, null);
+                else
+                    arena.getEngine().join(player, null);
                 event.setCancelled(true);
                 if (arena.getEngine().getPlayerTeams().containsKey(ArenaPlayer.adapt(event.getPlayer()))) // To make sure the player joined
                     Metas.set(event.getPlayer(), "spleefx.arena.justjoined", new FixedMetadataValue(plugin, arena));

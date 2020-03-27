@@ -15,11 +15,13 @@
  */
 package io.github.spleefx.util.item;
 
-import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.material.MaterialCompatibility;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import static io.github.spleefx.compatibility.CompatibilityHandler.getMaterialCompatibility;
+import static io.github.spleefx.compatibility.material.MaterialCompatibility.CAULDRON;
 
 /**
  * A class with constants of items
@@ -40,27 +42,27 @@ public class Items {
             .setName("&eNo teams in this arena!")
             .create();
 
-    public static final ItemStack RED_TEAM = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().wool(DyeColor.RED))
+    public static final ItemStack RED_TEAM = ItemFactory.create(getMaterialCompatibility().wool(DyeColor.RED))
             .setName("&cRed Team")
             .create();
 
-    public static final ItemStack GREEN_TEAM = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().wool(DyeColor.LIME))
+    public static final ItemStack GREEN_TEAM = ItemFactory.create(getMaterialCompatibility().wool(DyeColor.LIME))
             .setName("&aGreen Team")
             .create();
 
-    public static final ItemStack BLUE_TEAM = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().wool(DyeColor.BLUE))
+    public static final ItemStack BLUE_TEAM = ItemFactory.create(getMaterialCompatibility().wool(DyeColor.BLUE))
             .setName("&9Blue Team")
             .create();
 
-    public static final ItemStack YELLOW_TEAM = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().wool(DyeColor.YELLOW))
+    public static final ItemStack YELLOW_TEAM = ItemFactory.create(getMaterialCompatibility().wool(DyeColor.YELLOW))
             .setName("&eYellow Team")
             .create();
 
-    public static final ItemStack PINK_TEAM = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().wool(DyeColor.PINK))
+    public static final ItemStack PINK_TEAM = ItemFactory.create(getMaterialCompatibility().wool(DyeColor.PINK))
             .setName("&dPink Team")
             .create();
 
-    public static final ItemStack GRAY_TEAM = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().wool(DyeColor.GRAY))
+    public static final ItemStack GRAY_TEAM = ItemFactory.create(getMaterialCompatibility().wool(DyeColor.GRAY))
             .setName("&8Gray Team")
             .create();
 
@@ -83,7 +85,7 @@ public class Items {
             .setLore("&aThe maximum amount of players in the arena")
             .create();
 
-    public static final ItemStack GAME_TIME = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().get(MaterialCompatibility.CLOCK))
+    public static final ItemStack GAME_TIME = ItemFactory.create(getMaterialCompatibility().get(MaterialCompatibility.CLOCK))
             .setName("&eGame time")
             .setLore("&aHow many minutes the game can last for")
             .create();
@@ -91,6 +93,16 @@ public class Items {
     public static final ItemStack MINIMUM = ItemFactory.create(Material.HOPPER)
             .setName("&eMinimum players required")
             .setLore("&aMinimum amount of players required for the game to start")
+            .create();
+
+    public static final ItemStack BET_INT = ItemFactory.create(getMaterialCompatibility().get(MaterialCompatibility.SUNFLOWER))
+            .setName("&eBet amount")
+            .setLore("&aThe amount which players have to pay to join, and ", "&athe sum of bets is given to the winner")
+            .create();
+
+    public static final ItemStack BET_BOOL = ItemFactory.create(getMaterialCompatibility().get(CAULDRON))
+            .setName("&eTake bets")
+            .setLore("&aWhether should players be required to pay a bet ", "&a(which is given to the winner) to join", "&athe game")
             .create();
 
     public static final ItemStack MELTING = ItemFactory.create(Material.LAVA_BUCKET)
@@ -103,7 +115,7 @@ public class Items {
             .setLore("&aShould mined blocks have their standard drops dropped")
             .create();
 
-    public static final ItemStack POWERUPS = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().get(MaterialCompatibility.FIREWORK))
+    public static final ItemStack POWERUPS = ItemFactory.create(getMaterialCompatibility().get(MaterialCompatibility.FIREWORK))
             .setName("&ePower Ups")
             .setLore("&aShould power ups be dropped in the game or not")
             .create();
@@ -119,7 +131,7 @@ public class Items {
             .setName("&aAdd Team")
             .create();
 
-    public static final ItemStack REMOVE_TEAM = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().get(MaterialCompatibility.REDSTONE_TORCH))
+    public static final ItemStack REMOVE_TEAM = ItemFactory.create(getMaterialCompatibility().get(MaterialCompatibility.REDSTONE_TORCH))
             .setName("&cRemove Team")
             .create();
 
@@ -127,16 +139,16 @@ public class Items {
             .setName("&aEnable")
             .create();
 
-    public static final ItemStack DISABLE = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().get(MaterialCompatibility.REDSTONE_TORCH))
+    public static final ItemStack DISABLE = ItemFactory.create(getMaterialCompatibility().get(MaterialCompatibility.REDSTONE_TORCH))
             .setName("&cDisable")
             .create();
 
     /* Integer-controlling items */
 
-    public static final ItemFactory INCREASE = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().pane(DyeColor.LIME))
+    public static final ItemFactory INCREASE = ItemFactory.create(getMaterialCompatibility().pane(DyeColor.LIME))
             .setName("&aIncrease");
 
-    public static final ItemFactory DECREASE = ItemFactory.create(CompatibilityHandler.getMaterialCompatibility().pane(DyeColor.RED))
+    public static final ItemFactory DECREASE = ItemFactory.create(getMaterialCompatibility().pane(DyeColor.RED))
             .setName("&cDecrease");
 
 }

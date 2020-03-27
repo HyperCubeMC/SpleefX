@@ -19,6 +19,8 @@ import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.util.game.Chat;
 
+import static io.github.spleefx.data.GameStats.FORMAT;
+
 /**
  * A class for controlling signs for a specific arena
  */
@@ -59,6 +61,7 @@ public class SignManager {
         return Chat.colorize(text
                 .replace("{arena}", arena.getKey())
                 .replace("{arena_displayname}", arena.getDisplayName())
+                .replace("{arena_bet}", FORMAT.format(arena.getBet()))
                 .replace("{arena_playercount}", Integer.toString(arena.getEngine().getPlayerTeams().size()))
                 .replace("{arena_maximum}", Integer.toString(arena.getMaximum()))
                 .replace("{arena_minimum}", Integer.toString(arena.getMinimum()))

@@ -15,10 +15,12 @@
  */
 package io.github.spleefx.converter;
 
+import com.google.gson.JsonElement;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.util.code.MapBuilder;
 import org.moltenjson.configuration.direct.DirectConfiguration;
 import org.moltenjson.json.JsonFile;
+import org.moltenjson.utils.JsonUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -45,6 +47,12 @@ public class MessageFileConverter implements Runnable {
             .put("upgradePurchased", "&aSuccessfully purchased and selected &e{upgrade_displayname}&a!")
             .put("mustPurchaseBefore", "&cYou must purchase previous abilities before buying this!")
             .build();
+
+    private static final JsonElement BETS = JsonUtils.getObjectFromString("{\n" +
+            "    \"betTaken\": \"&e{arena_bet}$ &ahas been taken from you as a bet\",\n" +
+            "    \"wonGameBet\": \"&aYou've won &e{portion}$ &afrom the arena bets!\",\n" +
+            "    \"notEnoughToBet\": \"&cYou are required to have at least &e{arena_bet} &cas a betting to join the arena.\"\n" +
+            "  }");
 
     private File file;
 
@@ -80,6 +88,10 @@ public class MessageFileConverter implements Runnable {
         if (arenaMessages.putIfAbsent("mustHaveEmptyInventory", "&cYou must have an empty inventory in order to join!") == null) {
             changed = true;
             messagesFile.set("arena", arenaMessages);
+        }
+        if (!messagesFile.contains("bets")) {
+            messagesFile.set("bets", BETS);
+            changed = true;
         }
         if (changed) {
             messagesFile.save(Throwable::printStackTrace);

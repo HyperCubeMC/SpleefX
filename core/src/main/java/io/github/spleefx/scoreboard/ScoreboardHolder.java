@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import static io.github.spleefx.SpleefX.getPlugin;
+import static io.github.spleefx.data.GameStats.FORMAT;
 import static io.github.spleefx.message.MessageKey.formatTime;
 
 public class ScoreboardHolder {
@@ -64,7 +65,7 @@ public class ScoreboardHolder {
         getPlugin().getAssemble().getBoards().put(p.getPlayer().getUniqueId(), new AssembleBoard(p.getPlayer(), getPlugin().getAssemble()));
     }
 
-    public String replacePlaceholders(ArenaPlayer player, String message, GameArena arena, Map<String, Supplier<String>> placeholders) {
+    public static String replacePlaceholders(ArenaPlayer player, String message, GameArena arena, Map<String, Supplier<String>> placeholders) {
         BaseArenaEngine<? extends GameArena> engine = (BaseArenaEngine<? extends GameArena>) arena.getEngine();
         Location location = player.getPlayer().getLocation();
         for (Entry<String, Supplier<String>> placeholder : placeholders.entrySet())
@@ -73,6 +74,7 @@ public class ScoreboardHolder {
             message = message
                     .replace("{arena}", arena.getKey())
                     .replace("{arena_displayname}", arena.getDisplayName())
+                    .replace("{arena_bet}", FORMAT.format(arena.getBet()))
                     .replace("{arena_time_left}", formatTime(engine.timeLeft))
                     .replace("{arena_playercount}", Integer.toString(arena.getEngine().getPlayerTeams().size()))
                     .replace("{arena_minimum}", Integer.toString(arena.getMinimum()))

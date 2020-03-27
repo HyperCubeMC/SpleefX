@@ -156,6 +156,14 @@ public class GameStats {
         return coins = task.apply(coins);
     }
 
+    public void giveCoins(OfflinePlayer player, int amount) {
+        if ((boolean) ECO_USE_VAULT.get() && VAULT_EXISTS.get()) {
+            SpleefX.getPlugin().getVaultHandler().add(player, amount);
+            return;
+        }
+        coins += amount;
+    }
+
     /**
      * Returns the amount of coins the player has
      *
