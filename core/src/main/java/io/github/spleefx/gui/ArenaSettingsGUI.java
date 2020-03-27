@@ -65,7 +65,6 @@ public class ArenaSettingsGUI extends GameMenu {
         super("&1Settings for " + arena.getDisplayName(), ROWS);
         cancelAllClicks = true;
 
-
         createNumberButtons(1, arena.getDeathLevel(), 27, 45, arena::setDeathLevel, new Button(36, Items.DEATH_LEVEL));
 
         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
@@ -81,6 +80,10 @@ public class ArenaSettingsGUI extends GameMenu {
         createBooleanButtons(arena.getDropMinedBlocks(), 42, arena::setDropMinedBlocks, new Button(33, Items.DROP_MINED_BLOCKS));
         if (arena.getExtension() instanceof SpleefExtension)
             createBooleanButtons(((SpleefArena) arena).isMelt(), 43, ((SpleefArena) arena)::setMelt, new Button(34, Items.MELTING));
+
+        createNumberButtons(1, arena.getBet(), 31, 49, arena::setBet, new Button(40, Items.BET_INT));
+        createBooleanButtons(arena.shouldTakeBets(), 44, arena::setTakeBets, new Button(35, Items.BET_BOOL));
+
 
         /* Action buttons */
         setButton(new Button(16, Items.RENAME_ARENA).addAction((e) -> RENAME.accept(e, arena)));
@@ -116,12 +119,12 @@ public class ArenaSettingsGUI extends GameMenu {
         increase.register(incItem, decrease, (e, v) -> {
             valueChange.accept(v);
             e.getClickedInventory().setItem(itemButton.getSlot(), ItemFactory.create(itemButton.getItem().clone())
-                    .addLoreLine("&bCurrent value: &d" + binder.getValue(), 2).create());
+                    .addLoreLine("&bCurrent value: &d" + binder.getValue(), itemButton.getItem().getItemMeta().getLore().size() - 1).create());
         });
         decrease.register(minimum, increase, decItem, (e, v) -> {
             valueChange.accept(v);
             e.getClickedInventory().setItem(itemButton.getSlot(), ItemFactory.create(itemButton.getItem().clone())
-                    .addLoreLine("&bCurrent value: &d" + binder.getValue(), 2).create());
+                    .addLoreLine("&bCurrent value: &d" + binder.getValue(), itemButton.getItem().getItemMeta().getLore().size() - 1).create());
         });
         itemButton.addAction(e -> Chat.plugin(e.getWhoClicked(), "&eCurrent value: &d" + binder.getValue()));
         itemButton.setItem(ItemFactory.create(itemButton.getItem().clone()).addLoreLine("")

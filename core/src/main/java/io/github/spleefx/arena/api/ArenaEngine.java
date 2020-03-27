@@ -21,8 +21,10 @@ import io.github.spleefx.extension.ability.GameAbility;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.sign.SignManager;
 import io.github.spleefx.team.GameTeam;
+import org.bukkit.entity.Player;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,7 +59,7 @@ public interface ArenaEngine {
      *
      * @param player Player to join
      */
-    boolean join(ArenaPlayer player);
+    boolean join(ArenaPlayer player, GameTeam team);
 
     /**
      * Invoked when the player quits
@@ -191,4 +193,7 @@ public interface ArenaEngine {
      */
     boolean isFull();
 
+    List<Player> getAlive();
+
+    List<GameTeam> getDeadTeams();
 }

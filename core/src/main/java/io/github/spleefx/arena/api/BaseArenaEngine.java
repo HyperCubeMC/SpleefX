@@ -15,12 +15,15 @@
  */
 package io.github.spleefx.arena.api;
 
+import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.GameTask.Phase;
+import io.github.spleefx.data.GameStats;
 import io.github.spleefx.data.PlayerStatistic;
 import io.github.spleefx.extension.GameEvent;
+import io.github.spleefx.extension.GameExtension.SenderType;
 import io.github.spleefx.extension.ability.DoubleJumpHandler.DataHolder;
 import io.github.spleefx.extension.ability.DoubleJumpHandler.DoubleJumpItems;
 import io.github.spleefx.extension.ability.GameAbility;
@@ -42,7 +45,9 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
@@ -51,6 +56,7 @@ import java.util.stream.Collectors;
 
 import static io.github.spleefx.SpleefX.getPlugin;
 import static io.github.spleefx.compatibility.CompatibilityHandler.getProtocol;
+import static io.github.spleefx.data.GameStats.FORMAT;
 import static io.github.spleefx.util.plugin.PluginSettings.*;
 
 public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngine {
@@ -81,6 +87,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     private List<ArenaPlayer> dead = new LinkedList<>();
 
     private List<GameTeam> deadTeams = new LinkedList<>();
+
+    private Map<Player, Integer> betsMap = new HashMap<>();
 
     /**
      * The arena that is subject to processing
@@ -145,8 +153,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      */
     @Override
     public ArenaStage getArenaStage() {
-        if (!arena.isEnabled() || !arena.getExtension().isEnabled())
+        if (!arena.isEnabled() || !arena.getExtension().isEnabled()) {
             return arena.stage = ArenaStage.DISABLED;
+        }
         if (SETUP_VALIDATION.test(arena))
             return arena.stage = ArenaStage.NEEDS_SETUP;
         return arena.stage == null || arena.stage == ArenaStage.NEEDS_SETUP ? (arena.stage = ArenaStage.WAITING) : arena.stage;
@@ -182,7 +191,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      * @param p Player to join
      */
     @Override
-    public boolean join(ArenaPlayer p) {
+    public boolean join(ArenaPlayer p, @Nullable GameTeam team) {
         Player player = p.getPlayer();
         if (!arena.isEnabled() || !arena.getExtension().isEnabled()) {
             MessageKey.ARENA_DISABLED.send(player, arena, null, null, player, null, null,
@@ -198,6 +207,14 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             MessageKey.ARENA_FULL.send(player, arena, null, null, player, null, null,
                     -1, arena.getExtension());
             return false;
+        }
+        GameStats stats = null;
+        if (arena.shouldTakeBets()) {
+            if ((stats = SpleefX.getPlugin().getDataProvider().getStatistics(player)).getCoins(player) < arena.getBet()) {
+                MessageKey.NOT_ENOUGH_TO_BET.send(player, arena, null, null, player, null, null,
+                        -1, arena.getExtension());
+                return false;
+            }
         }
         switch (arena.getEngine().getArenaStage()) {
             case DISABLED:
@@ -218,22 +235,33 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                 return false;
         }
         if (playerTeams.containsKey(p)) return false;
-        GameTeam team = selectTeam();
+        if (team == null)
+            team = selectTeam();
         team.getMembers().add(player);
         playerTeams.put(p, team);
         prepare(p, team);
-        if (arena.getArenaType() == ArenaType.TEAMS)
-            playerTeams.forEach((pl, r) -> MessageKey.PLAYER_JOINED_T.send(pl.getPlayer(), arena, team.getColor(), null, player, null,
-                    null, -1, arena.getExtension()));
-        else
-            playerTeams.forEach((pl, r) -> MessageKey.PLAYER_JOINED_FFA.send(pl.getPlayer(), arena, team.getColor(), null, player, null,
-                    null, -1, arena.getExtension()));
+        if (arena.getArenaType() == ArenaType.TEAMS) {
+            for (ArenaPlayer pl : playerTeams.keySet()) {
+                MessageKey.PLAYER_JOINED_T.send(pl.getPlayer(), arena, team.getColor(), null, player, null,
+                        null, -1, arena.getExtension());
+            }
+        } else {
+            for (ArenaPlayer pl : playerTeams.keySet()) {
+                MessageKey.PLAYER_JOINED_FFA.send(pl.getPlayer(), arena, team.getColor(), null, player, null,
+                        null, -1, arena.getExtension());
+            }
+        }
         getSignManager().update();
         if (playerTeams.size() >= arena.getMinimum())
             countdown();
         abilityCount.put(player.getUniqueId(), (EnumMap<GameAbility, Integer>)
                 MapBuilder.of(new EnumMap<GameAbility, Integer>(GameAbility.class))
                         .put(GameAbility.DOUBLE_JUMP, arena.getExtension().getDoubleJumpSettings().getDefaultAmount()).build());
+        if (arena.shouldTakeBets()) {
+            betsMap.put(player, arena.getBet());
+            stats.takeCoins(player, arena.getBet());
+            MessageKey.BET_TAKEN.send(player, arena, null, null, player, null, null, -1, arena.getExtension());
+        }
         return true;
     }
 
@@ -272,6 +300,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             broadcast(MessageKey.NOT_ENOUGH_PLAYERS);
             playerTeams.keySet().forEach(ap -> ap.getPlayer().setLevel(0));
         }
+        if (arena.shouldTakeBets())
+            SpleefX.getPlugin().getDataProvider().getStatistics(player).giveCoins(player, betsMap.remove(player));
     }
 
     /**
@@ -522,27 +552,40 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             Collections.reverse(dead);
             Collections.reverse(deadTeams);
             if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
-                arena.getExtension().getRunCommandsForFFAWinners().forEach((index, commandsToRun) -> {
+                for (Entry<Integer, Map<SenderType, List<String>>> entry : arena.getExtension().getRunCommandsForFFAWinners().entrySet()) {
+                    Integer index = entry.getKey();
+                    Map<SenderType, List<String>> commandsToRun = entry.getValue();
                     try {
-                        ArenaPlayer died = dead.get(index - 1);
-                        if (died != null)
-                            commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(died.getPlayer(), c)));
+                        ArenaPlayer winner = dead.get(index - 1);
+                        if (winner != null) {
+                            int sum = betsMap.values().stream().mapToInt(integer -> integer).sum();
+                            commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(winner.getPlayer(), c.replace("{portion}", FORMAT.format(sum)))));
+                            if (arena.shouldTakeBets()) {
+                                getPlugin().getDataProvider().getStatistics(winner.getPlayer()).giveCoins(winner.getPlayer(), sum);
+                                MessageKey.WON_GAME_BET.send(winner.getPlayer(), arena, null, null, winner.getPlayer(), null, null, -1, arena.getExtension(), "{portion}", sum);
+                            }
+                        }
                     } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
                     }
-                });
+                }
             } else
                 arena.getExtension().getRunCommandsForTeamWinners().forEach((index, commandsToRun) -> {
                     try {
-                        GameTeam died = deadTeams.get(index - 1);
-                        if (died != null)
-                            died.getMembers().forEach(p -> commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(p, c))));
+                        GameTeam winningTeam = deadTeams.get(index - 1);
+                        if (winningTeam != null) {
+                            int portion = betsMap.values().stream().mapToInt(integer -> integer).sum() / arena.getMembersPerTeam();
+                            winningTeam.getMembers().forEach(p -> {
+                                commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(p, c.replace("{portion}", FORMAT.format(portion)))));
+                                getPlugin().getDataProvider().getStatistics(p.getPlayer()).giveCoins(p.getPlayer(), portion);
+                                MessageKey.WON_GAME_BET.send(p.getPlayer(), arena, null, null, p.getPlayer(), null, null, -1, arena.getExtension(), "{portion}", FORMAT.format(portion));
+                            });
+                        }
                     } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
                     }
                 });
-
         }
         playerTeams.clear();
-        //playerCount.set(0);
+        betsMap.clear();
         alive.clear();
         dead.clear();
         deadTeams.clear();
@@ -562,6 +605,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void forceEnd() {
         playerTeams.keySet().forEach(p -> {
             load(p);
+            if (arena.shouldTakeBets())
+                getPlugin().getDataProvider().getStatistics(p.getPlayer()).giveCoins(p.getPlayer(), betsMap.remove(p.getPlayer()));
             MessageKey.SERVER_STOPPED.send(p.getPlayer(), arena, null, null, p.getPlayer(), null, null, -1, arena.getExtension());
         });
         end(false);
@@ -700,6 +745,15 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     @Override
     public Map<UUID, EnumMap<GameAbility, Integer>> getAbilityCount() {
         return abilityCount;
+    }
+
+    @Override
+    public List<Player> getAlive() {
+        return alive;
+    }
+
+    @Override public List<GameTeam> getDeadTeams() {
+        return deadTeams;
     }
 
     static {

@@ -18,6 +18,7 @@ package io.github.spleefx.arena.bow;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.extension.ability.GameAbility;
+import io.github.spleefx.team.GameTeam;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -47,8 +48,8 @@ public class BowSpleefEngine extends BaseArenaEngine<BowSpleefArena> {
      * @param p Player to join
      */
     @Override
-    public boolean join(ArenaPlayer p) {
-        if (super.join(p)) {
+    public boolean join(ArenaPlayer p, GameTeam team) {
+        if (super.join(p, team)) {
             abilityCount.get(p.getPlayer().getUniqueId()).put(GameAbility.TRIPLE_ARROWS, EXTENSION.getTripleArrows().getDefaultAmount());
             return true;
         }

@@ -74,7 +74,7 @@ public class JoinSubcommand extends PluginSubcommand {
                         null, -1, mode);
                 return true;
             }
-            arena.getEngine().join(player);
+            arena.getEngine().join(player, null);
             return true;
         }
         String arenaKey = args[0];
@@ -84,7 +84,7 @@ public class JoinSubcommand extends PluginSubcommand {
             Chat.sendUnprefixed(sender, mode.getChatPrefix() + MessageKey.INVALID_ARENA.getText().replace("{arena}", arenaKey));
             return true;
         }
-        arena.getEngine().join(player);
+        arena.getEngine().join(player, null);
         return true;
     }
 

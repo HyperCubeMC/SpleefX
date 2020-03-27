@@ -78,6 +78,18 @@ public class GameArena extends ArenaData {
     private ArenaEngine engine;
 
     /**
+     * The amount of bets that should be taken from everyone when the game starts
+     */
+    @Expose
+    private int bet = 1;
+
+    /**
+     * Whether should the arena take bets when starting
+     */
+    @Expose
+    private boolean takeBets = false;
+
+    /**
      * The arena's extension mode
      */
     private GameExtension extension = new GameExtension();
@@ -103,7 +115,7 @@ public class GameArena extends ArenaData {
      *
      * @return Value for property 'gameTeams'.
      */
-    List<GameTeam> getGameTeams() {
+    public List<GameTeam> getGameTeams() {
         return gameTeams;
     }
 
@@ -136,10 +148,6 @@ public class GameArena extends ArenaData {
         return extension;
     }
 
-    public String getModeType() {
-        return modeType;
-    }
-
     /**
      * Sets the arena's extension
      *
@@ -151,6 +159,22 @@ public class GameArena extends ArenaData {
 
     public void setFFAManager(FFAManager ffaManager) {
         this.ffaManager = ffaManager;
+    }
+
+    public int getBet() {
+        return bet < 1 ? bet = 1 : bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet = bet;
+    }
+
+    public boolean shouldTakeBets() {
+        return takeBets;
+    }
+
+    public void setTakeBets(boolean takeBets) {
+        this.takeBets = takeBets;
     }
 
     @Override

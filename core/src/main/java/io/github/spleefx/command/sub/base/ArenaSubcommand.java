@@ -68,7 +68,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
 
     public static final List<String> TYPES = Arrays.asList("ffa", "teams");
 
-    private static final List<String> SETTINGS = Arrays.asList("deathLevel", "disable", "displayName", "enable", "gameTime", "maxPlayerCount", "membersPerTeam", "minimum", "teams", "toggle");
+    private static final List<String> SETTINGS = Arrays.asList("bet", "deathLevel", "disable", "displayName", "enable", "gameTime", "maxPlayerCount", "membersPerTeam", "minimum", "teams", "toggle");
 
     private ModeType type;
 
@@ -231,18 +231,19 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                         switch (args[2].toLowerCase()) {
                             case "toggle":
                                 arena.setEnabled(!arena.isEnabled());
-                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &chas been disabled"), arena.getKey()));
+                                Chat.prefix(sender, arena, String.format(arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &chas been disabled", arena.getKey()));
                                 return true;
                             case "enable":
                                 arena.setEnabled(true);
-                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &chas been disabled"), arena.getKey()));
+                                Chat.prefix(sender, arena, "&aArena &e" + arena.getKey() + " &ahas been enabled");
                                 return true;
                             case "disable":
                                 arena.setEnabled(false);
-                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &chas been disabled"), arena.getKey()));
+                                Chat.prefix(sender, arena, "&cArena &e" + arena.getKey() + " &chas been disabled");
                                 return true;
+                            default:
+                                return false;
                         }
-
                     }
                     case "create": {
                         if (checkSender(sender)) {
@@ -379,6 +380,12 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             parseThen(arena, sender, args[3], 1, (e, v) -> {
                                 arena.setDeathLevel(v);
                                 Chat.prefix(sender, arena, "&aArena &e" + arena.getKey() + "&a's death level has been set to &e" + v);
+                            });
+                            return true;
+                        case "bet":
+                            parseThen(arena, sender, args[3], 1, (e, v) -> {
+                                arena.setBet(v);
+                                Chat.prefix(sender, arena, "&aArena &e" + arena.getKey() + "&a's betting has been set to &e" + v);
                             });
                             return true;
                         case "minimum":

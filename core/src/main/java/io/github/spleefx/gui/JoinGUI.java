@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static io.github.spleefx.data.GameStats.FORMAT;
+
 public class JoinGUI extends GameMenu {
 
     /**
@@ -57,7 +59,7 @@ public class JoinGUI extends GameMenu {
         setButton(new Button(slot.getAndIncrement(),
                 MenuSettings.applyPlaceholders(menu.items.get(arena.getEngine().getArenaStage()).factory(), arena))
                 .addAction(e -> e.getWhoClicked().closeInventory())
-                .addAction(e -> arena.getEngine().join(ArenaPlayer.adapt(((Player) e.getWhoClicked())))));
+                .addAction(e -> arena.getEngine().join(ArenaPlayer.adapt(((Player) e.getWhoClicked())), null)));
     }
 
     public static class MenuSettings {
@@ -100,6 +102,7 @@ public class JoinGUI extends GameMenu {
         private static String placeholders(String string, GameArena arena) {
             return string.replace("{arena}", arena.getKey())
                     .replace("{arena_displayname}", arena.getDisplayName())
+                    .replace("{arena_bet}", FORMAT.format(arena.getBet()))
                     .replace("{arena_minimum}", Integer.toString(arena.getMinimum()))
                     .replace("{arena_playercount}", Integer.toString(arena.getEngine().getPlayerTeams().size()))
                     .replace("{arena_maximum}", Integer.toString(arena.getMaximum()))
