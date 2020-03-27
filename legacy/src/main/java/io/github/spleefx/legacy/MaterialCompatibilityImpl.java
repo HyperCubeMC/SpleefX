@@ -36,6 +36,8 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
             .put(DIAMOND_SHOVEL, Material.DIAMOND_SPADE)
             .put(SIGN, Material.SIGN)
             .put(SNOWBALL, Material.SNOW_BALL)
+            .put(SUNFLOWER, Material.DOUBLE_PLANT)
+            .put(CAULDRON, Material.CAULDRON_ITEM)
             .build();
 
     /**

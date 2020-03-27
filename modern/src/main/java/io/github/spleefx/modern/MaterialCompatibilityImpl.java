@@ -38,6 +38,8 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
             .put(DIAMOND_SHOVEL, Material.DIAMOND_SHOVEL)
             .put(SIGN, CompatibilityHandler.either(() -> Material.valueOf("SIGN"), () -> Material.valueOf("OAK_SIGN")))
             .put(SNOWBALL, Material.SNOWBALL)
+            .put(SUNFLOWER, Material.SUNFLOWER)
+            .put(CAULDRON, Material.CAULDRON)
             .build();
 
     /**

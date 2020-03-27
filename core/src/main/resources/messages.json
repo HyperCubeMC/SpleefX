@@ -80,5 +80,10 @@
     "notEnoughCoinsSplegg": "&cYou do not have enough coins to purchase this upgrade!",
     "upgradePurchased": "&aSuccessfully purchased and selected &e{upgrade_displayname}&a!",
     "mustPurchaseBefore": "&cYou must purchase previous abilities before buying this!"
+  },
+  "bets": {
+    "betTaken": "&e{arena_bet}$ &ahas been taken from you as a bet",
+    "wonGameBet": "&aYou've won &e{portion}$ &afrom the arena bets!",
+    "notEnoughToBet": "&cYou are required to have at least &e{arena_bet} &cas a betting to join the arena."
   }
 }
