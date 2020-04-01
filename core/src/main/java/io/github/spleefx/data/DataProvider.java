@@ -25,6 +25,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
+
 import static java.util.UUID.fromString;
 
 /**
@@ -103,6 +105,13 @@ public interface DataProvider {
      * @param stats  Stats to override with
      */
     void setStatistics(OfflinePlayer player, GameStats stats);
+
+    /**
+     * Returns the top n players in the specified statistic
+     *
+     * @param statistic Statistic to get from
+     */
+    List<LeaderboardTopper> getTopPlayers(PlayerStatistic statistic, GameExtension extension);
 
     /**
      * Returns the statistics of the specified player

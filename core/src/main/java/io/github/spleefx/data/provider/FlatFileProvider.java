@@ -18,10 +18,15 @@ package io.github.spleefx.data.provider;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.data.DataProvider;
 import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.LeaderboardTopper;
 import io.github.spleefx.data.PlayerStatistic;
 import io.github.spleefx.extension.GameExtension;
+import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.plugin.PluginSettings;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.scheduler.BukkitTask;
 import org.moltenjson.configuration.tree.TreeConfiguration;
 import org.moltenjson.configuration.tree.TreeConfigurationBuilder;
 import org.moltenjson.configuration.tree.strategy.TreeNamingStrategy;
@@ -29,19 +34,28 @@ import org.moltenjson.utils.Gsons;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.reverseOrder;
 
 public class FlatFileProvider implements DataProvider {
 
     private static final TreeNamingStrategy<OfflinePlayer> NAMING_STRATEGY = new PlayerNamingStrategy();
 
+    private static final Map<PlayerStatistic, List<LeaderboardTopper>> TOP = new HashMap<>();
+
+    private static final Map<PlayerStatistic, Map<GameExtension, List<LeaderboardTopper>>> TOP_BY_EXTENSION = new HashMap<>();
+
     private TreeConfiguration<OfflinePlayer, GameStats> statisticsTree =
             new TreeConfigurationBuilder<OfflinePlayer, GameStats>(new File(SpleefX.getPlugin().getDataFolder(), PluginSettings.STATISTICS_DIRECTORY.get()), NAMING_STRATEGY)
-                    .setLazy(true)
+                    .setLazy(false)
                     .setDataMap(new HashMap<>())
                     .setGson(Gsons.DEFAULT)
                     .ignoreInvalidFiles(false)
                     .build();
+
+    private BukkitTask updateLeaderboards;
 
     /**
      * Returns whether the player has an entry in the storage or not
@@ -131,6 +145,45 @@ public class FlatFileProvider implements DataProvider {
             SpleefX.logger().severe("Failed to convert player statistics. Error:");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Creates the required files for this provider
+     *
+     * @param fileManager File manager instance
+     */
+    @Override
+    public void createRequiredFiles(FileManager<SpleefX> fileManager) {
+        if (MessageKey.PAPI && (boolean) PluginSettings.LEADERBOARDS.get()) {
+            SpleefX.logger().info("Leaderboards are enabled. Loading player data to allow it to be sorted beforehand. This may take some time depending on the amount of data it has to process.");
+            updateLeaderboards = Bukkit.getScheduler().runTaskTimer(fileManager.getPlugin(), () -> {
+                Map<OfflinePlayer, GameStats> stats = new HashMap<>(statisticsTree.load(GameStats.class));
+                for (PlayerStatistic ps : PlayerStatistic.values) {
+                    List<LeaderboardTopper> top = stats.entrySet().stream()
+                            .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().get(ps, null))))
+                            .map(e -> new LeaderboardTopper(e.getKey().getUniqueId(), e.getValue().get(ps, null)))
+                            .collect(Collectors.toList());
+                    TOP.put(ps, top);
+                }
+            }, 0, 600 * 20);
+        }
+    }
+
+    /**
+     * Returns the top n players in the specified statistic
+     *
+     * @param statistic Statistic to get from
+     */
+    @Override
+    public List<LeaderboardTopper> getTopPlayers(PlayerStatistic statistic, GameExtension extension) {
+        if (!(boolean) PluginSettings.LEADERBOARDS.get())
+            throw new IllegalStateException("Leaderboards are not enabled! Enable them in the config.yml.");
+        if (!MessageKey.PAPI)
+            throw new IllegalStateException("PlaceholderAPI is not found! Get PlaceholderAPI for leaderboards to work.");
+        if (extension == null)
+            return new ArrayList<>(TOP.get(statistic));
+        else
+            return new ArrayList<>(TOP_BY_EXTENSION.get(statistic).get(extension));
     }
 
     /**

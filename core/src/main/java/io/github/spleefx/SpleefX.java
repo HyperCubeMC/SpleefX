@@ -342,7 +342,12 @@ public final class SpleefX extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         if (CompatibilityHandler.shouldDisable() || !CompatibilityHandler.hasWorldEdit()) return;
-        disableArenas();
+        try {
+            disableArenas();
+        } catch (Exception e) {
+            logger().warning("Failed to regenerate arenas.");
+            e.printStackTrace();
+        }
         boosterConsumer.cancel();
         saveArenas();
         MessageKey.save();

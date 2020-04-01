@@ -170,7 +170,7 @@ public class GameArena extends ArenaData {
     }
 
     public boolean shouldTakeBets() {
-        return takeBets;
+        return bet > 1 && takeBets;
     }
 
     public void setTakeBets(boolean takeBets) {

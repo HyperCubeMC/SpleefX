@@ -19,6 +19,7 @@ import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.data.DataProvider;
 import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.LeaderboardTopper;
 import io.github.spleefx.data.PlayerStatistic;
 import io.github.spleefx.economy.booster.BoosterInstance;
 import io.github.spleefx.extension.GameExtension;
@@ -28,6 +29,7 @@ import org.moltenjson.configuration.direct.DirectConfiguration;
 import org.moltenjson.json.JsonFile;
 
 import java.io.File;
+import java.util.List;
 
 public class UnitedFileProvider implements DataProvider {
 
@@ -127,6 +129,16 @@ public class UnitedFileProvider implements DataProvider {
      */
     @Override
     public void setStatistics(OfflinePlayer player, GameStats stats) {
+        throw new AbstractMethodError();
+    }
+
+    /**
+     * Returns the top n players in the specified statistic
+     *
+     * @param statistic Statistic to get from
+     * @param extension
+     */
+    @Override public List<LeaderboardTopper> getTopPlayers(PlayerStatistic statistic, GameExtension extension) {
         throw new AbstractMethodError();
     }
 

@@ -154,11 +154,13 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     @Override
     public ArenaStage getArenaStage() {
         if (!arena.isEnabled() || !arena.getExtension().isEnabled()) {
-            return arena.stage = ArenaStage.DISABLED;
+            arena.stage = ArenaStage.DISABLED;
         }
         if (SETUP_VALIDATION.test(arena))
-            return arena.stage = ArenaStage.NEEDS_SETUP;
-        return arena.stage == null || arena.stage == ArenaStage.NEEDS_SETUP ? (arena.stage = ArenaStage.WAITING) : arena.stage;
+            arena.stage = ArenaStage.NEEDS_SETUP;
+        if (arena.stage == null || arena.stage == ArenaStage.NEEDS_SETUP || (arena.stage == ArenaStage.DISABLED && arena.isEnabled() && arena.getExtension().isEnabled()))
+            arena.stage = ArenaStage.WAITING;
+        return arena.stage;
     }
 
     /**
@@ -559,7 +561,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                         ArenaPlayer winner = dead.get(index - 1);
                         if (winner != null) {
                             int sum = betsMap.values().stream().mapToInt(integer -> integer).sum();
-                            commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(winner.getPlayer(), c.replace("{portion}", FORMAT.format(sum)))));
+                            commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(winner.getPlayer(), c.replace("{portion}", FORMAT.format(sum)), arena)));
                             if (arena.shouldTakeBets()) {
                                 getPlugin().getDataProvider().getStatistics(winner.getPlayer()).giveCoins(winner.getPlayer(), sum);
                                 MessageKey.WON_GAME_BET.send(winner.getPlayer(), arena, null, null, winner.getPlayer(), null, null, -1, arena.getExtension(), "{portion}", sum);
@@ -575,7 +577,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                         if (winningTeam != null) {
                             int portion = betsMap.values().stream().mapToInt(integer -> integer).sum() / arena.getMembersPerTeam();
                             winningTeam.getMembers().forEach(p -> {
-                                commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(p, c.replace("{portion}", FORMAT.format(portion)))));
+                                commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(p, c.replace("{portion}", FORMAT.format(portion)), arena)));
                                 getPlugin().getDataProvider().getStatistics(p.getPlayer()).giveCoins(p.getPlayer(), portion);
                                 MessageKey.WON_GAME_BET.send(p.getPlayer(), arena, null, null, p.getPlayer(), null, null, -1, arena.getExtension(), "{portion}", FORMAT.format(portion));
                             });

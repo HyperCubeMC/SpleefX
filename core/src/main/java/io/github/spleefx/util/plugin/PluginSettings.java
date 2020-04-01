@@ -52,7 +52,10 @@ public enum PluginSettings {
     UNITED_FILE_NAME("PlayerGameStatistics.UnitedFile.FileName", "player-data.json"),
     SQLITE_FILE_NAME("PlayerGameStatistics.SQLite.FileName", "player-data.db"),
     ECO_HOOK_INTO_VAULT("Economy.HookIntoVault", true),
-    ECO_USE_VAULT("Economy.GetFromVault", false);
+    ECO_USE_VAULT("Economy.GetFromVault", false),
+
+    LEADERBOARDS("Leaderboards.Enabled", false),
+    LEADERBOARDS_FORMAT("Leaderboards.Format", "&d#{pos} &e{player} &7- &b{score}");
 
     public static final PluginSettings[] values = values();
 

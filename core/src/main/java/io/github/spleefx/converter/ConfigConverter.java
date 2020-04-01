@@ -42,7 +42,39 @@ public class ConfigConverter implements Runnable {
             "  # Whether should SpleefX hook into Vault, as in, SpleefX's economy becomes the one used by Vault.\n" +
             "  #\n" +
             "  # Note that the above setting (\"GetFromVault\") must be set to true for this to work.\n" +
-            "  HookIntoVault: false";
+            "  HookIntoVault: false\n";
+
+    private static final String LB = "\n" +
+            "# This is in beta, enable at your own risk!!\n" +
+            "#\n" +
+            "# Note that this section requires PlaceholderAPI\n" +
+            "Leaderboards:\n" +
+            "\n" +
+            "  # Whether should the plugin allow leaderboards.\n" +
+            "  #\n" +
+            "  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data.\n" +
+            "  Enabled: false\n" +
+            "\n" +
+            "  # The format, in which PlaceholderAPI will replace the placeholder with.\n" +
+            "  #\n" +
+            "  # This is used in the <i>format</i> PAPI request (see below).\n" +
+            "  #\n" +
+            "  # An example PAPI expression: %spleefx_wins_1:<request>%\n" +
+            "  #\n" +
+            "  # There are 3 requests through PAPI:\n" +
+            "  # ==\n" +
+            "  # name: The name of the top #n in the stat\n" +
+            "  # pos: The position of the top #n in the stat\n" +
+            "  # score: The score of the top #n in the stat\n" +
+            "  # format: The format below (to allow more than 1 thing in a single request)\n" +
+            "  # ==\n" +
+            "  #\n" +
+            "  # Inner placeholders:\n" +
+            "  # {pos} - The player position\n" +
+            "  # {player} - The player name\n" +
+            "  # {player_display} - The player's display name (e.g LuckPerms's name)\n" +
+            "  # {score} - The player's score in this stat\n" +
+            "  Format: \"&d#{pos} &e{player} &7- &b{score}\"";
 
     private File config;
 
@@ -73,6 +105,9 @@ public class ConfigConverter implements Runnable {
             }
             if (lines.stream().noneMatch(s -> s.contains("Economy:"))) {
                 lines.addAll(Arrays.asList(ECO.split("\n")));
+            }
+            if (lines.stream().noneMatch(s -> s.contains("Leaderboards:"))) {
+                lines.addAll(Arrays.asList(LB.split("\n")));
             }
             Files.write(config.toPath(), lines);
         } catch (IOException e) {

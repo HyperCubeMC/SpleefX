@@ -20,6 +20,7 @@ import com.google.gson.annotations.Expose;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaStage;
+import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.extension.ability.DoubleJumpHandler;
 import io.github.spleefx.extension.ability.DoubleJumpHandler.DataHolder;
 import io.github.spleefx.scoreboard.ScoreboardHolder;
@@ -307,22 +308,22 @@ public class GameExtension {
 
     public enum SenderType {
         PLAYER {
-            @Override public void run(Player player, String command) {
+            @Override public void run(Player player, String command, GameArena arena) {
                 ArenaPlayer p = ArenaPlayer.adapt(player);
-                command = ScoreboardHolder.replacePlaceholders(p, command, p.getCurrentArena(), Collections.emptyMap());
+                command = ScoreboardHolder.replacePlaceholders(p, command, arena, Collections.emptyMap());
                 player.performCommand(command.replace("{winner}", player.getName()).replace("{player}", player.getName()));
             }
         },
         CONSOLE {
-            @Override public void run(Player player, String command) {
+            @Override public void run(Player player, String command, GameArena arena) {
                 ArenaPlayer p = ArenaPlayer.adapt(player);
-                command = ScoreboardHolder.replacePlaceholders(p, command, p.getCurrentArena(), Collections.emptyMap());
+                command = ScoreboardHolder.replacePlaceholders(p, command, arena, Collections.emptyMap());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{winner}", player.getName())
                         .replace("{player}", player.getName()));
             }
         };
 
-        public abstract void run(Player player, String command);
+        public abstract void run(Player player, String command, GameArena arena);
 
     }
 

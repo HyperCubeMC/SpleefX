@@ -231,3 +231,34 @@ Economy:
   #
   # Note that the above setting ("GetFromVault") must be set to true for this to work.
   HookIntoVault: false
+
+# This is in beta, enable at your own risk!!
+#
+# Note that this section requires PlaceholderAPI
+Leaderboards:
+
+  # Whether should the plugin allow leaderboards.
+  #
+  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data.
+  Enabled: false
+
+  # The format, in which PlaceholderAPI will replace the placeholder with.
+  #
+  # This is used in the <i>format</i> PAPI request (see below).
+  #
+  # An example PAPI expression: %spleefx_wins_1:<request>%
+  #
+  # There are 3 requests through PAPI:
+  # ==
+  # name: The name of the top #n in the stat
+  # pos: The position of the top #n in the stat
+  # score: The score of the top #n in the stat
+  # format: The format below (to allow more than 1 thing in a single request)
+  # ==
+  #
+  # Inner placeholders:
+  # {pos} - The player position
+  # {player} - The player name
+  # {player_display} - The player's display name (e.g LuckPerms's name)
+  # {score} - The player's score in this stat
+  Format: "&d#{pos} &e{player} &7- &b{score}"

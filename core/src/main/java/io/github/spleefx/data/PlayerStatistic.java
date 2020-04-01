@@ -15,6 +15,8 @@
  */
 package io.github.spleefx.data;
 
+import java.util.Arrays;
+
 /**
  * Represents statistics of players
  */
@@ -43,5 +45,12 @@ public enum PlayerStatistic {
     /**
      * The blocks that were mined or destroyed
      */
-    BLOCKS_MINED
+    BLOCKS_MINED;
+
+    public static final PlayerStatistic[] values = values();
+
+    public static PlayerStatistic from(String value) {
+        return Arrays.stream(values).filter(ps -> ps.name().toLowerCase().equals(value.toLowerCase())).findFirst().orElse(null);
+    }
+
 }

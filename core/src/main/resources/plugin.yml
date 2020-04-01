@@ -10,6 +10,7 @@ loadbefore:
 softdepend:
   - Vault
   - WorldEdit
+  - FastAsyncWorldEdit
   - WorldGuard
   - WorldGuardExtraFlags
   - PlaceholderAPI
