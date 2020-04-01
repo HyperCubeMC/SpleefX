@@ -259,6 +259,5 @@ Leaderboards:
   # Inner placeholders:
   # {pos} - The player position
   # {player} - The player name
-  # {player_display} - The player's display name (e.g LuckPerms's name)
   # {score} - The player's score in this stat
   Format: "&d#{pos} &e{player} &7- &b{score}"

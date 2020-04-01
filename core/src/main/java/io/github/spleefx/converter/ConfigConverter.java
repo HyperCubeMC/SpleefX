@@ -72,7 +72,6 @@ public class ConfigConverter implements Runnable {
             "  # Inner placeholders:\n" +
             "  # {pos} - The player position\n" +
             "  # {player} - The player name\n" +
-            "  # {player_display} - The player's display name (e.g LuckPerms's name)\n" +
             "  # {score} - The player's score in this stat\n" +
             "  Format: \"&d#{pos} &e{player} &7- &b{score}\"";
 
