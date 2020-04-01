@@ -20,13 +20,13 @@ import io.github.spleefx.data.DataProvider;
 import io.github.spleefx.data.GameStats;
 import io.github.spleefx.data.LeaderboardTopper;
 import io.github.spleefx.data.PlayerStatistic;
+import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.scheduler.BukkitTask;
 import org.moltenjson.configuration.tree.TreeConfiguration;
 import org.moltenjson.configuration.tree.TreeConfigurationBuilder;
 import org.moltenjson.configuration.tree.strategy.TreeNamingStrategy;
@@ -54,8 +54,6 @@ public class FlatFileProvider implements DataProvider {
                     .setGson(Gsons.DEFAULT)
                     .ignoreInvalidFiles(false)
                     .build();
-
-    private BukkitTask updateLeaderboards;
 
     /**
      * Returns whether the player has an entry in the storage or not
@@ -156,7 +154,7 @@ public class FlatFileProvider implements DataProvider {
     public void createRequiredFiles(FileManager<SpleefX> fileManager) {
         if (MessageKey.PAPI && (boolean) PluginSettings.LEADERBOARDS.get()) {
             SpleefX.logger().info("Leaderboards are enabled. Loading player data to allow it to be sorted beforehand. This may take some time depending on the amount of data it has to process.");
-            updateLeaderboards = Bukkit.getScheduler().runTaskTimer(fileManager.getPlugin(), () -> {
+            Bukkit.getScheduler().runTaskTimer(fileManager.getPlugin(), () -> {
                 Map<OfflinePlayer, GameStats> stats = new HashMap<>(statisticsTree.load(GameStats.class));
                 for (PlayerStatistic ps : PlayerStatistic.values) {
                     List<LeaderboardTopper> top = stats.entrySet().stream()
@@ -164,6 +162,15 @@ public class FlatFileProvider implements DataProvider {
                             .map(e -> new LeaderboardTopper(e.getKey().getUniqueId(), e.getValue().get(ps, null)))
                             .collect(Collectors.toList());
                     TOP.put(ps, top);
+                    Map<GameExtension, List<LeaderboardTopper>> tops = new HashMap<>();
+                    for (GameExtension extension : ExtensionsManager.EXTENSIONS.values()) {
+                        List<LeaderboardTopper> topEx = stats.entrySet().stream()
+                                .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().get(ps, extension))))
+                                .map(e -> new LeaderboardTopper(e.getKey().getUniqueId(), e.getValue().get(ps, extension)))
+                                .collect(Collectors.toList());
+                        tops.put(extension, topEx);
+                    }
+                    TOP_BY_EXTENSION.put(ps, tops);
                 }
             }, 0, 600 * 20);
         }
