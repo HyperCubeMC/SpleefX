@@ -234,5 +234,7 @@
     "lore": [],
     "itemFlags": [],
     "unbreakable": true
-  }
+  },
+  "runCommandsWhenGameFills": [],
+  "runCommandsWhenGameStarts": []
 }

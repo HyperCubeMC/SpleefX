@@ -206,5 +206,7 @@
     "itemFlags": [],
     "durability": 0,
     "unbreakable": true
-  }
+  },
+  "runCommandsWhenGameFills": [],
+  "runCommandsWhenGameStarts": []
 }

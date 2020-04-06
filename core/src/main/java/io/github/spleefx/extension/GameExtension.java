@@ -110,6 +110,12 @@ public class GameExtension {
     @Expose
     private ItemHolder quitItem; // DONE
 
+    @Expose
+    private List<String> runCommandsWhenGameFills = new ArrayList<>();
+
+    @Expose
+    private List<String> runCommandsWhenGameStarts = new ArrayList<>();
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -255,6 +261,8 @@ public class GameExtension {
                 Objects.equals(extensionCommands, that.extensionCommands) &&
                 Objects.equals(allowedCommands, that.allowedCommands) &&
                 Objects.equals(scoreboard, that.scoreboard) &&
+                Objects.equals(runCommandsWhenGameFills, that.runCommandsWhenGameFills) &&
+                Objects.equals(runCommandsWhenGameStarts, that.runCommandsWhenGameStarts) &&
                 Objects.equals(quitItem, that.quitItem);
     }
 
@@ -263,6 +271,7 @@ public class GameExtension {
         return "GameExtension{" +
                 "enabled=" + enabled +
                 ", key='" + key + '\'' +
+                ", displayName='" + displayName + '\'' +
                 ", chatPrefix='" + chatPrefix + '\'' +
                 ", runCommandsForFFAWinners=" + runCommandsForFFAWinners +
                 ", runCommandsForTeamWinners=" + runCommandsForTeamWinners +
@@ -271,6 +280,7 @@ public class GameExtension {
                 ", givePotionEffects=" + givePotionEffects +
                 ", doubleJump=" + doubleJump +
                 ", itemsToAdd=" + itemsToAdd +
+                ", armorToAdd=" + armorToAdd +
                 ", gameTitles=" + gameTitles +
                 ", signs=" + signs +
                 ", waitingMode=" + waitingMode +
@@ -282,7 +292,17 @@ public class GameExtension {
                 ", scoreboard=" + scoreboard +
                 ", quitItemSlot=" + quitItemSlot +
                 ", quitItem=" + quitItem +
+                ", runCommandsWhenGameFills=" + runCommandsWhenGameFills +
+                ", runCommandsWhenGameStarts=" + runCommandsWhenGameStarts +
                 '}';
+    }
+
+    public List<String> getRunCommandsWhenGameFills() {
+        return runCommandsWhenGameFills;
+    }
+
+    public List<String> getRunCommandsWhenGameStarts() {
+        return runCommandsWhenGameStarts;
     }
 
     @Override

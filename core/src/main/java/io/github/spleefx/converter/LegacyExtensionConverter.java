@@ -16,6 +16,7 @@
 package io.github.spleefx.converter;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import io.github.spleefx.SpleefX;
@@ -204,6 +205,8 @@ public class LegacyExtensionConverter implements Runnable {
             "  }", ArenaData.GSON);
     //</editor-fold>
 
+    private static final JsonArray RUN_COMMANDS = new JsonArray();
+
     public LegacyExtensionConverter(File extensionsDirectory) {
         this.extensionsDirectory = extensionsDirectory;
     }
@@ -256,6 +259,14 @@ public class LegacyExtensionConverter implements Runnable {
             if (!d.contains("giveDroppedItems")) {
                 d.set("giveDroppedItems", true);
                 changed.add("Added giveDroppedItems option");
+            }
+            if (!d.contains("runCommandsWhenGameFills")) {
+                d.set("runCommandsWhenGameFills", RUN_COMMANDS);
+                changed.add("Added runCommandsWhenGameFills");
+            }
+            if (!d.contains("runCommandsWhenGameStarts")) {
+                d.set("runCommandsWhenGameStarts", RUN_COMMANDS);
+                changed.add("Added runCommandsWhenGameStarts");
             }
             if (!d.contains("armorToAdd")) {
                 d.set("armorToAdd", ImmutableMap.of(ArmorSlots.helmet, new ItemHolder().setType("diamond_helmet").setUnbreakable(true)));
