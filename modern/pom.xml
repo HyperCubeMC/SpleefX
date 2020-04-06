@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>modern</artifactId>
-    <version>3.7.8-BETA</version>
+    <version>3.7.9-BETA</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>io.github.spleefx</groupId>
         <artifactId>parent</artifactId>
-        <version>3.7.8-BETA</version>
+        <version>3.7.9-BETA</version>
     </parent>
 
     <repositories>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>core</artifactId>
-            <version>3.7.8-BETA</version>
+            <version>3.7.9-BETA</version>
         </dependency>
 
         <!-- WorldEdit 7.0.0 -->

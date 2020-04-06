@@ -28,6 +28,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
+import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -65,9 +66,11 @@ public class ScoreboardHolder {
         getPlugin().getAssemble().getBoards().put(p.getPlayer().getUniqueId(), new AssembleBoard(p.getPlayer(), getPlugin().getAssemble()));
     }
 
-    public static String replacePlaceholders(ArenaPlayer player, String message, GameArena arena, Map<String, Supplier<String>> placeholders) {
+    public static String replacePlaceholders(@Nullable ArenaPlayer player, String message, GameArena arena, Map<String, Supplier<String>> placeholders) {
         BaseArenaEngine<? extends GameArena> engine = (BaseArenaEngine<? extends GameArena>) arena.getEngine();
-        Location location = player.getPlayer().getLocation();
+
+        @Nullable Location location = null;
+        if (player != null) location = player.getPlayer().getLocation();
         for (Entry<String, Supplier<String>> placeholder : placeholders.entrySet())
             message = message.replace(placeholder.getKey(), placeholder.getValue().get());
         if (arena != null) {
@@ -82,7 +85,7 @@ public class ScoreboardHolder {
                     .replace("{arena_stage}", arena.getEngine().getArenaStage().getState())
                     .replace("{countdown}", formatTime(engine.countdown))
                     .replace("{plural}", engine.countdown == 1 ? "" : "s");
-            if (arena.getArenaType() == ArenaType.TEAMS) {
+            if (arena.getArenaType() == ArenaType.TEAMS && player != null) {
                 GameTeam team = engine.getPlayerTeams().get(player);
                 message = message
                         .replace("{team}", team.getColor().chat())
@@ -93,13 +96,14 @@ public class ScoreboardHolder {
                 .replace("{x}", Double.toString(location.getX()))
                 .replace("{y}", Double.toString(location.getY()))
                 .replace("{z}", Double.toString(location.getZ()))
-                .replace("{player}", player.getPlayer().getName())
                 .replace("{extension_key}", arena.getExtension().getKey())
                 .replace("{extension_chat_prefix}", arena.getExtension().getChatPrefix())
                 .replace("{extension}", arena.getExtension().getDisplayName())
                 .replace("{extension_without_colors}", ChatColor.stripColor(Chat.colorize(arena.getExtension().getDisplayName())))
                 .replace("{extension_name}", arena.getExtension().getDisplayName());
-        if (MessageKey.PAPI) {
+        if (player != null) {
+            message = message.replace("{player}", player.getPlayer().getName());
+        } if (MessageKey.PAPI) {
             message = PlaceholderAPI.setPlaceholders(player.getPlayer(), message);
         }
         return message;
