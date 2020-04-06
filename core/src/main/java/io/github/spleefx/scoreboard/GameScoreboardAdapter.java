@@ -45,7 +45,7 @@ public class GameScoreboardAdapter implements AssembleAdapter {
         return holder.getText()
                 .values()
                 .stream()
-                .map(s -> s.trim().isEmpty() ? "" : holder.replacePlaceholders(p, s, p.getCurrentArena(), engine.getScoreboardMap(player)))
+                .map(s -> s.trim().isEmpty() ? "" : ScoreboardHolder.replacePlaceholders(p, s, p.getCurrentArena(), engine.getScoreboardMap(player)))
                 .collect(Collectors.toList());
     }
 

@@ -443,7 +443,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             getPlugin().getArenaManager().regenerateArena(arena.getKey());
 
         playerTeams.forEach((p, team) -> MessageKey.GAME_STARTING.send(p.getPlayer(), arena, team.getColor(), null, p.getPlayer(), null, null, countdown, arena.getExtension()));
-        arena.getExtension().getRunCommandsWhenGameFills().forEach(c -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), ScoreboardHolder.replacePlaceholders(null, c, arena, Collections.emptyMap())));
+        arena.getExtension().getRunCommandsWhenGameFills().forEach(c -> SenderType.CONSOLE.run(null, c, arena));
         Map<String, String> numbersToDisplay = TITLE_ON_COUNTDOWN_NUMBERS.get();
         countdownTask = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
             countdown--;
@@ -480,7 +480,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             prepareForGame(arenaPlayer, team);
         });
         timeLeft = arena.getGameTime() * 60;
-        arena.getExtension().getRunCommandsWhenGameStarts().forEach(c -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), ScoreboardHolder.replacePlaceholders(null, c, arena, Collections.emptyMap())));
+        arena.getExtension().getRunCommandsWhenGameStarts().forEach(c -> SenderType.CONSOLE.run(null, c, arena));
         loop();
     }
 

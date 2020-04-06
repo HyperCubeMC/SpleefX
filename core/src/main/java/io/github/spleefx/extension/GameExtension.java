@@ -336,10 +336,16 @@ public class GameExtension {
         },
         CONSOLE {
             @Override public void run(Player player, String command, GameArena arena) {
-                ArenaPlayer p = ArenaPlayer.adapt(player);
-                command = ScoreboardHolder.replacePlaceholders(p, command, arena, Collections.emptyMap());
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{winner}", player.getName())
-                        .replace("{player}", player.getName()));
+                if (player == null) {
+                    command = ScoreboardHolder.replacePlaceholders(null, command, arena, Collections.emptyMap());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                } else {
+                    ArenaPlayer p = ArenaPlayer.adapt(player);
+                    command = ScoreboardHolder.replacePlaceholders(p, command, arena, Collections.emptyMap());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{winner}", player.getName())
+                            .replace("{player}", player.getName()));
+
+                }
             }
         };
 

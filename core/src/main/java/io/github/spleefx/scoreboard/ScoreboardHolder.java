@@ -76,6 +76,7 @@ public class ScoreboardHolder {
         if (arena != null) {
             message = message
                     .replace("{arena}", arena.getKey())
+                    .replace("{arena_key}", arena.getKey())
                     .replace("{arena_displayname}", arena.getDisplayName())
                     .replace("{arena_bet}", FORMAT.format(arena.getBet()))
                     .replace("{arena_time_left}", formatTime(engine.timeLeft))
@@ -92,19 +93,22 @@ public class ScoreboardHolder {
                         .replace("{team_color}", team.getColor().getChatColor());
             }
         }
-        message = message
-                .replace("{x}", Double.toString(location.getX()))
-                .replace("{y}", Double.toString(location.getY()))
-                .replace("{z}", Double.toString(location.getZ()))
-                .replace("{extension_key}", arena.getExtension().getKey())
-                .replace("{extension_chat_prefix}", arena.getExtension().getChatPrefix())
-                .replace("{extension}", arena.getExtension().getDisplayName())
-                .replace("{extension_without_colors}", ChatColor.stripColor(Chat.colorize(arena.getExtension().getDisplayName())))
-                .replace("{extension_name}", arena.getExtension().getDisplayName());
+        if (location != null) {
+            message = message
+                    .replace("{x}", Double.toString(location.getX()))
+                    .replace("{y}", Double.toString(location.getY()))
+                    .replace("{z}", Double.toString(location.getZ()))
+                    .replace("{extension_key}", arena.getExtension().getKey())
+                    .replace("{extension_chat_prefix}", arena.getExtension().getChatPrefix())
+                    .replace("{extension}", arena.getExtension().getDisplayName())
+                    .replace("{extension_without_colors}", ChatColor.stripColor(Chat.colorize(arena.getExtension().getDisplayName())))
+                    .replace("{extension_name}", arena.getExtension().getDisplayName());
+        }
         if (player != null) {
             message = message.replace("{player}", player.getPlayer().getName());
-        } if (MessageKey.PAPI) {
-            message = PlaceholderAPI.setPlaceholders(player.getPlayer(), message);
+        }
+        if (MessageKey.PAPI) {
+            message = PlaceholderAPI.setPlaceholders(player == null ? null : player.getPlayer(), message);
         }
         return message;
     }
