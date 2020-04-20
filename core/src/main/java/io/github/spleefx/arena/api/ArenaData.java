@@ -207,6 +207,9 @@ public abstract class ArenaData {
     @Expose
     private Location lobby;
 
+    @Expose
+    private Map<TeamColor, Location> teamLobbies = new HashMap<>();
+
     ArenaData(String key, String displayName, Location regenerationPoint, ArenaType arenaType) {
         this.key = key;
         this.displayName = displayName;
@@ -356,5 +359,9 @@ public abstract class ArenaData {
                 SpleefX.logger().info("An arena sign at (" + loc + ") no longer exists. Removing it");
             }
         }
+    }
+
+    public Map<TeamColor, Location> getTeamLobbies() {
+        return teamLobbies == null ? teamLobbies = new HashMap<>() : teamLobbies;
     }
 }

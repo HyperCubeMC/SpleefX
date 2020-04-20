@@ -41,6 +41,12 @@ public class FFAManager {
     private Map<Integer, Location> spawnpoints = new HashMap<>();
 
     /**
+     * Map for lobbies
+     */
+    @Expose
+    private Map<Integer, Location> lobbies = new HashMap<>();
+
+    /**
      * Represents all the players
      */
     private Map<ArenaPlayer, Integer> players = new HashMap<>();
@@ -53,6 +59,16 @@ public class FFAManager {
      */
     public void registerSpawnpoint(int index, Location location) {
         spawnpoints.put(index, location);
+    }
+
+    /**
+     * Registers a lobby
+     *
+     * @param index    Index of the lobby
+     * @param location Location of the lobby
+     */
+    public void registerLobby(int index, Location location) {
+        lobbies.put(index, location);
     }
 
     /**
@@ -69,6 +85,13 @@ public class FFAManager {
 
     public Location get(int index) {
         return spawnpoints.get(index);
+    }
+
+    public Location getLobby(Player player, GameArena arena) {
+        int empty = lobbies.keySet().stream().filter(index -> index <= arena.getMaximum() && !players.containsValue(index)).findFirst().orElse(-1);
+        if (empty == -1) return null; // The arena is full
+        players.put(ArenaPlayer.adapt(player), empty);
+        return lobbies.get(empty);
     }
 
     public int getIndex(Player player) {

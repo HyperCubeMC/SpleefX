@@ -39,6 +39,7 @@ import io.github.spleefx.util.game.Metas;
 import io.github.spleefx.util.game.PlayerContext;
 import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
@@ -377,10 +378,13 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         Player player = p.getPlayer();
         ArenaPlayer.adapt(player).setState(ArenaPlayerState.WAITING).setCurrentArena(arena);
         player.setGameMode(arena.getExtension().getWaitingMode());
-        if (team.getColor() != TeamColor.FFA)
-            player.teleport(arena.getLobby() == null ? arena.getSpawnPoints().get(team.getColor()) : arena.getLobby());
-        else if (arena.getLobby() == null) player.teleport(arena.getFFAManager().getSpawnpoint(arena, player));
-        else {
+        if (team.getColor() != TeamColor.FFA) {
+            Location lobby = arena.getTeamLobbies().getOrDefault(team.getColor(), arena.getLobby());
+            player.teleport(lobby == null ? arena.getSpawnPoints().get(team.getColor()) : lobby);
+        } else if (arena.getLobby() == null) {
+            Location lobby = arena.getFFAManager().getLobby(player, arena);
+            player.teleport(lobby == null ? arena.getFFAManager().getSpawnpoint(arena, player) : lobby);
+        } else {
             player.teleport(arena.getLobby());
             arena.getFFAManager().getSpawnpoint(arena, player);
         }
