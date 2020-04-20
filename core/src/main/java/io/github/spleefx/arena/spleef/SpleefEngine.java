@@ -75,9 +75,10 @@ public class SpleefEngine extends BaseArenaEngine<SpleefArena> {
         /**
          * Compares locations to check if they are equal
          */
-        private static final Comparator<Location> LOCATION_COMPARATOR = comparingInt(Location::getBlockX)
-                .thenComparingInt(location -> PluginSettings.ARENA_MELTING_IGNORE_Y.get() ? 0 : location.getBlockY())
-                .thenComparingInt(Location::getBlockZ);
+        private static final Comparator<Location> LOCATION_COMPARATOR =
+                comparingInt((Location location) -> PluginSettings.ARENA_MELTING_IGNORE_X.get() ? 0 : location.getBlockX())
+                        .thenComparingInt(location -> PluginSettings.ARENA_MELTING_IGNORE_Y.get() ? 0 : location.getBlockY())
+                        .thenComparingInt(location -> PluginSettings.ARENA_MELTING_IGNORE_Z.get() ? 0 : location.getBlockZ());
 
         /**
          * All locations of players
@@ -89,6 +90,9 @@ public class SpleefEngine extends BaseArenaEngine<SpleefArena> {
          */
         private SpleefEngine engine;
 
+        /**
+         * A list of all meltable materials
+         */
         private List<Material> meltableBlocks;
 
         /**
