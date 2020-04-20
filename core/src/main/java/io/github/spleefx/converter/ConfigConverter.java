@@ -53,6 +53,8 @@ public class ConfigConverter implements Runnable {
             "  # Whether should the plugin allow leaderboards.\n" +
             "  #\n" +
             "  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data.\n" +
+            "  #\n" +
+            "  # After enabling, you must restart the server in order for it to take effect. Reload will not work!\n" +
             "  Enabled: false\n" +
             "\n" +
             "  # The format, in which PlaceholderAPI will replace the placeholder with.\n" +

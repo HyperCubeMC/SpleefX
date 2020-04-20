@@ -18,6 +18,7 @@ package io.github.spleefx.data;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -41,5 +42,22 @@ public class LeaderboardTopper {
 
     public int getCount() {
         return count;
+    }
+
+    @Override
+    public String toString() {
+        return "player=" + getPlayer();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LeaderboardTopper that = (LeaderboardTopper) o;
+        return Objects.equals(player, that.player);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(player);
     }
 }

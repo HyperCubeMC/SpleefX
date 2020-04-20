@@ -15,6 +15,7 @@
  */
 package io.github.spleefx.data.provider;
 
+import com.google.common.base.Stopwatch;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.data.DataProvider;
 import io.github.spleefx.data.GameStats;
@@ -35,6 +36,9 @@ import org.moltenjson.utils.Gsons;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.reverseOrder;
@@ -43,16 +47,16 @@ public class FlatFileProvider implements DataProvider {
 
     private static final TreeNamingStrategy<OfflinePlayer> NAMING_STRATEGY = new PlayerNamingStrategy();
 
-    private static final Map<PlayerStatistic, List<LeaderboardTopper>> TOP = new HashMap<>();
+    private static final Map<PlayerStatistic, Set<LeaderboardTopper>> TOP = new HashMap<>();
 
-    private static final Map<PlayerStatistic, Map<GameExtension, List<LeaderboardTopper>>> TOP_BY_EXTENSION = new HashMap<>();
+    private static final Map<PlayerStatistic, Map<GameExtension, Set<LeaderboardTopper>>> TOP_BY_EXTENSION = new HashMap<>();
 
     private TreeConfiguration<OfflinePlayer, GameStats> statisticsTree =
             new TreeConfigurationBuilder<OfflinePlayer, GameStats>(new File(SpleefX.getPlugin().getDataFolder(), PluginSettings.STATISTICS_DIRECTORY.get()), NAMING_STRATEGY)
                     .setLazy(false)
                     .setDataMap(new HashMap<>())
                     .setGson(Gsons.DEFAULT)
-                    .ignoreInvalidFiles(false)
+                    .ignoreInvalidFiles(true)
                     .build();
 
     /**
@@ -153,26 +157,36 @@ public class FlatFileProvider implements DataProvider {
     @Override
     public void createRequiredFiles(FileManager<SpleefX> fileManager) {
         if (MessageKey.PAPI && (boolean) PluginSettings.LEADERBOARDS.get()) {
-            SpleefX.logger().info("Leaderboards are enabled. Loading player data to allow it to be sorted beforehand. This may take some time depending on the amount of data it has to process.");
+            AtomicBoolean firstTime = new AtomicBoolean(true);
+            SpleefX.logger().info("Leaderboards are enabled. Loading player data after 5 seconds to allow it to be sorted beforehand. This may take some time depending on the amount of data it has to process.");
             Bukkit.getScheduler().runTaskTimer(fileManager.getPlugin(), () -> {
-                Map<OfflinePlayer, GameStats> stats = new HashMap<>(statisticsTree.load(GameStats.class));
+                Stopwatch timer = Stopwatch.createStarted();
+                Map<OfflinePlayer, GameStats> stats = new HashMap<>(statisticsTree.isDataLoaded() ? statisticsTree.getData() : statisticsTree.load(GameStats.class));
                 for (PlayerStatistic ps : PlayerStatistic.values) {
-                    List<LeaderboardTopper> top = stats.entrySet().stream()
-                            .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().get(ps, null))))
-                            .map(e -> new LeaderboardTopper(e.getKey().getUniqueId(), e.getValue().get(ps, null)))
-                            .collect(Collectors.toList());
-                    TOP.put(ps, top);
-                    Map<GameExtension, List<LeaderboardTopper>> tops = new HashMap<>();
+                    if (firstTime.get())
+                        SpleefX.logger().info("Sorting leaderboards for statistic " + ps);
+
+                    List<Entry<OfflinePlayer, GameStats>> toSort = new ArrayList<>(stats.entrySet());
+                    toSort.removeIf(e -> e.getKey() == null || e.getKey().getUniqueId() == null || e.getValue() == null);
+                    toSort.sort(reverseOrder(Comparator.comparingInt(e -> e.getValue().get(ps, null))));
+                    List<LeaderboardTopper> top = toSort.stream().map(player -> new LeaderboardTopper(player.getKey().getUniqueId(), player.getValue().get(ps, null))).collect(Collectors.toList());
+                    TOP.put(ps, new HashSet<>(top));
+                    Map<GameExtension, Set<LeaderboardTopper>> tops = new HashMap<>();
                     for (GameExtension extension : ExtensionsManager.EXTENSIONS.values()) {
+                        if (firstTime.get())
+                            SpleefX.logger().info("Sorting leaderboards for extension " + extension.getKey() + " in statistic " + ps);
                         List<LeaderboardTopper> topEx = stats.entrySet().stream()
                                 .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().get(ps, extension))))
                                 .map(e -> new LeaderboardTopper(e.getKey().getUniqueId(), e.getValue().get(ps, extension)))
                                 .collect(Collectors.toList());
-                        tops.put(extension, topEx);
+                        tops.put(extension, new LinkedHashSet<>(topEx));
                     }
                     TOP_BY_EXTENSION.put(ps, tops);
                 }
-            }, 0, 600 * 20);
+                SpleefX.logger().info("Finished loading and sorting all leaderboards in " + timer.elapsed(TimeUnit.MILLISECONDS) + " milliseconds.");
+                firstTime.set(false);
+                timer.stop();
+            }, 5 * 20, 600 * 20);
         }
     }
 
@@ -187,8 +201,12 @@ public class FlatFileProvider implements DataProvider {
             throw new IllegalStateException("Leaderboards are not enabled! Enable them in the config.yml.");
         if (!MessageKey.PAPI)
             throw new IllegalStateException("PlaceholderAPI is not found! Get PlaceholderAPI for leaderboards to work.");
-        if (extension == null)
+        if (extension == null) try {
             return new ArrayList<>(TOP.get(statistic));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("The plugin hasn't started loading leaderboards data yet! Please wait. If this occured even after 5 seconds of loading the plugin, report (all of) the errors above. Otherwise, ignore it and wait!");
+        }
         else
             return new ArrayList<>(TOP_BY_EXTENSION.get(statistic).get(extension));
     }
