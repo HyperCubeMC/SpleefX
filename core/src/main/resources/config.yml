@@ -84,6 +84,9 @@ Arena:
     # Default value: ["SNOW_BLOCK"]
     MeltableBlocks: ["SOUL_SAND", "SNOW_BLOCK"]
 
+    # Whether should the plugin ignore changes/movements in the X axis when checking for melting
+    IgnoreX: false
+
     # Whether should the plugin ignore changes in the Y axis when checking for melting.
     #
     # For example, a player does not move forward or backward but is only jumping. If true,
@@ -92,6 +95,9 @@ Arena:
     #
     # Default value: true
     IgnoreY: true
+
+    # Whether should the plugin ignore changes/movements in the Z axis when checking for melting
+    IgnoreZ: false
 
   # The update interval of signs (in ticks).
   #
@@ -240,6 +246,8 @@ Leaderboards:
   # Whether should the plugin allow leaderboards.
   #
   # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data.
+  #
+  # After enabling, you must restart the server in order for it to take effect. Reload will not work!
   Enabled: false
 
   # The format, in which PlaceholderAPI will replace the placeholder with.

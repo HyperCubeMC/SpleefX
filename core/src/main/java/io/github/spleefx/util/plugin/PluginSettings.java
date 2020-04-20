@@ -23,7 +23,9 @@ public enum PluginSettings {
     ARENA_REQUIRE_EMPTY_INV("Arena.RequireEmptyInventoryBeforeJoining", false),
     ARENA_MELTING_RADIUS("Arena.Melting.Radius", 5),
     ARENA_MELTING_INTERVAL("Arena.Melting.Interval", 100),
+    ARENA_MELTING_IGNORE_X("Arena.Melting.IgnoreX", false),
     ARENA_MELTING_IGNORE_Y("Arena.Melting.IgnoreY", true),
+    ARENA_MELTING_IGNORE_Z("Arena.Melting.IgnoreZ", false),
     ARENA_MELTING_BLOCKS("Arena.Melting.MeltableBlocks", Collections.singletonList("SNOW_BLOCK")),
     ARENA_REGENERATE_BEFORE_COUNTDOWN("Arena.RegenerateBeforeGameStarts", true),
     SIGN_UPDATE_INTERVAL("Arena.SignUpdateInterval", 40),
@@ -127,7 +129,7 @@ public enum PluginSettings {
      * @return The enumeration value
      */
     private <E extends Enum<E>> E requestEnum() {
-        E e = (E) Enum.valueOf(((Enum<E>) defaultValue).getDeclaringClass(), SpleefX.getPlugin().getConfig().getString(path, ((Enum<E>) defaultValue).name()).toUpperCase());
+        E e = Enum.valueOf(((Enum<E>) defaultValue).getDeclaringClass(), SpleefX.getPlugin().getConfig().getString(path, ((Enum<E>) defaultValue).name()).toUpperCase());
         if (e == null) return (E) defaultValue;
         return e;
     }
