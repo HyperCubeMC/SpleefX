@@ -245,30 +245,6 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                                 return false;
                         }
                     }
-                    case "create": {
-                        if (checkSender(sender)) {
-                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                    null, -1, ex);
-                            return true;
-                        }
-                        try {
-                            T arena = (T) GameArena.getByKey(args[1]);
-                            if (arena != null) { // An arena with that key already exists
-                                MessageKey.ARENA_ALREADY_EXISTS.send(sender, arena, null, null, null, command.getName(),
-                                        null, -1, ex);
-                                return true;
-                            }
-                            String key = args[1];
-                            if (!isValidPath(key)) {
-                                Chat.plugin(sender, "&cUnacceptable name: &e" + key + "&c.");
-                                return true;
-                            }
-                            SpleefX.getPlugin().getArenaManager().add((Player) sender, arenaFactory.create(args[1], args[2], CopyStore.LOCATIONS.get(sender), ArenaType.TEAMS, ex), command.getName());
-                        } catch (ClassCastException e) {
-                            Chat.plugin(sender, "&cThe specified arena is not a " + type.name().replace("_", " ").toLowerCase() + " arena.");
-                        }
-                        return true;
-                    }
                     case "spawnpoint": {
                         if (checkSender(sender)) {
                             MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
