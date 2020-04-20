@@ -652,7 +652,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (player.hasMetadata("spleefx.data")) {
             context = Metas.get(player, "spleefx.data");
             if (context != null)
-                context.load(player);
+                context.load(player, arena);
             player.removeMetadata("spleefx.data", getPlugin());
         }
         ArenaPlayer.adapt(player).setCurrentArena(null).setState(ArenaPlayerState.NOT_INGAME);

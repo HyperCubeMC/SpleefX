@@ -58,13 +58,15 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     "&earena &cspawnpoint &a<arena key> &b<team> &7- &dSet the spawnpoint of a specific team",
                     "&earena &csettings &a<arena key> &7- &dOpen the arena settings GUI",
                     "&earena &clobby &a<arena key> &7- &dSet the arena lobby (waiting area)",
+                    "&earena &cfinishingloc &a<arena key> &7- &dSet the arena's finishing location, where players are teleported when the game is over.",
+                    "&earena &cremovefinishingloc &a<arena key> &7- &dRemove the arena's finishing location",
                     "&earena &cremovelobby &a<arena key> &7- &dRemove the arena lobby",
                     "&earena &cregenerate &a<arena key> &7- &dRegenerate the arena"
             );
 
     private static final List<String> TEAMS = Arrays.stream(TeamColor.values()).filter(TeamColor::isUsable).map(c -> c.name().toLowerCase()).collect(Collectors.toList());
 
-    public static final List<String> ARGS_1 = Arrays.asList("create", "lobby", "regenerate", "remove", "removelobby", "settings", "spawnpoint");
+    public static final List<String> ARGS_1 = Arrays.asList("create", "finishingloc", "lobby", "regenerate", "remove", "removefinishingloc", "removelobby", "settings", "spawnpoint");
 
     public static final List<String> TYPES = Arrays.asList("ffa", "teams");
 
@@ -186,6 +188,32 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             return true;
                         }
                         arena.setLobby(null);
+                        Chat.prefix(sender, ex, "&aLobby for arena &e" + arena.getKey() + " &ahas been removed.");
+                    }
+                    case "finishingloc": {
+                        if (checkSender(sender)) {
+                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
+                                    null, -1, ex);
+                            return true;
+                        }
+                        T arena = (T) GameArena.getByKey(args[1]);
+                        if (arena == null) {
+                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            return true;
+                        }
+                        Location old = ((Player) sender).getLocation();
+                        Location loc = arena.setFinishingLocation(new Location(old.getWorld(), old.getBlockX() + 0.5, old.getBlockY(), old.getBlockZ() + 0.5, old.getYaw(), old.getPitch()));
+                        MessageKey.LOBBY_SET.send(sender, arena, null, loc, null, command.getName(),
+                                null, -1, ex);
+                        return true;
+                    }
+                    case "removefinishingloc": {
+                        T arena = (T) GameArena.getByKey(args[1]);
+                        if (arena == null) {
+                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            return true;
+                        }
+                        arena.setFinishingLocation(null);
                         Chat.prefix(sender, ex, "&aLobby for arena &e" + arena.getKey() + " &ahas been removed.");
                     }
                     return true;

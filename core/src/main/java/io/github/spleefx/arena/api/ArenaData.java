@@ -142,6 +142,12 @@ public abstract class ArenaData {
     private Location regenerationPoint;
 
     /**
+     * The finishing location that players are teleported to when the game is over
+     */
+    @Expose
+    private Location finishingLocation;
+
+    /**
      * All signs that redirect to this arena
      */
     @Expose
@@ -212,24 +218,6 @@ public abstract class ArenaData {
     }
 
     /**
-     * Adds a team to the arena
-     *
-     * @param color Team color to add
-     */
-    public void addTeam(TeamColor color) {
-        teams.add(color);
-    }
-
-    /**
-     * Removes the team from the arena
-     *
-     * @param color Team color to remove
-     */
-    public void removeTeam(TeamColor color) {
-        teams.remove(color);
-    }
-
-    /**
      * Registers a spawn point for the team
      *
      * @param color    Color of the team
@@ -241,6 +229,10 @@ public abstract class ArenaData {
 
     public String getKey() {
         return key;
+    }
+
+    public Location getFinishingLocation() {
+        return finishingLocation;
     }
 
     public String getDisplayName() {
@@ -301,6 +293,10 @@ public abstract class ArenaData {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public Location setFinishingLocation(Location finishingLocation) {
+        return this.finishingLocation = finishingLocation;
     }
 
     public void setMembersPerTeam(int membersPerTeam) {

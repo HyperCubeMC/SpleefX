@@ -15,6 +15,7 @@
  */
 package io.github.spleefx.util.game;
 
+import io.github.spleefx.arena.api.GameArena;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -114,7 +115,7 @@ public class PlayerContext {
      *
      * @param player Player to load into
      */
-    public void load(Player player) {
+    public void load(Player player, GameArena arena) {
         player.getInventory().setContents(items);
         player.getInventory().setArmorContents(armor);
 
@@ -123,7 +124,7 @@ public class PlayerContext {
 
         player.setLevel(xp);
         player.setExp(exp);
-        player.teleport(location);
+        player.teleport(arena.getFinishingLocation() == null ? location : arena.getFinishingLocation());
         player.setHealth(health >= 24 ? 24 : health < 0 ? 1 : health);
         player.setFoodLevel(hunger);
         player.setGameMode(gameMode);
