@@ -142,7 +142,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
     /**
      * Boosters config
      */
-    private SelectableConfiguration boostersFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("boosters" + separator + "boosters.json")), false, AdapterBuilder.GSON);
+    private final SelectableConfiguration boostersFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("boosters" + separator + "boosters.json")), false, AdapterBuilder.GSON);
 
     @DeriveFrom("boosters/active-boosters.json")
     private static ActiveBoosterLoader activeBoosterLoader = new ActiveBoosterLoader();
@@ -150,19 +150,19 @@ public final class SpleefX extends JavaPlugin implements Listener {
     @DeriveFrom("perks/-perks-shop.json")
     private static PerkShop perkShop = new PerkShop("&ePerk Shop", 3, new HashMap<>());
 
-    private ConfigurationPack<SpleefX> configurationPack = new ConfigurationPack<>(this, getDataFolder(), ArenaData.GSON);
+    private final ConfigurationPack<SpleefX> configurationPack = new ConfigurationPack<>(this, getDataFolder(), ArenaData.GSON);
 
     /**
      * Join gui config
      */
-    private SelectableConfiguration joinGuiFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("gui" + separator + "join-gui.json")), false, AdapterBuilder.GSON);
+    private final SelectableConfiguration joinGuiFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("gui" + separator + "join-gui.json")), false, AdapterBuilder.GSON);
 
     private Assemble assemble;
 
     /**
      * The folder that contains arena schematics and arenas.json
      */
-    private File arenasFolder = new File(getDataFolder(), "arenas");
+    private final File arenasFolder = new File(getDataFolder(), "arenas");
 
     /**
      * The extensions controller

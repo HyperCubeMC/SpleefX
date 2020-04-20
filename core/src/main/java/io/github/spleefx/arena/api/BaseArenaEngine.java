@@ -339,10 +339,13 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void win(ArenaPlayer p, GameTeam team) {
         Player player = p.getPlayer();
         getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
-        if (arena.getArenaType() == ArenaType.FREE_FOR_ALL)
+        if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
+            playerTeams.keySet().forEach(e -> arena.getExtension().getGameTitles().get(GameEvent.WIN).display(e.getPlayer(), player.getName()));
             dead.add(p);
-        else
+        } else {
+            playerTeams.keySet().forEach(e -> arena.getExtension().getGameTitles().get(GameEvent.WIN).display(e.getPlayer(), team.getColor().chat()));
             deadTeams.add(team);
+        }
         load(p);
     }
 
