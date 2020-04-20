@@ -203,8 +203,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                         }
                         Location old = ((Player) sender).getLocation();
                         Location loc = arena.setFinishingLocation(new Location(old.getWorld(), old.getBlockX() + 0.5, old.getBlockY(), old.getBlockZ() + 0.5, old.getYaw(), old.getPitch()));
-                        MessageKey.LOBBY_SET.send(sender, arena, null, loc, null, command.getName(),
-                                null, -1, ex);
+                        Chat.plugin(sender, String.format("&aArena &e%s&a's finishing location has been set to &e%.1f&a, &e%.1f&a, &e%.1f&a.", arena.getKey(), loc.getX(), loc.getY(), loc.getZ()));
                         return true;
                     }
                     case "removefinishingloc": {
@@ -214,7 +213,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             return true;
                         }
                         arena.setFinishingLocation(null);
-                        Chat.prefix(sender, ex, "&aLobby for arena &e" + arena.getKey() + " &ahas been removed.");
+                        Chat.prefix(sender, ex, "&aFinishing location for arena &e" + arena.getKey() + " &ahas been removed.");
                     }
                     return true;
                     case "regenerate":
