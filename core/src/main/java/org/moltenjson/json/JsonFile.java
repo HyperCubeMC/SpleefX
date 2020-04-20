@@ -194,7 +194,7 @@ public class JsonFile {
      * @return {@code true} if it's empty or {@code null}, false if otherwise.
      */
     private static boolean isEmpty(String text) {
-        return text == null || text.isEmpty();
+        return text == null || text.isEmpty() || text.equals("null");
     }
 
     /**

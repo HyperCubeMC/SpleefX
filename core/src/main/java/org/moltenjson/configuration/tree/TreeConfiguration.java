@@ -263,7 +263,6 @@ public class TreeConfiguration<N, E> {
      * @see #getData()
      */
     public E lazyLoad(final N name, final Type template, ExtensionType type) {
-
         E value = data.get(name);
         if (value != null) return value; // In case there was an entry, use that entry
         File file = files.computeIfAbsent(namingStrategy.toName(name), (k) -> new File(ExtensionsManager.CUSTOM_FOLDER, k + ".json")); // Get the file associated with the name
@@ -375,6 +374,8 @@ public class TreeConfiguration<N, E> {
      */
     public E create(N name, E value, String fileExtension) throws IOException {
         data.put(name, value);
+        Preconditions.checkNotNull(name, "Key mapping");
+        Preconditions.checkNotNull(value, "Value");
         Preconditions.checkArgument(restrictedExtensions.isEmpty() || restrictedExtensions.contains(fileExtension), "The specified file extension (\"" + fileExtension + "\") is not one of the allowed extensions (" + restrictedExtensions + ")");
         File file = new File(directory, namingStrategy.toName(name) + "." + fileExtension);
         files.put(namingStrategy.toName(name), file);
@@ -487,7 +488,9 @@ public class TreeConfiguration<N, E> {
                 File file = files.getOrDefault(namingStrategy.toName(entry), null);
                 setFile(file, false);
                 N name = namingStrategy.fromName(FilenameUtils.getBaseName(file.getName()));
-                writer.writeAndOverride(data.get(name), gson);
+                E e = data.get(name);
+                if (e != null)
+                    writer.writeAndOverride(e, gson);
             } catch (InvalidFileException e) {
                 if (ignoreInvalidFiles) continue;
                 throw e;
