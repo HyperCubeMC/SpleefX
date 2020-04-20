@@ -6,7 +6,7 @@
     <version>3.8.1-BETA</version>
     <packaging>pom</packaging>
     <name>SpleefX</name>
-    <url>https://dre2n.github.io</url>
+    <url>https://spleefx.github.io</url>
     <description>A powerful, feature-rich spleef plugin</description>
 
     <modules>
