@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.spleefx</groupId>
     <artifactId>parent</artifactId>
-    <version>3.7.9-BETA</version>
+    <version>3.8.1-BETA</version>
     <packaging>pom</packaging>
     <name>SpleefX</name>
     <url>https://dre2n.github.io</url>
