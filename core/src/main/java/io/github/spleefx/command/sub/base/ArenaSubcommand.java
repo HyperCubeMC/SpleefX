@@ -21,6 +21,7 @@ import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.FFAManager;
 import io.github.spleefx.arena.api.GameArena;
+import io.github.spleefx.command.sub.CommandException;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
@@ -332,6 +333,8 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                                 null, -1, ex);
                         return true;
                     }
+                    if (!isValidPath(args[1]))
+                        throw new CommandException("&cInvalid arena name: &e" + args[1] + "&c.");
                     @SuppressWarnings("SuspiciousMethodCalls")
                     T newArena = arenaFactory.create(args[1], combine(args, 3), CopyStore.LOCATIONS.get(sender), ArenaType.lookup(args[2]), ex);
                     if (newArena.getArenaType() == ArenaType.FREE_FOR_ALL)
