@@ -196,6 +196,11 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     @Override
     public boolean join(ArenaPlayer p, @Nullable GameTeam team) {
         Player player = p.getPlayer();
+        if (p.getCurrentArena() != null) {
+            MessageKey.ALREADY_IN_ARENA.send(player, arena, null, null, player, null, null, -1, arena.getExtension());
+            return false;
+        }
+
         if (!arena.isEnabled() || !arena.getExtension().isEnabled()) {
             MessageKey.ARENA_DISABLED.send(player, arena, null, null, player, null, null,
                     -1, arena.getExtension());

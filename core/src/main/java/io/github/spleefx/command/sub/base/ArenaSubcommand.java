@@ -402,6 +402,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             arena.getTeamLobbies().remove(color);
                             Chat.plugin(sender, "&aLobby for team &e" + color.chat() + " &ahas been removed.");
                         }
+                        return true;
                     }
                 }
                 return false;

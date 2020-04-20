@@ -85,10 +85,11 @@ public class MessageFileConverter implements Runnable {
             changed = true;
         }
         Map<String, Object> arenaMessages = messagesFile.getMap("arena");
-        if (arenaMessages.putIfAbsent("mustHaveEmptyInventory", "&cYou must have an empty inventory in order to join!") == null) {
+        if (arenaMessages.putIfAbsent("mustHaveEmptyInventory", "&cYou must have an empty inventory in order to join!") == null)
             changed = true;
-            messagesFile.set("arena", arenaMessages);
-        }
+        if (arenaMessages.putIfAbsent("alreadyInArena", "&cYou are already in an arena!") == null)
+            changed = true;
+        messagesFile.set("arena", arenaMessages);
         if (!messagesFile.contains("bets")) {
             messagesFile.set("bets", BETS);
             changed = true;

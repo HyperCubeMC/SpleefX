@@ -85,6 +85,7 @@ public enum MessageKey {
     GAME_COUNTDOWN("gameCountdown", MessageCategory.ARENA, "Game countdown", "Broadcasted when an arena is counting down"),
     GAME_TIMEOUT("gameTimeout", MessageCategory.ARENA, "Game time out", "Broadcasted when the game is about to time out"),
     GAME_STARTING("gameStarting", MessageCategory.ARENA, "Game starting", "Broadcasted when there are enough players to start the game"),
+    ALREADY_IN_ARENA("alreadyInArena", MessageCategory.ARENA, "Already in arena", "Sent when the player attempts to join an arena but is in one already."),
 
     /* Arena teams */
     PLAYER_JOINED_T("playerJoined", MessageCategory.ARENA_TEAMS, "Player joined the game", "Broadcasted when a player joins the arena"),
@@ -135,7 +136,8 @@ public enum MessageKey {
     UPGRADE_SELECTED("upgradeSelected", MessageCategory.SPLEGG_UPGRADES, "Upgrade selected", "Sent when a player selects a splegg upgrade."),
     NOT_ENOUGH_COINS_SPLEGG("notEnoughCoinsSplegg", MessageCategory.SPLEGG_UPGRADES, "Not enough coins", "Sent when a player tries to purchase an upgrade but does not have enough coins."),
     UPGRADE_PURCHASED("upgradePurchased", MessageCategory.SPLEGG_UPGRADES, "Upgrade purchased", "Sent when a player successfully purchases a splegg upgrade."),
-    MUST_PURCHASE_BEFORE("mustPurchaseBefore", MessageCategory.SPLEGG_UPGRADES, "Must purchase before", "Sent when a player tries to purchase an upgrade but hasn't unlocked the ones required first.");
+    MUST_PURCHASE_BEFORE("mustPurchaseBefore", MessageCategory.SPLEGG_UPGRADES, "Must purchase before", "Sent when a player tries to purchase an upgrade but hasn't unlocked the ones required first."),
+    ;
 
     /**
      * The message key
