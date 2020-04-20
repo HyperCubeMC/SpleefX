@@ -64,12 +64,12 @@ public enum PluginSettings {
     /**
      * The config path to the variable
      */
-    private String path;
+    private final String path;
 
     /**
      * The default value
      */
-    private Object defaultValue;
+    private final Object defaultValue;
 
     /**
      * Represents the value
