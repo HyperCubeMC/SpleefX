@@ -105,8 +105,7 @@ public class SpleggListener implements Listener {
                     hitBlock.setType(Material.AIR);
             } else
                 event.getEntity().remove();
-            ArenaPlayer player = ArenaPlayer.adapt(((Player) event.getEntity().getShooter()));
-            SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.BLOCKS_MINED, player.getPlayer(), EXTENSION, 1);
+            SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.BLOCKS_MINED, ((Player) event.getEntity().getShooter()), EXTENSION, 1);
         }
     }
 

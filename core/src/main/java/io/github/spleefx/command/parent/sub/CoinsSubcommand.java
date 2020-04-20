@@ -68,21 +68,21 @@ public class CoinsSubcommand extends PluginSubcommand {
      */
     @Override
     public boolean handle(Command command, CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) throw new CommandException("&cYou must be a player to use this command!");
         if (GameStats.VAULT_EXISTS.get() && ((boolean) PluginSettings.ECO_USE_VAULT.get()) && !((boolean) PluginSettings.ECO_HOOK_INTO_VAULT.get()) && !(SpleefX.getPlugin().getVaultHandler().getEconomy() instanceof Economy_SpleefX))
             throw new CommandException("&cVault hook in config is set to true, and the economy is not SpleefX's, hence this command has been disabled. To edit a player's balance, use your standard Vault-based economy plugin.");
         OfflinePlayer target = args.length >= 2 ? Bukkit.getOfflinePlayer(args[1]) : null;
+        if (target == null)
+            throw new CommandException("&cInvalid player: &e" + target.getName());
         int value = args.length >= 3 ? get(args[2]) : 0;
         switch (args.length) {
-            case 0:
-                Chat.plugin(sender, "&eYour money: &a$" + SpleefX.getPlugin().getDataProvider().getStatistics(((Player) sender)).getCoinsFormatted(target));
-                break;
             case 1:
                 if (sender.hasPermission(BalanceSubcommand.OTHERS)) {
                     OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                    Chat.plugin(sender, "&e" + p.getName() + "&a's money: &e$" + SpleefX.getPlugin().getDataProvider().getStatistics(p).getCoinsFormatted(target));
+                    Chat.plugin(sender, "&e" + p.getName() + "&a's money: &e$" + SpleefX.getPlugin().getDataProvider().getStatistics(p).getCoinsFormatted(p));
                 } else {
-                    Chat.plugin(sender, "&eYour money: &a$" + SpleefX.getPlugin().getDataProvider().getStatistics(((Player) sender)).getCoinsFormatted(target));
+                    if (!(sender instanceof Player))
+                        throw new CommandException("&cYou must be a player to use this command!");
+                    Chat.plugin(sender, "&eYour money: &a$" + SpleefX.getPlugin().getDataProvider().getStatistics(((Player) sender)).getCoinsFormatted(((Player) sender)));
                 }
                 break;
             case 2:
