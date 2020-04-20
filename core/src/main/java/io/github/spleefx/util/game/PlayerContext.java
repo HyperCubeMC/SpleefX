@@ -34,50 +34,50 @@ public class PlayerContext {
     /**
      * The player's items
      */
-    private ItemStack[] items;
+    private final ItemStack[] items;
 
     /**
      * The player's armor
      */
-    private ItemStack[] armor;
+    private final ItemStack[] armor;
 
     /**
      * The player's potion effects
      */
-    private Collection<PotionEffect> effects;
+    private final Collection<PotionEffect> effects;
 
     /**
      * The player's experience
      */
-    private int xp;
+    private final int xp;
 
     /**
      * The player's last location
      */
-    private Location location;
+    private final Location location;
 
     /**
      * The player's health
      */
-    private double health;
+    private final double health;
 
     /**
      * The player's hunger
      */
-    private int hunger;
+    private final int hunger;
 
     /**
      * The player's gamemode
      */
-    private GameMode gameMode;
+    private final GameMode gameMode;
 
-    private int fireTicks;
+    private final int fireTicks;
 
-    private float exp;
+    private final float exp;
 
     public boolean allowFlight; // public to load the former allow-flight state for double jumps
 
-    private boolean flying;
+    private final boolean flying;
 
     /**
      * Fetches all the data from the player
@@ -124,7 +124,7 @@ public class PlayerContext {
         player.setLevel(xp);
         player.setExp(exp);
         player.teleport(location);
-        player.setHealth(health);
+        player.setHealth(health >= 24 ? 24 : health < 0 ? 1 : health);
         player.setFoodLevel(hunger);
         player.setGameMode(gameMode);
         player.setFireTicks(fireTicks);
