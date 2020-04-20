@@ -102,4 +102,8 @@ public class FFAManager {
         players.remove(ArenaPlayer.adapt(player));
     }
 
+    public void removeLobby(int index) {
+        lobbies.remove(index);
+    }
+
 }

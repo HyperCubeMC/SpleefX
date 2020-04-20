@@ -115,6 +115,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                 switch (args[0].toLowerCase()) {
                     case "spawnpoint":
                     case "lobby":
+                    case "removelobby":
                         if (arena.getArenaType() == ArenaType.TEAMS)
                             return arena.getTeams().stream().map(team -> team.getName().toLowerCase()).collect(Collectors.toList());
                         return IntStream.rangeClosed(1, arena.getMaxPlayerCount()).mapToObj(Integer::toString).collect(Collectors.toCollection(LinkedList::new));
@@ -362,6 +363,45 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             Chat.plugin(sender, "&aLobby for team &e" + color.chat() + String.format(" &ahas been set to &e%.1f&a, &e%.1f&a, &e%.1f&a.", lobby.getX(), lobby.getY(), lobby.getZ()));
                         }
                         return true;
+                    }
+                    case "removelobby": {
+                        if (checkSender(sender)) {
+                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
+                                    null, -1, ex);
+                            return true;
+                        }
+                        T arena = (T) GameArena.getByKey(args[1]);
+                        if (arena == null) { // An arena with that key already exists
+                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            return true;
+                        }
+                        if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
+                            try {
+                                FFAManager m = arena.getFFAManager();
+                                int index = Integer.parseInt(args[2]);
+                                if (index > arena.getMaxPlayerCount()) {
+                                    Chat.plugin(sender, String.format("&cValue &e%s &cis greater than the arena's maximum count (&e%s&c)", index, arena.getMaxPlayerCount()));
+                                    return true;
+                                }
+                                m.removeLobby(index);
+                                Chat.prefix(sender, arena, "&aLobby for index &e" + index + "has been removed.");
+                            } catch (NumberFormatException e) {
+                                Chat.prefix(sender, arena, "&cInvalid number: &e" + args[2]);
+                            }
+                        } else {
+                            TeamColor color = TeamColor.get(args[2]);
+                            if (color == TeamColor.INVALID) {
+                                Chat.plugin(sender, "&cInvalid color: &e" + args[2]);
+                                return true;
+                            }
+                            if (!arena.getTeams().contains(color)) {
+                                MessageKey.TEAM_NOT_REGISTERED.send(sender, arena, color, null, null, command.getName(),
+                                        null, -1, ex);
+                                return true;
+                            }
+                            arena.getTeamLobbies().remove(color);
+                            Chat.plugin(sender, "&aLobby for team &e" + color.chat() + " &ahas been removed.");
+                        }
                     }
                 }
                 return false;
