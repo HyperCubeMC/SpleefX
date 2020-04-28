@@ -137,6 +137,7 @@ public class ArenaListener implements Listener {
         }
     }
 
+    @SuppressWarnings("Convert2MethodRef")
     public static class WGListener implements Listener {
 
         private SpleefX plugin;
@@ -153,10 +154,11 @@ public class ArenaListener implements Listener {
                 for (Block block : event.getBlocks()) {
                     event.setAllowed(CompatibilityHandler.getWorldGuardHook().canBreak(player, block));
                     if (p.getState() == ArenaPlayerState.IN_GAME) {
+                        ItemStack mainHand = CompatibilityHandler.either(() -> player.getInventory().getItemInMainHand(), () -> player.getItemInHand());
                         if (event.getResult() != Result.DENY) {
                             GameArena arena = p.getCurrentArena();
                             if (!arena.getDropMinedBlocks()) {
-                                Collection<ItemStack> oldDrops = block.getDrops();
+                                Collection<ItemStack> oldDrops = block.getDrops(mainHand);
                                 block.setType(Material.AIR);
                                 if (arena.getExtension().isGiveDroppedItems())
                                     p.getPlayer().getInventory().addItem(oldDrops.toArray(new ItemStack[0]));
@@ -183,7 +185,8 @@ public class ArenaListener implements Listener {
             if (p.getState() == ArenaPlayerState.IN_GAME) {
                 GameArena arena = p.getCurrentArena();
                 if (!arena.getDropMinedBlocks()) {
-                    Collection<ItemStack> oldDrops = event.getBlock().getDrops();
+                    ItemStack mainHand = CompatibilityHandler.either(() -> p.getPlayer().getInventory().getItemInMainHand(), () -> p.getPlayer().getItemInHand());
+                    Collection<ItemStack> oldDrops = event.getBlock().getDrops(mainHand);
                     event.getBlock().setType(Material.AIR);
                     if (arena.getExtension().isGiveDroppedItems())
                         p.getPlayer().getInventory().addItem(oldDrops.toArray(new ItemStack[0]));

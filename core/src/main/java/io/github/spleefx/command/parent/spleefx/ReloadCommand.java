@@ -1,5 +1,5 @@
 /*
- * * Copyright 2020 github.com/ReflxctionDev
+ * * Copyright 2019-2020 github.com/ReflxctionDev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,74 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.spleefx.command.parent.sub;
+package io.github.spleefx.command.parent.spleefx;
 
 import io.github.spleefx.SpleefX;
-import io.github.spleefx.command.sub.PluginSubcommand;
+import io.github.spleefx.command.core.CommandCallback;
+import io.github.spleefx.command.core.CommandContext;
+import io.github.spleefx.command.core.PluginSubcommand;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.plugin.PluginSettings;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.permissions.Permission;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class ReloadSubcommand extends PluginSubcommand {
-
-    private static final Permission PERMISSION = new Permission("spleefx.admin.reload");
-
-    private static final List<String> TABS = Arrays.asList("config", "arenas", "statsFile", "joinGuiFile", "messagesFile");
-
-    private static final List<String> HELP = Arrays.asList(
-            "&ereload &aarenas &7- &dReload the arenas storage &c(Not recommended!)",
-            "&ereload &aconfig &7- &dReload the config to update values",
-            "&ereload &astatsFile &7- &dReload the statistics GUI file",
-            "&ereload &ajoinGuiFile &7- &dReload the join GUI file"
-    );
-
-    public ReloadSubcommand() {
-        super("reload", (c) -> PERMISSION, "Reloads the specified element", (c) -> "/spleefx reload <arenas | config | statsFile>");
-        super.aliases = Collections.singletonList("rl");
-        super.helpMenu = HELP;
-    }
-
-    private static final List<String> CONFIRM = Collections.singletonList("confirm");
+@PluginSubcommand(
+        name = "reload",
+        permission = "spleefx.admin.reload",
+        tabCompletions = "config|arenas|statsFile|joinGuiFile|messagesFile @rlConfirm",
+        description = "Reloads the specified element",
+        helpMenu = {
+                "&ereload &aarenas &7- &dReload the arenas storage &c(Not recommended!)",
+                "&ereload &aconfig &7- &dReload the config to update values",
+                "&ereload &astatsFile &7- &dReload the statistics GUI file",
+                "&ereload &ajoinGuiFile &7- &dReload the join GUI file"
+        },
+        parameters = "(config / arenas / statsFile / joinGuiFile / messagesFile)",
+        aliases = {"rl"}
+)
+public class ReloadCommand implements CommandCallback {
 
     /**
-     * Handles the command input
+     * Invoked when the command is processed
      *
-     * @param sender Command sender
-     * @param args   Extra command arguments
-     * @return {@code true} if the command succeed, {@code false} if it is desired to send {@link #getHelpMenu()}.
+     * @param context Context of the command (data)
      */
-    @Override
-    public boolean handle(Command command, CommandSender sender, String[] args) {
+    @Override public void onProcess(CommandContext context) {
+        CommandSender sender = context.getSender();
+        String[] args = context.getArgs();
         if (args.length == 0) {
             reloadConfig(sender);
-            return true;
+            return;
         }
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "config":
                     reloadConfig(sender);
-                    return true;
+                    break;
                 case "statsfile":
                     reloadStatsFile(sender);
-                    return true;
+                    break;
                 case "joinguifile":
                     reloadJoinGuiFile(sender);
-                    return true;
+                    break;
                 case "messagesfile":
                     reloadMessagesFile(sender);
-                    return true;
+                    break;
                 case "arenas":
                     Chat.plugin(sender, "&cAre you sure you want to reload arenas? This is not recommended and may lead to unexpected behavior for running arenas (a restart should fix this).");
                     Chat.plugin(sender, "&cType &e/spleefx reload arenas confirm &cto confirm.");
-                    return true;
+                    break;
             }
         }
         if (args.length == 2) {
@@ -88,23 +79,6 @@ public class ReloadSubcommand extends PluginSubcommand {
                 reloadArenas(sender);
             }
         }
-        return true;
-    }
-
-    /**
-     * Returns a list of tabs for this subcommand.
-     *
-     * @param args Command arguments. Does <i>NOT</i> contain this subcommand.
-     * @return A list of all tabs.
-     */
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String[] args) {
-        if (args.length == 0) return TABS;
-        if (args.length == 1)
-            return TABS.stream().filter(a -> a.startsWith(args[0])).collect(Collectors.toList());
-        if (args.length == 2 && args[0].equals("arenas"))
-            return CONFIRM;
-        return Collections.emptyList();
     }
 
     private void reloadConfig(CommandSender sender) {

@@ -42,6 +42,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>16.0.1</version>
+        </dependency>
+        
         <!-- Apache Commons IO -->
         <dependency>
             <groupId>commons-io</groupId>

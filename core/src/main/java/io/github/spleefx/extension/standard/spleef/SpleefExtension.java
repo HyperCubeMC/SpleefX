@@ -19,6 +19,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.util.Percentage;
+import org.bukkit.Material;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class SpleefExtension extends GameExtension {
 
@@ -39,6 +43,9 @@ public class SpleefExtension extends GameExtension {
         private Percentage removalChance = new Percentage(50);
 
         @Expose
+        private Set<Material> thrownSnowballsRemoveHitBlocks = new HashSet<>();
+
+        @Expose
         private int removedAmount = 1;
 
         @Expose
@@ -50,6 +57,10 @@ public class SpleefExtension extends GameExtension {
 
         public Percentage getRemovalChance() {
             return removalChance;
+        }
+
+        public Set<Material> getThrownSnowballsRemoveHitBlocks() {
+            return thrownSnowballsRemoveHitBlocks;
         }
 
         public boolean getAllowThrowing() {

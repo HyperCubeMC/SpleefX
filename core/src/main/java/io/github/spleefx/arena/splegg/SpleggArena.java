@@ -15,7 +15,6 @@
  */
 package io.github.spleefx.arena.splegg;
 
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.arena.api.GameArena;
@@ -50,7 +49,6 @@ public class SpleggArena extends GameArena {
     @Override
     public void post() {
         super.post();
-        this.type = ModeType.SPLEGG;
         setEngine(new SpleggEngine(this));
         setExtension(SpleggExtension.EXTENSION);
         ((BaseArenaEngine<?>) getEngine()).registerEndTask(new ClearTask());

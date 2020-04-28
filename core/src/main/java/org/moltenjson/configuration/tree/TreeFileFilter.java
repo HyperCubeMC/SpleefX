@@ -45,7 +45,7 @@ public class TreeFileFilter<N, E> implements FileFilter {
     private ImmutableList<String> restrictedExtensions;
 
     /**
-     * Whether or not to search sub-directories
+     * Whether or not to search spleefx-directories
      */
     private boolean searchSubdirectories;
 

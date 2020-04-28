@@ -20,11 +20,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A utility to simplify managing files
  */
 public class FileManager<P extends JavaPlugin> {
+
+    private static final List<Character> ILLEGAL_CHARACTERS = new ArrayList<>(Arrays.asList('/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'));
 
     /**
      * Main class instance
@@ -59,5 +66,31 @@ public class FileManager<P extends JavaPlugin> {
 
     public P getPlugin() {
         return plugin;
+    }
+
+    /**
+     * <pre>
+     * Checks if a string is a valid path.
+     * Null safe.
+     *
+     * Calling examples:
+     *    isValidPath("c:/test");      //returns true
+     *    isValidPath("c:/te:t");      //returns false
+     *    isValidPath("c:/te?t");      //returns false
+     *    isValidPath("c/te*t");       //returns false
+     *    isValidPath("good.txt");     //returns true
+     *    isValidPath("not|good.txt"); //returns false
+     *    isValidPath("not:good.txt"); //returns false
+     * </pre>
+     */
+    public static boolean isValidPath(String path) {
+        if (ILLEGAL_CHARACTERS.stream().anyMatch(p -> path.contains(p.toString())))
+            return false;
+        try {
+            Paths.get(path);
+        } catch (InvalidPathException | NullPointerException ex) {
+            return false;
+        }
+        return true;
     }
 }

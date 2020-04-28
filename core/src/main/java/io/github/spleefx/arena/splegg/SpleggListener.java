@@ -19,7 +19,6 @@ import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.arena.ArenaStage;
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.data.GameStats;
@@ -62,7 +61,7 @@ public class SpleggListener implements Listener {
         ArenaPlayer player = ArenaPlayer.adapt(event.getPlayer());
         if (player.getState() != ArenaPlayerState.IN_GAME) return;
         GameArena arena = player.getCurrentArena();
-        if (arena.type != ModeType.SPLEGG) return;
+        if (!(arena instanceof SpleggArena)) return;
         if (!EXTENSION.getClickActions().contains(event.getAction())) return;
         if (EXTENSION.isUpgradeSystemEnabled()) {
             if (delayHandler.has(player.getPlayer())) return;
@@ -117,7 +116,7 @@ public class SpleggListener implements Listener {
         Projectile p = (Projectile) event.getDamager();
         if (!p.hasMetadata("spleefx.splegg.projectile")) return;
         ArenaPlayer player = ArenaPlayer.adapt((Player) event.getEntity());
-        if (player.getCurrentArena().type != ModeType.SPLEGG) return;
+        if (!(player.getCurrentArena() instanceof SpleggArena)) return;
         SpleggArena arena = player.getCurrentArena();
         arena.getDamageMap().put(p.getUniqueId(), player.getPlayer());
     }

@@ -17,10 +17,14 @@ package io.github.spleefx.arena.spleef;
 
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.compatibility.CompatibilityHandler;
+import io.github.spleefx.util.code.Printable;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 public class SpleefListener implements Listener {
@@ -32,6 +36,20 @@ public class SpleefListener implements Listener {
         Player p = (Player) event.getEntity().getShooter();
         ArenaPlayer player = ArenaPlayer.adapt(p);
         if (player.getCurrentArena() instanceof SpleefArena)
-            event.setCancelled(!CompatibilityHandler.either(() -> p.getInventory().getItemInMainHand(), () -> p.getItemInHand()).hasItemMeta() && SpleefArena.EXTENSION.getSnowballSettings().getAllowThrowing());
+            event.setCancelled(CompatibilityHandler.either(() -> p.getInventory().getItemInMainHand(), () -> p.getItemInHand()).hasItemMeta() && SpleefArena.EXTENSION.getSnowballSettings().getAllowThrowing());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onProjectileHit(ProjectileHitEvent event) {
+        Printable.print("SpleefListener#onProjectileHit()");
+        if (!(event.getEntity().getShooter() instanceof Player)) return;
+        ArenaPlayer player = ArenaPlayer.adapt(((Player) event.getEntity().getShooter()));
+        if (!(player.getCurrentArena() instanceof SpleefArena)) return;
+        Block hitBlock = CompatibilityHandler.getHitBlock(player.getCurrentArena(), event);
+        Printable.print(hitBlock, "Hit block");
+        if (hitBlock == null) return;
+        if (SpleefArena.EXTENSION.getSnowballSettings().getThrownSnowballsRemoveHitBlocks().contains(hitBlock.getType())) {
+            hitBlock.setType(Material.AIR);
+        }
     }
 }

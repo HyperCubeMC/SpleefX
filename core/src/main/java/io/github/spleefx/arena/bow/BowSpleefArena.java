@@ -15,7 +15,6 @@
  */
 package io.github.spleefx.arena.bow;
 
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.arena.api.GameTask;
@@ -46,7 +45,6 @@ public class BowSpleefArena extends GameArena {
     @Override
     public void post() {
         super.post();
-        this.type = ModeType.BOW_SPLEEF;
         setEngine(new BowSpleefEngine(this));
         setExtension(BowSpleefExtension.EXTENSION);
         damageMap = new HashMap<>();

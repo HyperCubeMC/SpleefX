@@ -89,7 +89,7 @@ public class TreeConfiguration<N, E> {
     private final Gson gson;
 
     /**
-     * Whether to search sub-directories or not.
+     * Whether to search spleefx-directories or not.
      */
     final boolean searchSubdirectories; // package-private to be accessed by file filter
 
@@ -145,7 +145,7 @@ public class TreeConfiguration<N, E> {
      * @param data                 An initial map data value to set
      * @param directory            Directory which contains all the data files
      * @param gson                 The GSON profile used for handling JSON data
-     * @param searchSubdirectories Whether or not to search sub-directories
+     * @param searchSubdirectories Whether or not to search spleefx-directories
      * @param exclusionPrefixes    Prefixes that exclude files from being loaded and updated
      * @param restrictedExtensions File extensions to exclude
      * @param namingStrategy       The naming strategy used to fetch file names and convert them into usable names

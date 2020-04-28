@@ -52,7 +52,7 @@ public class TreeConfigurationBuilder<N, E> {
     private Gson gson = Gsons.PRETTY_PRINTING;
 
     /**
-     * Whether to search sub-directories or not.
+     * Whether to search spleefx-directories or not.
      * <p>
      * Controlled by {@link #searchSubdirectories()}
      */
@@ -119,7 +119,7 @@ public class TreeConfigurationBuilder<N, E> {
     }
 
     /**
-     * Sets whether sub-directories should be searched for files
+     * Sets whether spleefx-directories should be searched for files
      *
      * @return A reference to this builder
      */
@@ -143,7 +143,7 @@ public class TreeConfigurationBuilder<N, E> {
     }
 
     /**
-     * Sets whether sub-directories should be searched for files.
+     * Sets whether spleefx-directories should be searched for files.
      * <p>
      * Used locally by {@link TreeConfiguration#asBuilder()}.
      *

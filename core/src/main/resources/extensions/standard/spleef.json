@@ -9,6 +9,9 @@
   "snowballSettings": {
     "removeSnowballsGraduallyOnMelting": true,
     "removalChance": "50%",
+    "thrownSnowballsRemoveHitBlocks": [
+      "SNOW_BLOCK"
+    ],
     "allowThrowing": true,
     "removedAmount": 2
   },

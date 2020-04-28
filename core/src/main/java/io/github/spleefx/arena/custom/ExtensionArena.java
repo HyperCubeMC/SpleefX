@@ -16,7 +16,6 @@
 package io.github.spleefx.arena.custom;
 
 import com.google.gson.annotations.Expose;
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.SimpleArenaEngine;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
@@ -50,7 +49,6 @@ public class ExtensionArena extends GameArena {
     @Override
     public void post() {
         super.post();
-        this.type = ModeType.CUSTOM;
         setEngine(new SimpleArenaEngine<>(this));
         setExtension(getExtension());
     }

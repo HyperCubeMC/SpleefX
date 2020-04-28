@@ -19,7 +19,6 @@ import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.arena.ArenaStage;
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.extension.standard.bowspleef.BowSpleefExtension;
@@ -57,7 +56,7 @@ public class BowSpleefListener implements Listener {
         ArenaPlayer arenaPlayer = ArenaPlayer.adapt(player);
         if (arenaPlayer.getState() != ArenaPlayerState.IN_GAME) return;
         GameArena arena = arenaPlayer.getCurrentArena();
-        if (arena.type != ModeType.BOW_SPLEEF) return;
+        if (!(arena instanceof BowSpleefArena)) return;
         Metas.set(event.getEntity(), ARROW_METADATA, new FixedMetadataValue(plugin, arena));
     }
 
@@ -86,7 +85,7 @@ public class BowSpleefListener implements Listener {
         Projectile p = (Projectile) event.getDamager();
         if (!p.hasMetadata(ARROW_METADATA)) return;
         ArenaPlayer player = ArenaPlayer.adapt((Player) event.getEntity());
-        if (player.getCurrentArena().type != ModeType.BOW_SPLEEF) return;
+        if (!(player.getCurrentArena() instanceof BowSpleefArena)) return;
         BowSpleefArena arena = player.getCurrentArena();
         arena.getDamageMap().put(p.getUniqueId(), player.getPlayer());
     }

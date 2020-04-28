@@ -8,10 +8,11 @@ import io.github.spleefx.arena.ArenaManager;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.arena.bow.BowSpleefListener;
+import io.github.spleefx.arena.spleef.SpleefListener;
 import io.github.spleefx.arena.splegg.SpleggListener;
-import io.github.spleefx.command.parent.*;
+import io.github.spleefx.command.parent.CommandsContainer;
+import io.github.spleefx.command.parent.extensions.StatsCommand;
 import io.github.spleefx.command.plugin.PluginCommandBuilder;
-import io.github.spleefx.command.sub.base.StatsCommand.MenuListener;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.worldedit.SchematicProcessor;
 import io.github.spleefx.converter.*;
@@ -278,16 +279,17 @@ public final class SpleefX extends JavaPlugin implements Listener {
         p.registerEvents(new CopyStore(), this);
         p.registerEvents(new BowSpleefListener(this), this);
         p.registerEvents(new SpleggListener(this), this);
-        p.registerEvents(new MenuListener(), this);
+        p.registerEvents(new SpleefListener(), this);
+        p.registerEvents(new StatsCommand.MenuListener(), this);
 
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
             p.registerEvents(new ArenaListener.WGListener(this), this);
         else
             p.registerEvents(new ArenaListener.BlockBreakListener(this), this);
 
-        Preconditions.checkNotNull(getCommand("spleefx")).setExecutor(new CommandSpleefX());
+        Preconditions.checkNotNull(getCommand("spleefx")).setExecutor(CommandsContainer.SPLEEFX);
 
-        CommandExecutor def = new CustomExtensionCommand();
+        CommandExecutor def = CommandsContainer.CUSTOM;
 
         data.forEach((key, extension) -> extension.getExtensionCommands().forEach(command -> new PluginCommandBuilder(command, SpleefX.this)
                 .command(fromKey(key, def))
@@ -489,16 +491,16 @@ public final class SpleefX extends JavaPlugin implements Listener {
         }
     }
 
-    private static CommandExecutor fromKey(final String key, final CommandExecutor def) {
+    private CommandExecutor fromKey(final String key, final CommandExecutor def) {
         switch (key) {
             case "bow_spleef": {
-                return new CommandBowSpleef();
+                return CommandsContainer.BOW_SPLEEF;
             }
             case "spleef": {
-                return new CommandSpleef();
+                return CommandsContainer.SPLEEF;
             }
             case "splegg": {
-                return new CommandSplegg();
+                return CommandsContainer.SPLEGG;
             }
             default: {
                 return def;

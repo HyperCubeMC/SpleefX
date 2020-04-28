@@ -18,7 +18,7 @@ package io.github.spleefx.extension;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.spleef.SpleefArena;
-import io.github.spleefx.command.parent.CustomExtensionCommand;
+import io.github.spleefx.command.parent.CommandsContainer;
 import io.github.spleefx.command.plugin.PluginCommandBuilder;
 import io.github.spleefx.extension.GameExtension.ExtensionType;
 import io.github.spleefx.extension.standard.bowspleef.BowSpleefExtension;
@@ -93,7 +93,7 @@ public class ExtensionsManager {
                         !e.getKey().equals(BowSpleefExtension.EXTENSION.getKey()) &&
                         !e.getKey().equals(SpleggExtension.EXTENSION.getKey()))
             e.getExtensionCommands().forEach(command -> new PluginCommandBuilder(command, plugin)
-                    .command(CustomExtensionCommand.INSTANCE)
+                    .command(CommandsContainer.CUSTOM)
                     .register());
         return e;
     }

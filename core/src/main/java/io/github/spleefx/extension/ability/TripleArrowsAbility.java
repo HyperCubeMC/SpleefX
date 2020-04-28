@@ -18,7 +18,6 @@ package io.github.spleefx.extension.ability;
 import com.google.gson.annotations.Expose;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.bow.BowSpleefArena;
 import io.github.spleefx.compatibility.material.Enchants;
 import io.github.spleefx.util.game.Metas;
@@ -57,7 +56,7 @@ public class TripleArrowsAbility implements Listener {
         if (EXTENSION.getTripleArrows().actionsToTrigger == null || !EXTENSION.getTripleArrows().actionsToTrigger.contains(event.getAction()))
             return;
         ArenaPlayer player = ArenaPlayer.adapt(event.getPlayer());
-        if (player.getCurrentArena() == null || player.getCurrentArena().type != ModeType.BOW_SPLEEF) return;
+        if (player.getCurrentArena() == null || !(player.getCurrentArena() instanceof BowSpleefArena)) return;
         BowSpleefArena arena = player.getCurrentArena();
         Settings settings = EXTENSION.getTripleArrows();
         if (settings.getRequiredMaterials().contains(either(() -> event.getPlayer().getInventory().getItemInMainHand(), () -> event.getPlayer().getItemInHand()).getType()))

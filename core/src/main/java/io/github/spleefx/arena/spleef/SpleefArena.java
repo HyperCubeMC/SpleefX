@@ -16,7 +16,6 @@
 package io.github.spleefx.arena.spleef;
 
 import com.google.gson.annotations.Expose;
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.extension.ExtensionsManager;
@@ -49,7 +48,6 @@ public class SpleefArena extends GameArena {
     @Override
     public void post() {
         super.post();
-        this.type = ModeType.SPLEEF;
         setEngine(new SpleefEngine(this));
         setExtension(EXTENSION);
     }

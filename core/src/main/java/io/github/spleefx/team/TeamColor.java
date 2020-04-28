@@ -166,6 +166,10 @@ public enum TeamColor {
         return COLORS.getOrDefault(name.toLowerCase(), INVALID);
     }
 
+    public static TeamColor getNullable(String name) {
+        return COLORS.get(name.toLowerCase());
+    }
+
     static {
         Arrays.stream(values()).forEachOrdered(color -> COLORS.put(color.getName().toLowerCase(), color));
     }

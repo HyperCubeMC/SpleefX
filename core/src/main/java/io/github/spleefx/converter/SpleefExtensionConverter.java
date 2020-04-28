@@ -19,10 +19,13 @@ import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.extension.standard.spleef.SpleefExtension.SnowballSettings;
 import org.apache.commons.io.FilenameUtils;
+import org.bukkit.Material;
 import org.moltenjson.configuration.direct.DirectConfiguration;
 import org.moltenjson.json.JsonFile;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 import java.util.StringJoiner;
 
 public class SpleefExtensionConverter implements Runnable {
@@ -61,6 +64,13 @@ public class SpleefExtensionConverter implements Runnable {
                 if (!d.contains("snowballSettings")) {
                     d.set("snowballSettings", new SnowballSettings());
                     changed.add("Added new snowball settings");
+                }
+                if (d.contains("snowballSettings")) {
+                    Map<String, Object> settings = d.getMap("snowballSettings");
+                    if (settings.putIfAbsent("thrownSnowballsRemoveHitBlocks", Collections.singletonList(Material.SNOW_BLOCK)) == null) {
+                        d.set("snowballSettings", settings);
+                        changed.add("Added thrownSnowballsRemoveHitBlocks");
+                    }
                 }
             }
             String ch = changed.toString().trim();

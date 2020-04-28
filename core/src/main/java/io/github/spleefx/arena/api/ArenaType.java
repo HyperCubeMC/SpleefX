@@ -15,8 +15,6 @@
  */
 package io.github.spleefx.arena.api;
 
-import io.github.spleefx.command.sub.CommandException;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,10 +43,7 @@ public enum ArenaType {
     private static final Map<String, ArenaType> ALIASES = new HashMap<>();
 
     public static ArenaType lookup(String name) {
-        ArenaType type = ALIASES.get(name);
-        if (type == null)
-            throw new CommandException("&cInvalid arena type: &e" + name + "&c. Available types: &bffa&c, &bteams&c.");
-        return type;
+        return ALIASES.get(name);
     }
 
     static {

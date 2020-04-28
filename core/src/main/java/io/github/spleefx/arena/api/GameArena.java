@@ -19,7 +19,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import io.github.spleefx.arena.ArenaStage;
-import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.SimpleArenaEngine;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.team.GameTeam;
@@ -53,12 +52,6 @@ public class GameArena extends ArenaData {
      */
     @Expose
     protected String modeType;
-
-    /**
-     * Represents the mode type
-     */
-    @Expose
-    public ModeType type;
 
     /**
      * Represents the arena's ffa manager
