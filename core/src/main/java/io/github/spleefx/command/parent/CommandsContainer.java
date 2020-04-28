@@ -44,6 +44,7 @@ public interface CommandsContainer {
             .contain(new JoinCommand())
             .contain(new JoinGUICommand())
             .contain(new LeaveCommand())
+            .contain(new ForceStartCommand())
             .contain(new ListArenasCommand())
             .contain(new StatsCommand());
 
@@ -52,6 +53,7 @@ public interface CommandsContainer {
             .contain(new HelpCommand())
             .contain(new JoinCommand())
             .contain(new JoinGUICommand())
+            .contain(new ForceStartCommand())
             .contain(new LeaveCommand())
             .contain(new ListArenasCommand())
             .contain(new StatsCommand());
@@ -62,6 +64,7 @@ public interface CommandsContainer {
             .contain(new JoinCommand())
             .contain(new JoinGUICommand())
             .contain(new LeaveCommand())
+            .contain(new ForceStartCommand())
             .contain(new SpleggShopCommand())
             .contain(new ListArenasCommand())
             .contain(new StatsCommand());
