@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>dist</artifactId>
-    <version>3.8.1-BETA</version>
+    <version>3.8.3-BETA</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>io.github.spleefx</groupId>
         <artifactId>parent</artifactId>
-        <version>3.8.1-BETA</version>
+        <version>3.8.3-BETA</version>
     </parent>
 
     <dependencies>
@@ -17,35 +17,35 @@
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>core</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.12.2 implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>legacy</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.14.2 implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>modern</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.8.8 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_8_R3</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.9-1.9.2 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_9_R1</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
 
@@ -53,62 +53,62 @@
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_9_R2</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.10 - 1.10.2 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_10_R1</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.11 - 1.11.2 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_11_R1</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.9.4 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_12_R1</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.13 - 1.13.1 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_13_R1</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.13.2 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_13_R2</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.14 - 1.14.4 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_14_R1</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
 
         <!-- 1.15 protocol implementation -->
         <dependency>
             <groupId>io.github.spleefx</groupId>
             <artifactId>1_15_R1</artifactId>
-            <version>3.8.1-BETA</version>
+            <version>3.8.3-BETA</version>
         </dependency>
     </dependencies>
 
     <build>
         <directory>../target</directory>
-        <finalName>SpleefX-3.8.1-BETA</finalName>
+        <finalName>SpleefX-3.8.3-BETA</finalName>
         <resources>
             <resource>
                 <targetPath>.</targetPath>
