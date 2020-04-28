@@ -16,10 +16,12 @@
 package io.github.spleefx.command.parent.extensions;
 
 import io.github.spleefx.arena.ArenaPlayer;
+import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.command.core.CommandCallback;
 import io.github.spleefx.command.core.CommandContext;
 import io.github.spleefx.command.core.PluginSubcommand;
+import io.github.spleefx.message.MessageKey;
 
 @PluginSubcommand(
         name = "forcestart",
@@ -38,7 +40,15 @@ public class ForceStartCommand implements CommandCallback {
     @Override
     public void onProcess(CommandContext context) {
         ArenaPlayer player = ArenaPlayer.adapt(context.player());
-        ((BaseArenaEngine<?>) player.getCurrentArena().getEngine()).countdown = 1;
-        context.reply("&aForcibly starting arena!");
+        if (player.getCurrentArena() != null) {
+            if (player.getCurrentArena().getEngine().getArenaStage() == ArenaStage.COUNTDOWN) {
+                ((BaseArenaEngine<?>) player.getCurrentArena().getEngine()).countdown = 1;
+                context.reply("&aForcibly starting arena!");
+            } else {
+                MessageKey.NOT_IN_ARENA.send(context.getSender(), null, null, null, null, context.getCommand().getName(), null, -1, context.getExtension());
+            }
+        } else {
+            throw new CommandCallbackException("&cThe arena does not have enough players yet to start!");
+        }
     }
 }
