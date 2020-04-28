@@ -18,7 +18,6 @@ package io.github.spleefx.command.core;
 import io.github.spleefx.command.core.CommandCallback.CommandCallbackException;
 import io.github.spleefx.command.core.PluginSubcommand.TabContext;
 import io.github.spleefx.extension.ExtensionsManager;
-import io.github.spleefx.extension.standard.bowspleef.BowSpleefExtension;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
 import org.apache.commons.lang.ArrayUtils;
@@ -77,7 +76,7 @@ public class CommandHandler {
             CommandWrapper wrapper = commands.get(args[0]);
             if (wrapper == null) {
                 MessageKey.UNKNOWN_SUBCOMMAND.send(sender, null, null, null, null,
-                        command.getName(), null, -1, BowSpleefExtension.EXTENSION);
+                        command.getName(), null, -1, ExtensionsManager.getFromCommand(command.getName()));
                 throw new CommandCallbackException();
             }
             String[] finalArgs = (String[]) ArrayUtils.subarray(args, 1, args.length);
