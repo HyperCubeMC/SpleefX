@@ -20,6 +20,8 @@ import io.github.spleefx.data.DataProvider;
 import io.github.spleefx.data.DataProvider.StorageType;
 import io.github.spleefx.data.GameStats;
 import io.github.spleefx.data.StatisticsConfig;
+import io.github.spleefx.data.papi.OldExpansionRemover;
+import io.github.spleefx.data.papi.SpleefXPAPI;
 import io.github.spleefx.economy.booster.ActiveBoosterLoader;
 import io.github.spleefx.economy.booster.BoosterConsumer;
 import io.github.spleefx.economy.booster.BoosterFactory;
@@ -49,6 +51,7 @@ import io.github.spleefx.util.plugin.PluginSettings;
 import io.github.spleefx.util.plugin.Protocol;
 import io.github.spleefx.vault.VaultHandler;
 import lombok.Getter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -344,6 +347,15 @@ public final class SpleefX extends JavaPlugin implements Listener {
 
         scoreboardTicker = new ScoreboardTicker();
         scoreboardTicker.setTicks(((Number) PluginSettings.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            if (PlaceholderAPI.unregisterPlaceholderHook("SpleefX")) {
+                new OldExpansionRemover(this).run();
+                logger().info("Removed old SpleefX-PAPI jar to avoid conflict.");
+            }
+            logger().info("Found PlaceholderAPI. Registering hooks");
+            new SpleefXPAPI(this).register();
+        }
 
         getLogger().info("Establishing connection to bstats.org");
         Metrics metrics = new Metrics(this, 7694);

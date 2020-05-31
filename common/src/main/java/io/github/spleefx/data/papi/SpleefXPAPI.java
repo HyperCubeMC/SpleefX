@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.spleefx.data;
+package io.github.spleefx.data.papi;
 
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.LeaderboardTopper;
+import io.github.spleefx.data.PlayerStatistic;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.util.code.Printable;
