@@ -236,7 +236,7 @@ public class GameExtension {
     public enum ScoreboardEvent {
         WAITING_IN_LOBBY,
         COUNTDOWN_AND_WAITING,
-        COUNTDOWN_ARENA_FULL,
+        COUNTDOWN_AND_FULL,
         GAME_ACTIVE
     }
 

@@ -21,9 +21,9 @@ import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.scoreboard.sidebar.SidebarBoard;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.util.game.Chat;
-import io.github.thatkawaiisam.assemble.AssembleBoard;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
@@ -53,7 +53,7 @@ public class ScoreboardHolder {
 
     public void createScoreboard(ArenaPlayer p) {
         if (!isEnabled()) return;
-        getPlugin().getAssemble().getBoards().put(p.getPlayer().getUniqueId(), new AssembleBoard(p.getPlayer(), getPlugin().getAssemble()));
+        getPlugin().getScoreboardTicker().getBoards().put(p.getPlayer().getUniqueId(), new SidebarBoard(p.getPlayer(), getPlugin().getScoreboardTicker()));
     }
 
     public static String replacePlaceholders(@Nullable ArenaPlayer player, String message, GameArena arena, Map<String, Supplier<String>> placeholders) {
@@ -70,6 +70,7 @@ public class ScoreboardHolder {
                 .replace("{arena_bet}", FORMAT.format(arena.getBet()))
                 .replace("{arena_time_left}", formatTime(engine.timeLeft))
                 .replace("{arena_playercount}", Integer.toString(arena.getEngine().getPlayerTeams().size()))
+                .replace("{arena_alive}", Integer.toString(arena.getEngine().getAlive().size()))
                 .replace("{arena_minimum}", Integer.toString(arena.getMinimum()))
                 .replace("{arena_maximum}", Integer.toString(arena.getMaximum()))
                 .replace("{arena_stage}", arena.getEngine().getArenaStage().getState())

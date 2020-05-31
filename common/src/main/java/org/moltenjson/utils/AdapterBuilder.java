@@ -38,7 +38,7 @@ import java.util.function.Function;
 import static io.github.spleefx.arena.api.ArenaData.PROJECTILE_ADAPTER;
 
 /**
- * A simple adapter creator, not meant for advanced usage
+ * A simple provider creator, not meant for advanced usage
  *
  * @param <R> Element to handle serializing and deserializing for
  */

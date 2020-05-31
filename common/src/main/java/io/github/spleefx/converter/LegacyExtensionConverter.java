@@ -251,7 +251,7 @@ public class LegacyExtensionConverter implements Runnable {
                 d.set("scoreboard", MapBuilder.of(new LinkedHashMap<>())
                         .put(ScoreboardEvent.WAITING_IN_LOBBY, sb)
                         .put(ScoreboardEvent.COUNTDOWN_AND_WAITING, sb)
-                        .put(ScoreboardEvent.COUNTDOWN_ARENA_FULL, sb)
+                        .put(ScoreboardEvent.COUNTDOWN_AND_FULL, sb)
                         .put(ScoreboardEvent.GAME_ACTIVE, sb)
                         .build());
                 changed.add("Added scoreboards");
@@ -266,7 +266,7 @@ public class LegacyExtensionConverter implements Runnable {
                         oldScoreboards.put(ScoreboardEvent.WAITING_IN_LOBBY.name(), waiting);
                     if (countdown != null) {
                         oldScoreboards.put(ScoreboardEvent.COUNTDOWN_AND_WAITING.name(), countdown);
-                        oldScoreboards.put(ScoreboardEvent.COUNTDOWN_ARENA_FULL.name(), countdown);
+                        oldScoreboards.put(ScoreboardEvent.COUNTDOWN_AND_FULL.name(), countdown);
                     }
                     if (active != null)
                         oldScoreboards.put(ScoreboardEvent.GAME_ACTIVE.name(), active);

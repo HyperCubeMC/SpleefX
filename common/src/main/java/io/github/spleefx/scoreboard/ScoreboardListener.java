@@ -16,7 +16,7 @@
 package io.github.spleefx.scoreboard;
 
 import io.github.spleefx.arena.ArenaPlayer;
-import io.github.thatkawaiisam.assemble.events.AssembleBoardCreateEvent;
+import io.github.spleefx.scoreboard.sidebar.SidebarCreateEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,7 +24,7 @@ import org.bukkit.event.Listener;
 public class ScoreboardListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
-    public void onAssembleBoardCreate(AssembleBoardCreateEvent event) {
+    public void onSidebarCreate(SidebarCreateEvent event) {
         Player pl = event.getPlayer();
         ArenaPlayer player = ArenaPlayer.adapt(pl);
         if (player.getCurrentArena() == null)

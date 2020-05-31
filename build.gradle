@@ -44,7 +44,6 @@ subprojects {
     }
 
     dependencies {
-        compile 'io.github.thatkawaiisam:assemble:1.1-SNAPSHOT'
 
         // Add JetBrains annotations
         compileOnly group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
@@ -58,13 +57,6 @@ subprojects {
 
     jar {
         from '../LICENSE'
-    }
-
-    shadowJar {
-        dependencies {
-            include(dependency('io.github.thatkawaiisam:assemble:1.1-SNAPSHOT'))
-        }
-        relocate 'net.moltenjson', 'io.github.spicykoth.lib.json'
     }
 }
 

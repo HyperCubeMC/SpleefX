@@ -102,7 +102,7 @@ import java.util.Map;
  *   shapeAdapterFactory.registerSubtype(Circle.class, "Circle");
  *   shapeAdapterFactory.registerSubtype(Diamond.class, "Diamond");
  * }</pre>
- * Finally, register the type adapter factory in your application's GSON builder:
+ * Finally, register the type provider factory in your application's GSON builder:
  * <pre>   {@code
  *   Gson gson = new GsonBuilder()
  *       .registerTypeAdapterFactory(shapeAdapterFactory)
@@ -136,7 +136,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     }
 
     /**
-     * Creates a new runtime type adapter using for {@code baseType} using {@code
+     * Creates a new runtime type provider using for {@code baseType} using {@code
      * typeFieldName} as the type field name. Type field names are case sensitive.
      * {@code maintainType} flag decide if the type will be stored in pojo or not.
      */
@@ -145,7 +145,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     }
 
     /**
-     * Creates a new runtime type adapter using for {@code baseType} using {@code
+     * Creates a new runtime type provider using for {@code baseType} using {@code
      * typeFieldName} as the type field name. Type field names are case sensitive.
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType, String typeFieldName) {
@@ -153,7 +153,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     }
 
     /**
-     * Creates a new runtime type adapter for {@code baseType} using {@code "type"} as
+     * Creates a new runtime type provider for {@code baseType} using {@code "type"} as
      * the type field name.
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType) {
@@ -165,7 +165,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or {@code label}
-     *                                  have already been registered on this type adapter.
+     *                                  have already been registered on this type provider.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type, String label) {
         if (type == null || label == null) {
@@ -184,7 +184,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * name}. Labels are case sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or its simple name
-     *                                  have already been registered on this type adapter.
+     *                                  have already been registered on this type provider.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type) {
         return registerSubtype(type, type.getSimpleName());

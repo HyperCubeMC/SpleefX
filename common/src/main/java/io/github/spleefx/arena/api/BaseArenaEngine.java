@@ -456,7 +456,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     @SneakyThrows @Override
     public void countdown() {
         if (countdownTask != null && !BukkitTaskUtils.isCancelled(countdownTask)) return;
-        currentScoreboard = isFull() ? ScoreboardEvent.COUNTDOWN_ARENA_FULL : ScoreboardEvent.COUNTDOWN_AND_WAITING;
+        currentScoreboard = isFull() ? ScoreboardEvent.COUNTDOWN_AND_FULL : ScoreboardEvent.COUNTDOWN_AND_WAITING;
         setArenaStage(ArenaStage.COUNTDOWN);
         if (ARENA_REGENERATE_BEFORE_COUNTDOWN.get())
             getPlugin().getArenaManager().regenerateArena(arena.getKey());
@@ -654,6 +654,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             setArenaStage(oldStage);
             getSignManager().update();
         });
+        currentScoreboard = ScoreboardEvent.WAITING_IN_LOBBY;
     }
 
     /**
@@ -689,7 +690,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (context != null)
             player.setAllowFlight(context.allowFlight);
         player.setFallDistance(-500);
-        getPlugin().getAssemble().getBoards().remove(player.getUniqueId());
+        getPlugin().getScoreboardTicker().getBoards().remove(player.getUniqueId());
         try {
             player.setScoreboard(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard());
         } catch (NullPointerException ignored) {

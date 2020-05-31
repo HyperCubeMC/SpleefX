@@ -233,7 +233,7 @@
         "11": "",
         "10": "Map: &a{arena_displayname}",
         "9": "",
-        "8": "Players Alive: &a{arena_playercount}",
+        "8": "Players Alive: &a{arena_alive}",
         "7": "Double Jumps: &a{double_jumps}&7/5",
         "6": "Triple Arrows: &a{triple_arrows}&7/5",
         "4": "",

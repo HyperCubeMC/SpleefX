@@ -18,15 +18,13 @@ package io.github.spleefx.scoreboard;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.util.game.Chat;
-import io.github.thatkawaiisam.assemble.AssembleAdapter;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GameScoreboardAdapter implements AssembleAdapter {
+public class ScoreboardProvider {
 
-    @Override
     public String getTitle(Player player) {
         try {
             return Chat.colorize(getScoreboardHolder(ArenaPlayer.adapt(player)).getTitle());
@@ -35,7 +33,6 @@ public class GameScoreboardAdapter implements AssembleAdapter {
         }
     }
 
-    @Override
     public List<String> getLines(Player player) {
         ArenaPlayer p = ArenaPlayer.adapt(player);
         BaseArenaEngine<?> engine = (BaseArenaEngine<?>) p.getCurrentArena().getEngine();

@@ -39,8 +39,8 @@ import io.github.spleefx.metrics.Metrics;
 import io.github.spleefx.metrics.Metrics.AdvancedPie;
 import io.github.spleefx.perk.GamePerk;
 import io.github.spleefx.perk.PerkShop;
-import io.github.spleefx.scoreboard.GameScoreboardAdapter;
 import io.github.spleefx.scoreboard.ScoreboardListener;
+import io.github.spleefx.scoreboard.sidebar.ScoreboardTicker;
 import io.github.spleefx.util.io.CopyStore;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.menu.GameMenu;
@@ -48,8 +48,6 @@ import io.github.spleefx.util.plugin.DelayExecutor;
 import io.github.spleefx.util.plugin.PluginSettings;
 import io.github.spleefx.util.plugin.Protocol;
 import io.github.spleefx.vault.VaultHandler;
-import io.github.thatkawaiisam.assemble.Assemble;
-import io.github.thatkawaiisam.assemble.AssembleStyle;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -169,7 +167,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
      */
     private final SelectableConfiguration joinGuiFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("gui" + separator + "join-gui.json")), false, AdapterBuilder.GSON);
 
-    private Assemble assemble;
+    private ScoreboardTicker scoreboardTicker;
 
     /**
      * The folder that contains arena schematics and arenasConfig.json
@@ -344,11 +342,10 @@ public final class SpleefX extends JavaPlugin implements Listener {
         });
         boosterConsumer.start(this);
 
-        assemble = new Assemble(this, new GameScoreboardAdapter());
-        assemble.setTicks(((Number) PluginSettings.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
-        assemble.setAssembleStyle(AssembleStyle.MODERN);
+        scoreboardTicker = new ScoreboardTicker();
+        scoreboardTicker.setTicks(((Number) PluginSettings.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
 
-        getLogger().info("Establishing connection to bStats.org");
+        getLogger().info("Establishing connection to bstats.org");
         Metrics metrics = new Metrics(this, 7694);
         metrics.addCustomChart(new AdvancedPie("most_used_modes", () -> {
             Map<String, Integer> m = new HashMap<>(BSTATS_EXTENSIONS);
