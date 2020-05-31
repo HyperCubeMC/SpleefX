@@ -1,0 +1,11 @@
+# Project exclude paths
+/.gradle/
+/build/
+/common/build/
+/common/build/classes/java/main/
+/legacy/build/
+/legacy/build/classes/java/main/
+/modern/build/
+/modern/build/classes/java/main/
+.DS_STORE
+_MACOSX
