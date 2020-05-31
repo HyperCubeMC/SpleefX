@@ -1,0 +1,92 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2' }
+    }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+def projectName = "SpleefX"
+def projectVersion = "3.8.3-BETA"
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    group = 'io.github.spicykoth'
+    version = projectVersion
+
+    sourceCompatibility = targetCompatibility = 1.8
+
+    each { subproject -> evaluationDependsOn(subproject.path) }
+
+    ext {
+        moduleVersion = projectVersion
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+        maven { url 'https://jitpack.io/' }
+    }
+
+    dependencies {
+        compile 'io.github.thatkawaiisam:assemble:1.1-SNAPSHOT'
+
+        // Add JetBrains annotations
+        compileOnly group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
+        compileOnly group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+
+        // Add lombok annotation processing
+        compileOnly 'org.projectlombok:lombok:1.18.12'
+        annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    }
+
+    jar {
+        from '../LICENSE'
+    }
+
+    shadowJar {
+        dependencies {
+            include(dependency('io.github.thatkawaiisam:assemble:1.1-SNAPSHOT'))
+        }
+        relocate 'net.moltenjson', 'io.github.spicykoth.lib.json'
+    }
+}
+
+shadowJar {
+    dependencies {
+        include(dependency('io.github.spicykoth:.*'))
+    }
+    getArchiveClassifier().set('')
+}
+
+task assembleJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+    archiveBaseName.set(projectName + "-" + projectVersion)
+    for (subproject in subprojects) {
+        from subproject.configurations.archives.allArtifacts.files.collect {
+            String path = it.absolutePath.replace(projectVersion, projectVersion + "-all")
+            zipTree(path) // include all sub-projects in the final JAR
+        }
+    }
+}
+
+tasks.assembleJar.dependsOn tasks.shadowJar
+
+artifacts {
+    archives(assembleJar)
+}

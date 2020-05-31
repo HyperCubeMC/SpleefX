@@ -1,0 +1,6 @@
+arena-settings:
+  start-countdown-duration: 15
+  start-countdown-sound: (todo, a sound)
+  countdown-as-xpbar: true
+  sign-update-interval-ticks: 100
+  scoreboard-update-interval-ticks: 20

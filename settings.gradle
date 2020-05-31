@@ -1,0 +1,12 @@
+rootProject.name = 'SpleefX'
+
+include(
+        'legacy',
+        'common',
+        'modern',
+        '1_8_R3',
+        '1_12_R1',
+        '1_13_R2',
+        '1_14_R1',
+        '1_15_R1'
+)
