@@ -1,0 +1,257 @@
+{
+  "consumeActiveBoostersWhenOffline": false,
+  "maximumAmountOfActiveBoostersAllowed": 1,
+  "boostingMethod": "SUM_MULTIPLIERS",
+  "canBoostersBePaused": true,
+  "boosterMenuTitle": "&5Your boosters",
+  "boosters": {
+    "common": {
+      "key": "common",
+      "displayName": "&eCommon",
+      "enabled": true,
+      "multiplier": 1,
+      "duration": {
+        "duration": 1,
+        "unit": "hours"
+      },
+      "items": {
+        "AVAILABLE": {
+          "type": "chest_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&aClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "ACTIVE": {
+          "type": "minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&cThis booster is already active!",
+            "&eRight click to pause."
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "PAUSED": {
+          "type": "hopper_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&eThis booster is paused",
+            "&eClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        }
+      }
+    },
+    "rare": {
+      "key": "rare",
+      "displayName": "&bRare",
+      "enabled": true,
+      "multiplier": 1.5,
+      "duration": {
+        "duration": 2,
+        "unit": "hours"
+      },
+      "items": {
+        "AVAILABLE": {
+          "type": "chest_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&aClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "ACTIVE": {
+          "type": "minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&cThis booster is already active!",
+            "&eRight click to pause."
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "PAUSED": {
+          "type": "hopper_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&eThis booster is paused",
+            "&eClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        }
+      }
+    },
+    "epic": {
+      "key": "epic",
+      "displayName": "&5Epic",
+      "enabled": true,
+      "multiplier": 2.5,
+      "duration": {
+        "duration": 3,
+        "unit": "hours"
+      },
+      "items": {
+        "AVAILABLE": {
+          "type": "chest_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&aClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "ACTIVE": {
+          "type": "minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&cThis booster is already active!",
+            "&eRight click to pause."
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "PAUSED": {
+          "type": "hopper_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&eThis booster is paused",
+            "&eClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        }
+      }
+    },
+    "legendary": {
+      "key": "legendary",
+      "displayName": "&6Legendary",
+      "enabled": true,
+      "multiplier": 4,
+      "duration": {
+        "duration": 6,
+        "unit": "hours"
+      },
+      "items": {
+        "AVAILABLE": {
+          "type": "chest_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&aClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "ACTIVE": {
+          "type": "minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&cThis booster is already active!",
+            "&eRight click to pause."
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        },
+        "PAUSED": {
+          "type": "hopper_minecart",
+          "count": 1,
+          "enchantments": [
+            "INFINITY:1"
+          ],
+          "displayName": "{booster_type_displayname}",
+          "lore": [
+            "",
+            "&eThis booster is paused",
+            "&eClick to activate!"
+          ],
+          "itemFlags": [
+            "HIDE_ENCHANTS"
+          ],
+          "unbreakable": false
+        }
+      }
+    }
+  }
+}

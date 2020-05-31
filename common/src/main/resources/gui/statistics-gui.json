@@ -1,0 +1,63 @@
+{
+  "menu": {
+    "title": "&5{player} &0- {extension}",
+    "rows": 1,
+    "items": {
+      "0": {
+        "type": "stone_sword",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&dGames Played",
+        "lore": [
+          "&e{games_played}"
+        ],
+        "itemFlags": [],
+        "unbreakable": false
+      },
+      "2": {
+        "type": "emerald_block",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&aWins",
+        "lore": [
+          "&e{wins}"
+        ],
+        "itemFlags": [],
+        "unbreakable": false
+      },
+      "4": {
+        "type": "redstone_block",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&cLosses",
+        "lore": [
+          "&e{losses}"
+        ],
+        "itemFlags": [],
+        "unbreakable": false
+      },
+      "6": {
+        "type": "iron_block",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&7Draws",
+        "lore": [
+          "&e{draws}"
+        ],
+        "itemFlags": [],
+        "unbreakable": false
+      },
+      "8": {
+        "type": "iron_pickaxe",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&eBlocks Mined",
+        "lore": [
+          "&e{blocks_mined}"
+        ],
+        "itemFlags": [],
+        "unbreakable": false
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "menu": {
+    "title": "&e{extension} arenas",
+    "rows": 2,
+    "stagesToDisplay": [
+      "WAITING",
+      "COUNTDOWN",
+      "ACTIVE"
+    ],
+    "items": {
+      "WAITING": {
+        "type": "wool",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&e{arena_displayname}",
+        "lore": [
+          "&b{arena_playercount} &7/&d {arena_maximum}",
+          " ",
+          "{arena_stage}"
+        ],
+        "itemFlags": [],
+        "color": "lime",
+        "unbreakable": false
+      },
+      "COUNTDOWN": {
+        "type": "wool",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&e{arena_displayname}",
+        "lore": [
+          "&b{arena_playercount} &7/&d {arena_maximum}",
+          " ",
+          "{arena_stage}"
+        ],
+        "itemFlags": [],
+        "color": "blue",
+        "unbreakable": false
+      },
+      "ACTIVE": {
+        "type": "wool",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&e{arena_displayname}",
+        "lore": [
+          "&b{arena_playercount} &7/&d {arena_maximum}",
+          " ",
+          "{arena_stage}"
+        ],
+        "itemFlags": [],
+        "color": "magenta",
+        "unbreakable": false
+      },
+      "REGENERATING": {
+        "type": "wool",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&e{arena_displayname}",
+        "lore": [
+          "&b{arena_playercount} &7/&d {arena_maximum}",
+          " ",
+          "{arena_stage}"
+        ],
+        "itemFlags": [],
+        "color": "brown",
+        "unbreakable": false
+      },
+      "NEEDS_SETUP": {
+        "type": "wool",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&e{arena_displayname}",
+        "lore": [
+          "&b{arena_playercount} &7/&d {arena_maximum}",
+          " ",
+          "{arena_stage}"
+        ],
+        "itemFlags": [],
+        "color": "gray",
+        "unbreakable": false
+      },
+      "DISABLED": {
+        "type": "wool",
+        "count": 1,
+        "enchantments": [],
+        "displayName": "&e{arena_displayname}",
+        "lore": [
+          "&b{arena_playercount} &7/&d {arena_maximum}",
+          " ",
+          "{arena_stage}"
+        ],
+        "itemFlags": [],
+        "color": "red",
+        "unbreakable": false
+      }
+    }
+  }
+}

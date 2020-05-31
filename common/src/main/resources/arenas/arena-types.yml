@@ -1,0 +1,6 @@
+# arena-types.yml
+#
+# This configuration allows plugin developers to register their own types of arena types and engines, other than
+# the ones provided by the plugin. To register your own type, simply add your class name below to the list.
+ArenaSubTypes:
+# - "my.cool.package.MyArena"

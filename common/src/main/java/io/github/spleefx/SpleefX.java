@@ -190,7 +190,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
     public void onEnable() {
         if (CompatibilityHandler.shouldDisable()) {
             SpleefX.logger().severe("Unsupported server protocol: 1." + Protocol.EXACT);
-            SpleefX.logger().severe("Please update to at least 1.8 for the plugin to function");
+            SpleefX.logger().severe("Please use one of the following: 1.8.8, 1.8.9, 1.12.2, 1.13.2, 1.14.X, 1.15.X for the plugin to function");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -262,7 +262,6 @@ public final class SpleefX extends JavaPlugin implements Listener {
                 .setLazy(false)
                 .setRestrictedExtensions(ImmutableList.of("json"))
                 .build();
-        //SpleggExtension.EXTENSION = ExtensionsManager.getExtension("splegg", ExtensionType.STANDARD, SpleggExtension.class);
         Map<String, GameExtension> data = extensions.load(GameExtension.class);
         try {
             PERKS.putAll(perks.load(GamePerk.class));
@@ -452,6 +451,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
     private static <T extends Throwable> T sneakyThrow0(Throwable t) throws T {
         throw (T) t;
     }
+
     public static Logger logger() {
         return plugin.pluginLogger;
     }

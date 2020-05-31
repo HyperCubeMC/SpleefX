@@ -1,0 +1,89 @@
+{
+  "globalPrefix": "&7[&bSpleef&fX&7] ",
+  "success": {
+    "arenaCreated": "&aArena &e{arena} &ahas been created. Run &e/{command} arena settings {arena}&a.",
+    "arenaDeleting": "&cDeleting &e{arena}&c...",
+    "arenaRenamed": "&aDisplay name of arena &e{arena} &ahas been changed into &d{arena_displayname}",
+    "spawnpointSet": "&aTeam {team}&a's spawnpoint has been set to &e{x}&a, &e{y}&a, &e{z}&a.",
+    "lobbySet": "&aArena &e{arena}&a's lobby has been set to &e{x}&a, &e{y}&a, &e{z}&a.",
+    "arenaDeleted": "&aArena &e{arena} &ahas been deleted"
+  },
+  "error": {
+    "notPlayer": "&cYou must be a player to use this command!",
+    "noPermission": "&cYou do not have permission to perform this command!",
+    "unknownPlayer": "&cPlayer &e{player} &cis offline or invalid.",
+    "unknownSubcommand": "&cUnrecognizable subcommand. Try &e/{command} help&c.",
+    "teamNotRegistered": "&cTeam {team} &cis not registered in arena &e{arena}&c. Add the team in &e/spleef arena settings {arena}&c.",
+    "notInArena": "&cYou must be in an arena to leave!",
+    "disallowedCommand": "&cYou may not execute this command while in-game!",
+    "noAvailableArena": "&cI couldn't find an available arena for you",
+    "noPermissionStats": "&cYou don't have permission to view statistics of other players!",
+    "noArenas": "&cThis game type has no arenas!"
+  },
+  "arena": {
+    "arenaNeedsSetup": "&cThis arena is not in a playable state.",
+    "arenaAlreadyActive": "&cThis arena is already active!",
+    "arenaFull": "&cThis arena is full!",
+    "arenaAlreadyExists": "&cAn arena with the key &e{arena} &calready exists! Remove it with &e/spleef arena remove {arena}&c.",
+    "arenaDisabled": "&cThis arena is disabled",
+    "mustHaveEmptyInventory": "&cYou must have an empty inventory in order to join!",
+    "gameCountdown": "&aGame starting in &e{countdown} &asecond{plural}",
+    "gameTimeout": "&7The game ends in {countdown} &7second{plural}",
+    "arenaRegenerating": "&cPlease wait while this arena regenerates.",
+    "invalidArena": "&cNo arena with key &e{arena} &cexists!",
+    "notEnoughPlayers": "&eThere are not enough players to start the game. Countdown cancelled.",
+    "gameStarting": "&aThere are enough players to start the game. Starting in &e{countdown} second{plural}&a.",
+    "serverStopped": "&cThe server has stopped, so the game has been forcibly ended."
+  },
+  "arena_teams": {
+    "teamEliminated": "&eTeam {team} &ehas been eliminated!",
+    "playerJoined": "&e{player} &ahas joined the game - {team} Team&a! &7(&9{arena_playercount}&c/&9{arena_maximum}&7)",
+    "playerWins": "{team_color}{player} &ahas won!",
+    "playerLost": "&c{player} &chas been eliminated!"
+  },
+  "arena_ffa": {
+    "playerJoined": "&e{player} &ahas joined the game! &7(&9{arena_playercount}&c/&9{arena_maximum}&7)",
+    "playerWins": "{player} &ahas won!",
+    "playerLost": "&c{player} &chas been eliminated!"
+  },
+  "stages": {
+    "needsSetup": "&cNeeds setup",
+    "waiting": "&5Waiting",
+    "countdown": "&1Starting",
+    "active": "&4Running",
+    "disabled": "&cDisabled",
+    "regenerating": "&2Regenerating"
+  },
+  "teams": {
+    "ffa": "&8",
+    "red": "&cRed",
+    "pink": "&dPink",
+    "green": "&aGreen",
+    "gray": "&8Gray",
+    "blue": "&9Blue",
+    "yellow": "&eYellow"
+  },
+  "economy": {
+    "moneyGiven": "&aYou have been given &e${value}&a.",
+    "moneyTaken": "&e${value} &ahas been taken from you.",
+    "boosterGiven": "&aYou have been given a booster of type &e{booster_type_displayname}",
+    "boosterActivated": "&aYour booster will be activated for &e{duration}&a.",
+    "cannotActivateMoreBoosters": "&cYou have reached the maximum amount of boosters activated!",
+    "boosterAlreadyActive": "&cThis booster is already active!",
+    "boosterPaused": "&aThis booster has been paused.",
+    "itemPurchased": "&aYou have successfully bought {perk_displayname}&a!",
+    "notEnoughCoins": "&cYou do not have enough coins to purchase this item!",
+    "alreadyPurchased": "&cYou have already purchased this item!"
+  },
+  "splegg_upgrades": {
+    "upgradeSelected": "&aYou have selected &e{upgrade_displayname}&a.",
+    "notEnoughCoinsSplegg": "&cYou do not have enough coins to purchase this upgrade!",
+    "upgradePurchased": "&aSuccessfully purchased and selected &e{upgrade_displayname}&a!",
+    "mustPurchaseBefore": "&cYou must purchase previous abilities before buying this!"
+  },
+  "bets": {
+    "betTaken": "&e{arena_bet}$ &ahas been taken from you as a bet",
+    "wonGameBet": "&aYou've won &e{portion}$ &afrom the arena bets!",
+    "notEnoughToBet": "&cYou are required to have at least &e{arena_bet} &cas a betting to join the arena."
+  }
+}

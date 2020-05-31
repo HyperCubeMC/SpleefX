@@ -1,6 +1,271 @@
-arena-settings:
-  start-countdown-duration: 15
-  start-countdown-sound: (todo, a sound)
-  countdown-as-xpbar: true
-  sign-update-interval-ticks: 100
-  scoreboard-update-interval-ticks: 20
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#    ________  ________  ___       _______   _______   ________      ___    ___   #
+#   |\   ____\|\   __  \|\  \     |\  ___ \ |\  ___ \ |\  _____\    |\  \  /  /|  #
+#   \ \  \___|\ \  \|\  \ \  \    \ \   __/|\ \   __/|\ \  \__/     \ \  \/  / /  #
+#    \ \_____  \ \   ____\ \  \    \ \  \_|/_\ \  \_|/_\ \   __\     \ \    / /   #
+#     \|____|\  \ \  \___|\ \  \____\ \  \_|\ \ \  \_|\ \ \  \_|      /     \/    #
+#       ____\_\  \ \__\    \ \_______\ \_______\ \_______\ \__\      /  /\   \    #
+#      |\_________\|__|     \|_______|\|_______|\|_______|\|__|     /__/ /\ __\   #
+#      \|_________|                                                 |__|/ \|__|   #
+#                                                                                 #
+# SpleefX configuration. This config contains settings which allow to further     #
+# customize the plugin. Each field/key is fully documented and contains examples. #
+# Changes made to the config can be immediatelly seen with /spleefx reload, and   #
+# are applied automatically to all running games. Do note that, some settings are #
+# only referred to on plugin bootstrap, and need a server restart to take effect. #
+#                                                                                 #
+# Plugin messages can be found in messages.json, and can be alternatively edited  #
+# and modified through the in-game GUI in /spleefx messages.                      #
+#                                                                                 #
+# Arenas, regardless of their types, are generally stored along with their        #
+# settings in /plugins/SpleefX/arenas/arenas.json. Changes to arenas can be done  #
+# through the in-game GUI in /<mode> arena settings <arena key>.                  #
+#                                                                                 #
+# Custom extensions, beside spleef, bow spleef and splegg, can be created through #
+# JSON files placed in /plugins/SpleefX/extensions/custom/ and can be loaded      #
+# using /spleefx extension load <extension key>                                   #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# General arena settings
+Arena:
+
+  # The update interval of the arena (in ticks). This is the interval in which the arena checks for loses, wins, etc.
+  # The less the value is, the more accurate, but (to some extent) more laggy.
+  #
+  # Default value: 20
+  # Every 1 second = 20 ticks
+  # Recommended value: 20-40
+  LoopUpdateInterval: 20
+
+  # Whether should the arena regenerate before it starts the countdown. This is recommended in case the arena was still affected after
+  # its last game was over (e.g a projectile fell in a splegg arena that was already over).
+  #
+  # Arena regeneration is exceptionally fast (can take milliseconds for very large arenas), so there is no reason to worry about the main
+  # countdown thread being blocked.
+  #
+  # Default value: true
+  # Recommended value: true
+  RegenerateBeforeGameStartsCountdown: true
+
+  # Whether should the arena cancel any damage done between team members
+  #
+  # Default value: true
+  CancelTeamDamage: true
+
+  # Whether should players be required to have an empty inventory before joining the arena.
+  #
+  # This includes the normal inventory content, as well as the player's armor slots
+  #
+  # Default value: false
+  RequireEmptyInventoryBeforeJoining: false
+
+  # Spleef melting settings
+  Melting:
+
+    # The interval (in ticks) in which if the player does not move in, a meltable block around them will turn into air
+    # The radius in which the block is selected can be changed below.
+    #
+    # Every 1 second = 20 ticks
+    # Default value: 100
+    Interval: 100
+
+    # The melting radius for spleef arenas.
+    #
+    # When a player remains in the same block for the above value of ticks, the plugin will try to turn a meltable block
+    # within this radius into air.
+    #
+    # Set to 0 to completely disable melting
+    # Default value: 5
+    Radius: 5
+
+    # Represents all the block types that can melt.
+    #
+    # Set to empty to completely disable melting
+    # Default value: ["SNOW_BLOCK"]
+    MeltableBlocks: ["SOUL_SAND", "SNOW_BLOCK"]
+
+    # Whether should the plugin ignore changes/movements in the X axis when checking for melting
+    IgnoreX: false
+
+    # Whether should the plugin ignore changes in the Y axis when checking for melting.
+    #
+    # For example, a player does not move forward or backward but is only jumping. If true,
+    # they will be treated as a player that is not moving at all. If false, they will be treated
+    # as a player that is moving hence no block around them will melt.
+    #
+    # Default value: true
+    IgnoreY: true
+
+    # Whether should the plugin ignore changes/movements in the Z axis when checking for melting
+    IgnoreZ: false
+
+  # The update interval of signs (in ticks).
+  #
+  # Default value: 40
+  # Every 1 second = 20 ticks
+  SignUpdateInterval: 40
+
+  # The update interval of scoreboards (in ticks). This is the interval in which the content of every scoreboard
+  # is updated.
+  #
+  # Values should not exceed 20 ticks, as this will lead to timers displaying and updating incorrectly on the
+  # player's screen.
+  #
+  # Default value: 20 (1 second)
+  # Every 1 second = 20 ticks
+  ScoreboardUpdateInterval: 20
+
+# Timing out settings (regarding the arena's maximum time)
+TimeOut:
+
+  # Numbers in which, if the arena's time reaches, are broadcasted in order to warn people that the game is about to end
+  NumbersToWarnOn:
+    30: "&a30"
+    20: "&a20"
+    15: "&e15"
+    10: "&e10"
+    5: "&c5"
+    4: "&c4"
+    3: "&c3"
+    2: "&c2"
+    1: "&c1"
+
+# The player's game statistics
+PlayerGameStatistics:
+
+  # The string that is displayed in the statistics GUI when the player is viewing global/all-mode statistics.
+  #
+  # Default value: "&1All Modes"
+  AllModesName: "&1All Modes"
+
+  # The storage type. Each type is cached accordingly and only requested when needed. Can be either:
+  # 1- FLAT_FILE (default) - Player data is saved in JSON files (recommended for servers with 500-700 players)
+  # 2- SQLITE - Player data is saved in a SQLite file (recommended for VERY large servers (1000+ players))
+  #
+  # Fill the appropriate settings for the selected option. When one is selected, the settings of the other ones are ignored.
+  #
+  # IMPORTANT NOTE: CHANGING THE TYPE WILL NOT IMPORT THE DATA FROM THE OLD STORAGE TO THE NEW ONE. USE THE APPROPRIATE
+  # TOOLS TO CONVERT.
+  StorageType: "FLAT_FILE"
+
+  # The data directory in which the files should be in. This directory will automatically be created if
+  # it does not exist already.
+  Directory: "player-data"
+
+  # How players should be stored and referenced in files. Can be either:
+  # 1- UUID (default, recommended) - Store players by their UUID. Recommended for premium servers (could work with cracked, idk)
+  # 2- NAME - Store players by their username.
+  #
+  # IMPORTANT NOTE: CHANGING THE TYPE WILL NOT CHANGE THE OLD STORAGE TO USE THE NEW ONE, AND PLAYERS
+  # WILL HAVE NEW RECORDS. USE THE APPROPRIATE TOOLS TO CONVERT.
+  StorePlayersBy: "UUID"
+
+  # SQLite settings
+  SQLite:
+
+    # The SQLite file in which all players are stored in
+    FileName: "player-data.db"
+
+# Game countdown settings
+Countdown:
+
+  # Countdown when there are enough players to start the game
+  OnEnoughPlayers: 20
+
+  # Whether or not should the countdown be displayed in the player's experience bar
+  #
+  # Default value: true
+  DisplayOnExpBar: true
+
+  # The sound that should be played when a number is broadcasted.
+  PlaySoundOnEachBroadcast:
+
+    # Whether is the sound enabled.
+    Enabled: true
+
+    # The sound to play. Retrieve from https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+    # Beware, sounds may differ if using 1.8 - 1.8.8!
+    Sound: "BLOCK_LEVER_CLICK"
+
+    # When should the countdown be played
+    PlayWhenCountdownIs: [45, 30, 20, 15, 10, 5, 4, 3, 2, 1]
+
+# Titles on countdowns settings
+TitleOnCountdown:
+
+  # Whether should the plugin display titles when doing countdown.
+  Enabled: true
+
+  # The fade in ticks of the title
+  FadeIn: 5
+
+  # The display ticks of the title
+  Display: 10
+
+  # The fade out ticks of the title
+  FadeOut: 5
+
+  # The subtitle
+  Subtitle: ""
+
+  # Numbers to display as a title when the countdown is one of them
+  NumbersToDisplay:
+    30: "&a30"
+    20: "&a20"
+    15: "&e15"
+    10: "&e10"
+    5: "&c5"
+    4: "&c4"
+    3: "&c3"
+    2: "&c2"
+    1: "&c1"
+
+# SpleefX economy settings
+Economy:
+
+  # Whether should the plugin get the players' balance from Vault.
+  #
+  # For example, if the server uses iConomy, the plugin will use iConomy to handle coins.
+  # If it uses Essentials Economy, it will use EE to handle coins, and so on.
+  #
+  # Any economy plugin will work as long as it supports Vault hook.
+  #
+  # Default value: true
+  GetFromVault: true
+
+  # Whether should SpleefX hook into Vault, as in, SpleefX's economy becomes the one used by Vault.
+  #
+  # Note that the above setting ("GetFromVault") must be set to true for this to work.
+  HookIntoVault: false
+
+# This is in beta, enable at your own risk!!
+#
+# Note that this section requires PlaceholderAPI
+Leaderboards:
+
+  # Whether should the plugin allow leaderboards.
+  #
+  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data.
+  #
+  # After enabling, you must restart the server in order for it to take effect. Reload will not work!
+  Enabled: false
+
+  # The format, in which PlaceholderAPI will replace the placeholder with.
+  #
+  # This is used in the <i>format</i> PAPI request (see below).
+  #
+  # An example PAPI expression: %spleefx_wins_1:<request>%
+  #
+  # There are 3 requests through PAPI:
+  # ==
+  # name: The name of the top #n in the stat
+  # pos: The position of the top #n in the stat
+  # score: The score of the top #n in the stat
+  # format: The format below (to allow more than 1 thing in a single request)
+  # ==
+  #
+  # Inner placeholders:
+  # {pos} - The player position
+  # {player} - The player name
+  # {score} - The player's score in this stat
+  Format: "&d#{pos} &e{player} &7- &b{score}"

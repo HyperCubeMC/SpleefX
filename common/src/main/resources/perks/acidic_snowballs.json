@@ -1,0 +1,35 @@
+{
+  "key": "acidic_snowballs",
+  "perkInternalId": "AcidicSnowballsPerk",
+  "displayName": "&2Acidic Snowballs",
+  "projectileType": "snowball",
+  "allowedExtensions": null,
+  "purchaseSettings": {
+    "price": 100,
+    "ingameAmount": 5,
+    "gamesUsableFor": 5
+  },
+  "clickTypes": [
+    "RIGHT_CLICK_BLOCK",
+    "RIGHT_CLICK_AIR"
+  ],
+  "projectileItemSlot": 8,
+  "projectileItem": {
+    "type": "snowball",
+    "count": 5,
+    "enchantments": [
+      "INFINITY:1"
+    ],
+    "displayName": "&2Acidic Snowballs",
+    "lore": [
+      "",
+      "&eDestroys blocks it is shoot onto"
+    ],
+    "itemFlags": [
+      "HIDE_ENCHANTS"
+    ],
+    "unbreakable": false
+  },
+  "nonDestroyableBlocks": [
+  ]
+}

@@ -1,0 +1,239 @@
+{
+  "enabled": true,
+  "key": "spleef",
+  "displayName": "&b&lSpleef",
+  "chatPrefix": "&7[&bSpleef&7]&e ",
+  "preventItemDropping": true,
+  "giveDroppedItems": true,
+  "dropMinedBlocks": false,
+  "snowballSettings": {
+    "removeSnowballsGraduallyOnMelting": true,
+    "removalChance": "50%",
+    "allowThrowing": true,
+    "removedAmount": 2
+  },
+  "runCommandsForFFAWinners": {
+    "1": {
+      "PLAYER": [],
+      "CONSOLE": []
+    }
+  },
+  "runCommandsForTeamsWinners": {
+    "1": {
+      "PLAYER": [],
+      "CONSOLE": []
+    }
+  },
+  "givePotionEffects": [
+    "REGENERATION:200000:4",
+    "SATURATION:200000:4"
+  ],
+  "doubleJump": {
+    "enabled": true,
+    "defaultAmount": 5,
+    "cooldownBetween": 2,
+    "playSoundOnJump": "ENTITY_WITHER_SHOOT",
+    "doubleJumpItems": {
+      "enabled": true,
+      "slot": 2,
+      "onAvailable": {
+        "type": "feather",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&a&lDouble Jump",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      },
+      "onUnavailable": {
+        "type": "feather",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&c&lDouble Jump",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      }
+    },
+    "launchVelocity": {
+      "x": 0,
+      "y": 1,
+      "z": 0,
+      "usePlayerOriginalVector": false,
+      "multiply": 1,
+      "divide": 1,
+      "addition": 0,
+      "subtract": 0
+    }
+  },
+  "itemsToAdd": {
+    "0": {
+      "type": "DIAMOND_SPADE",
+      "count": 1,
+      "enchantments": [
+        "dig_speed:1"
+      ],
+      "displayName": "&bDiamond Spade",
+      "lore": [],
+      "itemFlags": [
+        "HIDE_ENCHANTS"
+      ],
+      "durability": 0,
+      "unbreakable": true
+    }
+  },
+  "armorToAdd": {
+    "helmet": {
+      "type": "diamond_helmet",
+      "count": 1,
+      "displayName": "{}",
+      "lore": [],
+      "itemFlags": [],
+      "unbreakable": true
+    }
+  },
+  "gameTitles": {
+    "win": {
+      "enabled": true,
+      "title": "",
+      "subtitle": "&e{winner} &ahas won the game!",
+      "fadeInTicks": 5,
+      "displayTicks": 20,
+      "fadeOutTicks": 5
+    },
+    "draw": {
+      "enabled": true,
+      "title": "&7Draw!",
+      "subtitle": "",
+      "fadeInTicks": 5,
+      "displayTicks": 20,
+      "fadeOutTicks": 5
+    },
+    "lose": {
+      "enabled": true,
+      "title": "&cYou have lost!",
+      "subtitle": "",
+      "fadeInTicks": 5,
+      "displayTicks": 20,
+      "fadeOutTicks": 5
+    }
+  },
+  "signs": [
+    "&7[&1Spleef&7]",
+    "&1{arena_displayname}",
+    "&7(&9{arena_playercount}&8/&1{arena_maximum}&7)",
+    "{arena_stage}"
+  ],
+  "waitingMode": "ADVENTURE",
+  "ingameMode": "SURVIVAL",
+  "cancelledDamageInWaiting": [
+    "ENTITY_ATTACK",
+    "BLOCK_EXPLOSION",
+    "FALL",
+    "FIRE",
+    "FIRE_TICK",
+    "PROJECTILE"
+  ],
+  "cancelledDamageInGame": [
+    "ENTITY_ATTACK",
+    "BLOCK_EXPLOSION",
+    "FALL",
+    "FIRE",
+    "FIRE_TICK"
+  ],
+  "extensionCommands": [
+    "spleef"
+  ],
+  "allowedCommands": [
+    "spleef leave"
+  ],
+  "scoreboard": {
+    "WAITING_IN_LOBBY": {
+      "enabled": true,
+      "title": "&9&lSPLEEF",
+      "text": {
+        "9": "",
+        "8": "Map: &a{arena_displayname}",
+        "7": "",
+        "6": "Players: &a{arena_playercount}/{arena_maximum}",
+        "5": "",
+        "4": "Waiting...",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    },
+    "COUNTDOWN_AND_WAITING": {
+      "enabled": true,
+      "title": "&9&lSPLEEF",
+      "text": {
+        "12": "",
+        "11": "Map: &a{arena_displayname}",
+        "10": "",
+        "9": "Players: &a{arena_playercount}/{arena_maximum}",
+        "8": "",
+        "7": "Starting in &e{countdown} &fto",
+        "6": "allow time for",
+        "5": "additional players",
+        "4": "",
+        "3": "Game: &a{extension_without_colors}",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    },
+    "COUNTDOWN_AND_FULL": {
+      "enabled": true,
+      "title": "&9&lSPLEEF",
+      "text": {
+        "12": "",
+        "11": "Map: &a{arena_displayname}",
+        "10": "",
+        "9": "Players: &a{arena_playercount}/{arena_maximum}",
+        "8": "",
+        "7": "&b&lBrace yourselves!",
+        "4": "",
+        "3": "Game: &a{extension_without_colors}",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    },
+    "GAME_ACTIVE": {
+      "enabled": true,
+      "title": "&9&lSPLEEF",
+      "text": {
+        "9": "",
+        "8": "Map: &a{arena_displayname}",
+        "7": "",
+        "6": "&fPlayers Alive: &a{arena_playercount}",
+        "5": "&fDouble Jumps: &a{double_jumps}&7/5",
+        "4": "",
+        "3": "Time left: &a{arena_time_left}",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    }
+  },
+  "quitItem": {
+    "slot": 8,
+    "give": true,
+    "leaveArena": true,
+    "runCommandsByPlayer": [],
+    "type": "MAGMA_CREAM",
+    "count": 1,
+    "enchantments": [],
+    "displayName": "&cLeave",
+    "lore": [],
+    "itemFlags": [],
+    "durability": 0,
+    "unbreakable": true
+  },
+  "runCommandsWhenGameFills": [],
+  "runCommandsWhenGameStarts": []
+}

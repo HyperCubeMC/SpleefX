@@ -1,0 +1,23 @@
+{
+  "title": "&5Perks Shop",
+  "rows": 3,
+  "items": {
+    "0": {
+      "type": "snowball",
+      "count": 5,
+      "enchantments": [
+        "INFINITY:1"
+      ],
+      "displayName": "&2Acidic Snowballs",
+      "lore": [
+        "",
+        "&eDestroys blocks it is shoot onto"
+      ],
+      "itemFlags": [
+        "HIDE_ENCHANTS"
+      ],
+      "unbreakable": false,
+      "purchasePerk": "acidic_snowballs"
+    }
+  }
+}

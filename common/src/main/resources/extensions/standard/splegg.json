@@ -1,0 +1,475 @@
+{
+  "enabled": true,
+  "key": "splegg",
+  "displayName": "&2Splegg",
+  "chatPrefix": "&8[&2Splegg&8] ",
+  "preventItemDropping": true,
+  "giveDroppedItems": true,
+  "dropMinedBlocks": false,
+  "upgradeSystemEnabled": true,
+  "runCommandsForFFAWinners": {
+    "1": {
+      "PLAYER": [],
+      "CONSOLE": []
+    }
+  },
+  "runCommandsForTeamsWinners": {
+    "1": {
+      "PLAYER": [],
+      "CONSOLE": []
+    }
+  },
+  "doubleJump": {
+    "enabled": true,
+    "defaultAmount": 5,
+    "cooldownBetween": 2,
+    "playSoundOnJump": "ENTITY_WITHER_SHOOT",
+    "doubleJumpItems": {
+      "enabled": true,
+      "slot": 2,
+      "onAvailable": {
+        "type": "feather",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&a&lDouble Jump",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      },
+      "onUnavailable": {
+        "type": "feather",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&c&lDouble Jump",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      }
+    },
+    "launchVelocity": {
+      "x": 0,
+      "y": 1,
+      "z": 0,
+      "usePlayerOriginalVector": false,
+      "multiply": 1,
+      "divide": 1,
+      "addition": 0,
+      "subtract": 0
+    }
+  },
+  "projectileItemSlot": 0,
+  "projectileItem": {
+    "type": "IRON_INGOT",
+    "count": 1,
+    "enchantments": [
+      "dig_speed:1"
+    ],
+    "displayName": "&7Snowball Launcher",
+    "lore": [],
+    "itemFlags": [
+      "HIDE_ENCHANTS"
+    ],
+    "durability": 0,
+    "unbreakable": false
+  },
+  "projectileType": "snowball",
+  "explodeTNTWhenHit": {
+    "enabled": true,
+    "createFire": false,
+    "particles": true,
+    "yield": 0,
+    "breakBlocks": true,
+    "power": 3
+  },
+  "nonDestroyableBlocks": [
+    "DIAMOND_ORE"
+  ],
+  "clickActions": [
+    "LEFT_CLICK_BLOCK",
+    "RIGHT_CLICK_BLOCK",
+    "LEFT_CLICK_AIR",
+    "RIGHT_CLICK_AIR"
+  ],
+  "upgrades": {
+    "woodenShovel": {
+      "key": "woodenShovel",
+      "displayName": "&eWooden Shovel",
+      "delay": 1.0,
+      "default": true,
+      "price": 0,
+      "requiredUpgradesBefore": [],
+      "gameItem": {
+        "slot": 0,
+        "type": "wooden_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&eWooden Shovel",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": true
+      }
+    },
+    "stoneShovel": {
+      "key": "stoneShovel",
+      "displayName": "&7Stone Shovel",
+      "delay": 0.8,
+      "default": false,
+      "price": 1000,
+      "requiredUpgradesBefore": [
+        "woodenShovel"
+      ],
+      "gameItem": {
+        "slot": 0,
+        "type": "stone_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&7Stone Shovel",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": true
+      }
+    },
+    "ironShovel": {
+      "key": "ironShovel",
+      "displayName": "&7Iron Shovel",
+      "delay": 0.6,
+      "default": false,
+      "price": 2000,
+      "requiredUpgradesBefore": [
+        "stoneShovel"
+      ],
+      "gameItem": {
+        "slot": 0,
+        "type": "iron_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&7Iron Shovel",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": true
+      }
+    },
+    "goldenShovel": {
+      "key": "goldenShovel",
+      "displayName": "&6Golden Shovel",
+      "delay": 0.4,
+      "default": false,
+      "price": 3000,
+      "requiredUpgradesBefore": [
+        "ironShovel"
+      ],
+      "gameItem": {
+        "slot": 0,
+        "type": "golden_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&6Golden Shovel",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": true
+      }
+    },
+    "diamondShovel": {
+      "key": "diamondShovel",
+      "displayName": "&bDiamond Shovel",
+      "delay": 0.2,
+      "default": false,
+      "price": 5000,
+      "requiredUpgradesBefore": [
+        "goldenShovel"
+      ],
+      "gameItem": {
+        "slot": 0,
+        "type": "diamond_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&bDiamond Shovel",
+        "lore": [],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": true
+      }
+    }
+  },
+  "spleggShop": {
+    "title": "&2Splegg Upgrades",
+    "rows": 1,
+    "items": {
+      "0": {
+        "purchaseUpgrade": "woodenShovel",
+        "type": "wooden_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&eWooden Shovel",
+        "lore": [
+          "&eDelay: &a{upgrade_delay}",
+          "&bPrice: &d{upgrade_price}",
+          "",
+          "{upgrade_purchased}"
+        ],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      },
+      "2": {
+        "purchaseUpgrade": "stoneShovel",
+        "type": "stone_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&7Stone Shovel",
+        "lore": [
+          "&eDelay: &a{upgrade_delay}",
+          "&bPrice: &d{upgrade_price}",
+          "",
+          "{upgrade_purchased}"
+        ],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      },
+      "4": {
+        "purchaseUpgrade": "ironShovel",
+        "type": "iron_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&7Iron Shovel",
+        "lore": [
+          "&eDelay: &a{upgrade_delay}",
+          "&bPrice: &d{upgrade_price}",
+          "",
+          "{upgrade_purchased}"
+        ],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      },
+      "6": {
+        "purchaseUpgrade": "goldenShovel",
+        "type": "golden_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&6Golden Shovel",
+        "lore": [
+          "&eDelay: &a{upgrade_delay}",
+          "&bPrice: &d{upgrade_price}",
+          "",
+          "{upgrade_purchased}"
+        ],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      },
+      "8": {
+        "purchaseUpgrade": "diamondShovel",
+        "type": "diamond_shovel",
+        "count": 1,
+        "enchantments": [
+          "infinity:1"
+        ],
+        "displayName": "&bDiamond Shovel",
+        "lore": [
+          "&eDelay: &a{upgrade_delay}",
+          "&bPrice: &d{upgrade_price}",
+          "",
+          "{upgrade_purchased}"
+        ],
+        "itemFlags": [
+          "HIDE_ENCHANTS"
+        ],
+        "unbreakable": false
+      }
+    }
+  },
+  "givePotionEffects": [
+    "REGENERATION:200000:4",
+    "SATURATION:200000:4"
+  ],
+  "itemsToAdd": {
+  },
+  "armorToAdd": {
+    "helmet": {
+      "type": "diamond_helmet",
+      "count": 1,
+      "displayName": "{}",
+      "lore": [],
+      "itemFlags": [],
+      "unbreakable": true
+    }
+  },
+  "gameTitles": {
+    "win": {
+      "enabled": true,
+      "title": "&e{winner} &1has won the game!",
+      "subtitle": "",
+      "fadeInTicks": 5,
+      "displayTicks": 20,
+      "fadeOutTicks": 5
+    },
+    "draw": {
+      "enabled": true,
+      "title": "&7Draw!",
+      "subtitle": "",
+      "fadeInTicks": 5,
+      "displayTicks": 20,
+      "fadeOutTicks": 5
+    },
+    "lose": {
+      "enabled": true,
+      "title": "&cYou have lost!",
+      "subtitle": "",
+      "fadeInTicks": 5,
+      "displayTicks": 20,
+      "fadeOutTicks": 5
+    }
+  },
+  "signs": [
+    "&8[&2Splegg&8]",
+    "&1{arena_displayname}",
+    "&7(&9{arena_playercount}&8/&1{arena_maximum}&7)",
+    "{arena_stage}"
+  ],
+  "waitingMode": "ADVENTURE",
+  "ingameMode": "ADVENTURE",
+  "cancelledDamageInWaiting": [
+    "ENTITY_ATTACK",
+    "BLOCK_EXPLOSION",
+    "FALL",
+    "FIRE",
+    "FIRE_TICK",
+    "PROJECTILE"
+  ],
+  "cancelledDamageInGame": [
+    "ENTITY_ATTACK",
+    "BLOCK_EXPLOSION",
+    "FALL",
+    "FIRE",
+    "FIRE_TICK",
+    "PROJECTILE"
+  ],
+  "extensionCommands": [
+    "splegg"
+  ],
+  "allowedCommands": [
+    "splegg leave"
+  ],
+  "scoreboard": {
+    "WAITING_IN_LOBBY": {
+      "enabled": true,
+      "title": "&2&lSPLEGG",
+      "text": {
+        "9": "",
+        "8": "Map: &a{arena_displayname}",
+        "7": "",
+        "6": "Players: &a{arena_playercount}/{arena_maximum}",
+        "5": "",
+        "4": "Waiting...",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    },
+    "COUNTDOWN_AND_WAITING": {
+      "enabled": true,
+      "title": "&2&lSPLEGG",
+      "text": {
+        "12": "",
+        "11": "Map: &a{arena_displayname}",
+        "10": "",
+        "9": "Players: &a{arena_playercount}/{arena_maximum}",
+        "8": "",
+        "7": "Starting in &e{countdown} &fto",
+        "6": "allow time for",
+        "5": "additional players",
+        "4": "",
+        "3": "Game: &a{extension_without_colors}",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    },
+    "COUNTDOWN_AND_FULL": {
+      "enabled": true,
+      "title": "&2&lSPLEGG",
+      "text": {
+        "12": "",
+        "11": "Map: &a{arena_displayname}",
+        "10": "",
+        "9": "Players: &a{arena_playercount}/{arena_maximum}",
+        "8": "",
+        "7": "&a&lBrace yourselves!",
+        "4": "",
+        "3": "Game: &a{extension_without_colors}",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    },
+    "GAME_ACTIVE": {
+      "enabled": true,
+      "title": "&2&lSPLEGG",
+      "text": {
+        "9": "",
+        "8": "Map: &a{arena_displayname}",
+        "7": "",
+        "6": "&fPlayers Alive: &a{arena_playercount}",
+        "5": "&fDouble Jumps: &a{double_jumps}&7/5",
+        "4": "",
+        "3": "Time left: &a{arena_time_left}",
+        "2": "",
+        "1": "&bwww.example.com"
+      }
+    }
+  },
+  "quitItem": {
+    "slot": 8,
+    "give": true,
+    "leaveArena": true,
+    "runCommandsByPlayer": [],
+    "type": "MAGMA_CREAM",
+    "count": 1,
+    "enchantments": [],
+    "displayName": "&cLeave",
+    "lore": [],
+    "itemFlags": [],
+    "durability": 0,
+    "unbreakable": true
+  },
+  "runCommandsWhenGameFills": [],
+  "runCommandsWhenGameStarts": []
+}
