@@ -96,10 +96,11 @@ public class SpleefXPAPI extends PlaceholderExpansion {
             } catch (IndexOutOfBoundsException e) {
                 topper = toppers.get(toppers.size() - 1);
             }
-            Printable.print("Found in position " + pos + " the topper " + topper);
             if (topper != null)
                 Printable.print("With UUID: " + topper.getPlayer().getUniqueId() + " (name: " + topper.getPlayer().getName() + ")");
             else return "Invalid player";
+            if (!topper.getPlayer().hasPlayedBefore())
+                return "Invalid player";
             switch (request) {
                 case "name":
                     return topper.getPlayer().getName();
