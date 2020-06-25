@@ -25,32 +25,32 @@ public enum ArenaStage {
     /**
      * The arena is waiting for players to join
      */
-    WAITING(MessageKey.WAITING, true),
+    WAITING(MessageKey.WAITING, true, true),
 
     /**
      * The arena is in countdown
      */
-    COUNTDOWN(MessageKey.COUNTDOWN, true),
+    COUNTDOWN(MessageKey.COUNTDOWN, true, true),
 
     /**
-     * The arena is running and is actiev
+     * The arena is running and is active
      */
-    ACTIVE(MessageKey.ACTIVE, false),
+    ACTIVE(MessageKey.ACTIVE, false, true),
 
     /**
      * The arena is regenerating
      */
-    REGENERATING(MessageKey.REGENERATING, false),
+    REGENERATING(MessageKey.REGENERATING, false, false),
 
     /**
      * The arena's setup is not finished
      */
-    NEEDS_SETUP(MessageKey.NEEDS_SETUP, false),
+    NEEDS_SETUP(MessageKey.NEEDS_SETUP, false, false),
 
     /**
      * The arena mode is disabled
      */
-    DISABLED(MessageKey.DISABLED, false);
+    DISABLED(MessageKey.DISABLED, false, false);
 
     /**
      * The text representing the state
@@ -61,6 +61,7 @@ public enum ArenaStage {
      * Whether is the arena playable in this arena state or not
      */
     private boolean playable;
+    private boolean endable;
 
     /**
      * Initiates a new arena stage
@@ -68,9 +69,10 @@ public enum ArenaStage {
      * @param key      The message key representing this state
      * @param playable Whether is the arena playable in this arena state or not
      */
-    ArenaStage(MessageKey key, boolean playable) {
+    ArenaStage(MessageKey key, boolean playable, boolean endable) {
         this.key = key;
         this.playable = playable;
+        this.endable = endable;
     }
 
     /**
@@ -91,4 +93,7 @@ public enum ArenaStage {
         return playable;
     }
 
+    public boolean isEndable() {
+        return endable;
+    }
 }
