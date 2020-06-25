@@ -96,7 +96,7 @@ public class SpleggListener implements Listener {
         if (!event.getEntity().hasMetadata("spleefx.splegg.projectile")) return;
         SpleggArena arena = Metas.get(event.getEntity(), "spleefx.splegg.projectile");
         Block hitBlock = CompatibilityHandler.getHitBlock(arena, event);
-        if (hitBlock != null && EXTENSION.isDestroyable(hitBlock.getType())) {
+        if (hitBlock != null && arena.canDestroy(hitBlock.getType())) {
             Location loc = hitBlock.getLocation();
             if (arena.getEngine().getArenaStage() == ArenaStage.ACTIVE) {
                 ExplosionSettings explosionSettings = EXTENSION.getExplodeTNTWhenHit();
