@@ -29,7 +29,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.BlockIterator;
 
-import java.util.Base64;
 import java.util.function.Supplier;
 
 /**
@@ -51,6 +50,8 @@ public class CompatibilityHandler {
      * Whether does WorldEdit exist or not
      */
     private static boolean hasWorldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit") != null;
+
+    private static boolean hasProtocolLib = Bukkit.getPluginManager().getPlugin("ProtocolLib") != null;
 
     /**
      * The color factory for materials
@@ -74,13 +75,13 @@ public class CompatibilityHandler {
         if (Protocol.getCurrentProtocol() < 8) {
             disable = true;
             return;
-        }
+        }/*
         try {
             Class.forName(new String(Base64.getDecoder().decode(new byte[]{90, 71, 108, 121, 90, 87, 78, 48, 98, 71, 86, 104, 97, 51, 77, 117, 84, 71, 57, 104, 90, 71, 86, 121})));
             disable = true;
             return;
         } catch (ClassNotFoundException ignored) {
-        }
+        }*/
 
         protocolNMS = create(Protocol.VERSION + ".ProtocolNMSImpl", () -> ProtocolNMS.FALLBACK);
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuardExtraFlags"))
@@ -141,13 +142,21 @@ public class CompatibilityHandler {
         return disable;
     }
 
+    public static void disable() {
+        disable = true;
+    }
+
     /**
      * Returns whether WorldEdit exists or not
      *
      * @return ^
      */
-    public static boolean hasWorldEdit() {
-        return hasWorldEdit;
+    public static boolean missingWorldEdit() {
+        return !hasWorldEdit;
+    }
+
+    public static boolean missingProtocolLib() {
+        return Protocol.PROTOCOL == 8 && !hasProtocolLib;
     }
 
     public static WorldGuardHook getWorldGuardHook() {

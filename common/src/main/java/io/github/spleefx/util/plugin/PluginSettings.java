@@ -57,7 +57,9 @@ public enum PluginSettings {
     ECO_USE_VAULT("Economy.GetFromVault", false),
 
     LEADERBOARDS("Leaderboards.Enabled", false),
-    LEADERBOARDS_FORMAT("Leaderboards.Format", "&d#{pos} &e{player} &7- &b{score}");
+    LEADERBOARDS_FORMAT("Leaderboards.Format", "&d#{pos} &e{player} &7- &b{score}"),
+    EXPER_INVENTORY_DELAY("Experimental.DelayInventoryByOneTick", false),
+    EXPER_SPECTATING_ENABLED("Experimental.SpectatingEnabled", true);
 
     public static final PluginSettings[] values = values();
 

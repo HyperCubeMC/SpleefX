@@ -17,11 +17,14 @@ package io.github.spleefx.extension;
 
 import com.google.gson.annotations.Expose;
 import io.github.spleefx.compatibility.CompatibilityHandler;
+import io.github.spleefx.util.PlaceholderUtil;
+import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 
 /**
  * Represents the title displayed by an extension
  */
+@AllArgsConstructor
 public class ExtensionTitle {
 
     @Expose
@@ -42,10 +45,21 @@ public class ExtensionTitle {
     @Expose
     private int fadeOutTicks;
 
+    public ExtensionTitle() {
+    }
+
     public void display(Player player, String winner) {
         try {
             if (enabled)
                 CompatibilityHandler.getProtocol().displayTitle(player, title.replace("{winner}", winner), subtitle.replace("{winner}", winner), fadeInTicks, displayTicks, fadeOutTicks);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    public void display(Player player, Player target) {
+        try {
+            if (enabled)
+                CompatibilityHandler.getProtocol().displayTitle(player, PlaceholderUtil.all(title, target), PlaceholderUtil.all(subtitle, target), fadeInTicks, displayTicks, fadeOutTicks);
         } catch (Throwable ignored) {
         }
     }

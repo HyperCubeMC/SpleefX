@@ -24,7 +24,7 @@ import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.extension.GameExtension.ArmorSlots;
 import io.github.spleefx.extension.GameExtension.QuitItem;
-import io.github.spleefx.extension.GameExtension.ScoreboardEvent;
+import io.github.spleefx.extension.GameExtension.ScoreboardType;
 import io.github.spleefx.extension.GameExtension.SenderType;
 import io.github.spleefx.extension.ItemHolder;
 import io.github.spleefx.extension.ability.DoubleJumpHandler.DataHolder;
@@ -249,10 +249,10 @@ public class LegacyExtensionConverter implements Runnable {
             if (!d.contains("scoreboard")) {
                 ScoreboardHolder sb = new ScoreboardHolder();
                 d.set("scoreboard", MapBuilder.of(new LinkedHashMap<>())
-                        .put(ScoreboardEvent.WAITING_IN_LOBBY, sb)
-                        .put(ScoreboardEvent.COUNTDOWN_AND_WAITING, sb)
-                        .put(ScoreboardEvent.COUNTDOWN_AND_FULL, sb)
-                        .put(ScoreboardEvent.GAME_ACTIVE, sb)
+                        .put(ScoreboardType.WAITING_IN_LOBBY, sb)
+                        .put(ScoreboardType.COUNTDOWN_AND_WAITING, sb)
+                        .put(ScoreboardType.COUNTDOWN_AND_FULL, sb)
+                        .put(ScoreboardType.GAME_ACTIVE, sb)
                         .build());
                 changed.add("Added scoreboards");
             } else {
@@ -263,13 +263,13 @@ public class LegacyExtensionConverter implements Runnable {
                     ScoreboardHolder countdown = oldScoreboards.remove(ArenaStage.COUNTDOWN.name());
                     ScoreboardHolder active = oldScoreboards.remove(ArenaStage.ACTIVE.name());
                     if (waiting != null)
-                        oldScoreboards.put(ScoreboardEvent.WAITING_IN_LOBBY.name(), waiting);
+                        oldScoreboards.put(ScoreboardType.WAITING_IN_LOBBY.name(), waiting);
                     if (countdown != null) {
-                        oldScoreboards.put(ScoreboardEvent.COUNTDOWN_AND_WAITING.name(), countdown);
-                        oldScoreboards.put(ScoreboardEvent.COUNTDOWN_AND_FULL.name(), countdown);
+                        oldScoreboards.put(ScoreboardType.COUNTDOWN_AND_WAITING.name(), countdown);
+                        oldScoreboards.put(ScoreboardType.COUNTDOWN_AND_FULL.name(), countdown);
                     }
                     if (active != null)
-                        oldScoreboards.put(ScoreboardEvent.GAME_ACTIVE.name(), active);
+                        oldScoreboards.put(ScoreboardType.GAME_ACTIVE.name(), active);
                     d.set("scoreboard", oldScoreboards);
                     changed.add("Change scoreboards into new format");
                 }

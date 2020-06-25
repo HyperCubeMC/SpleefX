@@ -17,15 +17,21 @@ package io.github.spleefx.compatibility.material;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * An interface for abstracting materials across versions
  */
 public interface MaterialCompatibility {
+
+    ExecutorService HEAD = Executors.newSingleThreadExecutor();
 
     String EXP_BOTTLE = "exp_bottle";
     String CLOCK = "clock";
@@ -59,6 +65,14 @@ public interface MaterialCompatibility {
      * @return The compatibility map
      */
     Map<String, Material> getCompatibilityMap();
+
+    /**
+     * Creates a skull of the specified player
+     *
+     * @param owner Owner of the skull
+     * @return The ItemStack representing this skull
+     */
+    CompletableFuture<ItemStack> skull(OfflinePlayer owner);
 
     /**
      * Returns the trident class. Returns {@code Snowball.class} as a fallback for older versions

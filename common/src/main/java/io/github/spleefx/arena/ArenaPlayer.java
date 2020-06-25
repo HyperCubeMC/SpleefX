@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents a player who may join an arena
@@ -47,6 +48,11 @@ public class ArenaPlayer {
      * The player's current arena
      */
     private GameArena currentArena;
+
+    /**
+     * Whether is the player spectating or not
+     */
+    private boolean spectating = false;
 
     /**
      * Creates a new ArenaPlayer
@@ -79,12 +85,30 @@ public class ArenaPlayer {
         return SpleefX.getPlugin().getDataProvider().getStatistics(player);
     }
 
+    public void setSpectating(boolean spectating) {
+        this.spectating = spectating;
+    }
+
+    public boolean isSpectating() {
+        return spectating;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArenaPlayer that = (ArenaPlayer) o;
+        return Objects.equals(player.getUniqueId(), that.player.getUniqueId());
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(player.getUniqueId());
+    }
+
     /**
      * Returns the current arena
      *
      * @return ^
      */
-    @SuppressWarnings("unchecked")
     public <R extends GameArena> R getCurrentArena() {
         return (R) currentArena;
     }
@@ -153,12 +177,9 @@ public class ArenaPlayer {
         IN_GAME,
 
         /**
-         * The player is in a game but dead
-         *
-         * @deprecated Not tracked. Use {@link #NOT_INGAME}
+         * The player is in a game but spectating
          */
-        @Deprecated
-        DEAD
+        SPECTATING
     }
 
 }

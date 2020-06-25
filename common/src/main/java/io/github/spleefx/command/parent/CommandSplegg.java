@@ -59,6 +59,7 @@ public class CommandSplegg implements TabExecutor {
                 new JoinSubcommand((c) -> SpleggExtension.EXTENSION),
                 new JoinGUISubcommand(),
                 new EditBuildingSubcommand(),
+                new SpleggMaterialsCommand(),
                 new ForceStartCommand(),
                 new WhyDisabledCommand(),
                 new LeaveSubcommand(),

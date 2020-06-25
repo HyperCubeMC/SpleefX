@@ -145,11 +145,11 @@ public class Enchants {
              .put("impaling", Enchantment.IMPALING)
              .put("riptide", Enchantment.RIPTIDE)
              .put("channeling", Enchantment.CHANNELING);
-
+/*
         if (Protocol.isNewerThan(14))
             m.put("multishot", Enchantment.MULTISHOT)
              .put("quick_charge", Enchantment.QUICK_CHARGE)
-             .put("piercing", Enchantment.PIERCING);
+             .put("piercing", Enchantment.PIERCING);*/
         //@formatter:on
         //</editor-fold>
     }

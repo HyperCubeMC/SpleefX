@@ -162,7 +162,7 @@ public class ItemFactory {
             im.setUnbreakable(e);
             return this;
         }, () -> CompatibilityHandler.either(() -> {
-            im.spigot().setUnbreakable(e);
+        //    im.spigot().setUnbreakable(e);
             return this;
         }, () -> this));
     }

@@ -43,6 +43,10 @@ import io.github.spleefx.perk.GamePerk;
 import io.github.spleefx.perk.PerkShop;
 import io.github.spleefx.scoreboard.ScoreboardListener;
 import io.github.spleefx.scoreboard.sidebar.ScoreboardTicker;
+import io.github.spleefx.spectate.ProtocolLibSpectatorAdapter;
+import io.github.spleefx.spectate.SpectatingHandler;
+import io.github.spleefx.spectate.SpectatingListener;
+import io.github.spleefx.spectate.SpectatorSettings;
 import io.github.spleefx.util.io.CopyStore;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.menu.GameMenu;
@@ -72,6 +76,9 @@ import org.moltenjson.utils.AdapterBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -163,7 +170,13 @@ public final class SpleefX extends JavaPlugin implements Listener {
     @Getter
     private static PerkShop perkShop = new PerkShop("&ePerk Shop", 3, new HashMap<>());
 
+    @DeriveFrom("spectator-settings.json")
+    @Getter
+    private static SpectatorSettings spectatorMenu = new SpectatorSettings();
+
     private final ConfigurationPack<SpleefX> configurationPack = new ConfigurationPack<>(this, getDataFolder(), ArenaData.GSON);
+
+    private final SpectatingHandler spectatingHandler = new SpectatingHandler();
 
     /**
      * Join gui config
@@ -195,7 +208,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        if (!CompatibilityHandler.hasWorldEdit()) {
+        if (CompatibilityHandler.missingWorldEdit()) {
             String v = "6.1.9";
             String d = "https://dev.bukkit.org/projects/worldedit/files/2597538/download";
             if (Protocol.isNewerThan(13)) { // 1.13+
@@ -210,171 +223,198 @@ public final class SpleefX extends JavaPlugin implements Listener {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        compatibilityHandler = new CompatibilityHandler();
-        arenaManager = new ArenaManager(this);
-
-        fileManager.createFile("messages.json");
-        PluginSettings.load();
-        fileManager.createDirectory(PluginSettings.STATISTICS_DIRECTORY.get());
-        arenasFolder.mkdirs();
-        statsFile.register(StatisticsConfig.class).associate();
-        boostersFile.register(BoosterFactory.class).associate();
-        try {
-            configurationPack.register();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (CompatibilityHandler.missingProtocolLib()) {
+            SpleefX.logger().severe("ProtocolLib not found. Because you are using 1." + Protocol.EXACT + ", ProtocolLib is required as a workaround for certain bugs in CraftBukkit 1.8.X");
+            SpleefX.logger().severe("Please download ProtocolLib from https://www.spigotmc.org/resources/1997/");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
-        joinGuiFile.register(MenuSettings.class).associate();
+        try {
+            compatibilityHandler = new CompatibilityHandler();
+            arenaManager = new ArenaManager(this);
 
-        List<Class<? extends GameArena>> arenaClasses = new ArrayList<>();
-
-        // <-- Replace with the id of your plugin!
-        FileConfiguration arenaTypes = YamlConfiguration.loadConfiguration(fileManager.createFile("arenas" + separator + "arena-types.yml"));
-
-        for (String className : arenaTypes.getStringList("ArenaSubTypes")) {
+            fileManager.createFile("messages.json");
+            PluginSettings.load();
+            fileManager.createDirectory(PluginSettings.STATISTICS_DIRECTORY.get());
+            arenasFolder.mkdirs();
+            statsFile.register(StatisticsConfig.class).associate();
+            boostersFile.register(BoosterFactory.class).associate();
             try {
-                Class<?> c = Class.forName(className);
-                if (GameArena.class.isAssignableFrom(c)) {
-                    arenaClasses.add((Class<? extends GameArena>) c);
-                } else {
-                    logger().warning("Failed to register arena type: Class does not extend GameArena: " + className);
+                configurationPack.register();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            joinGuiFile.register(MenuSettings.class).associate();
+
+            List<Class<? extends GameArena>> arenaClasses = new ArrayList<>();
+
+            // <-- Replace with the id of your plugin!
+            FileConfiguration arenaTypes = YamlConfiguration.loadConfiguration(fileManager.createFile("arenas" + separator + "arena-types.yml"));
+
+            for (String className : arenaTypes.getStringList("ArenaSubTypes")) {
+                try {
+                    Class<?> c = Class.forName(className);
+                    if (GameArena.class.isAssignableFrom(c)) {
+                        arenaClasses.add((Class<? extends GameArena>) c);
+                    } else {
+                        logger().warning("Failed to register arena type: Class does not extend GameArena: " + className);
+                    }
+                } catch (ClassNotFoundException e) {
+                    logger().warning("Failed to register arena type: Class not found: " + className);
                 }
-            } catch (ClassNotFoundException e) {
-                logger().warning("Failed to register arena type: Class not found: " + className);
             }
-        }
 
-        arenaClasses.forEach(GameArenaAdapter::registerArena);
-        worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-        getServer().getPluginManager().registerEvents(this, this);
-        extensions = new TreeConfigurationBuilder<String, GameExtension>(EXTENSIONS_FOLDER, STRING_STRATEGY)
-                .setExclusionPrefixes(ImmutableList.of("-"))
-                .setDataMap(new HashMap<>())
-                .searchSubdirectories()
-                .setGson(ArenaData.GSON)
-                .setLazy(false)
-                .setRestrictedExtensions(ImmutableList.of("json"))
-                .build();
-        perks = new TreeConfigurationBuilder<String, GamePerk>(PERKS_FOLDER, STRING_STRATEGY)
-                .setExclusionPrefixes(ImmutableList.of("-"))
-                .setDataMap(new HashMap<>())
-                .searchSubdirectories()
-                .setGson(ArenaData.GSON)
-                .setLazy(false)
-                .setRestrictedExtensions(ImmutableList.of("json"))
-                .build();
-        Map<String, GameExtension> data = extensions.load(GameExtension.class);
-        try {
-            PERKS.putAll(perks.load(GamePerk.class));
-            configurationPack.updateField("perkShop");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        extensionsManager = new ExtensionsManager(this);
-        arenasConfig = SelectableConfiguration.of(JsonFile.of(arenasFolder, "arenasConfig.json"), false, ArenaData.GSON)
-                .register(GameArena.class).associate();
-        int original = GameArena.ARENAS.get().size();
-        GameArena.ARENAS.get().values().removeIf(Objects::isNull); // Filter out arenasConfig which couldn't be loaded
-        int modified = GameArena.ARENAS.get().size();
-        logger().info("Successfully loaded " + modified + " arena" + (modified == 1 ? "" : "s") + " out of " + original);
-        final PluginManager p = Bukkit.getPluginManager();
-        MessageKey.load(false);
-        p.registerEvents(new ChatListener(), this);
-        p.registerEvents(new TripleArrowsAbility(abilityDelays), this);
+            arenaClasses.forEach(GameArenaAdapter::registerArena);
+            worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            getServer().getPluginManager().registerEvents(this, this);
 
-        p.registerEvents(new SignListener(this), this);
-        p.registerEvents(new ConnectionListener(), this);
-        p.registerEvents(new RenameListener(), this);
-        p.registerEvents(new ArenaListener(), this);
-        p.registerEvents(new CopyStore(), this);
-        p.registerEvents(new BowSpleefListener(this), this);
-        p.registerEvents(new SpleefListener(), this);
-        p.registerEvents(new SpleggListener(this), this);
-        p.registerEvents(new MenuListener(), this);
-
-        if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
-            p.registerEvents(new ArenaListener.WGListener(this), this);
-        else
-            p.registerEvents(new ArenaListener.BlockBreakListener(this), this);
-
-        Preconditions.checkNotNull(getCommand("spleefx")).setExecutor(new CommandSpleefX());
-        Preconditions.checkNotNull(getCommand("sploofx")).setExecutor(new CommandSpleefX());
-        CommandExecutor def = new CustomExtensionCommand();
-
-        data.forEach((key, extension) -> extension.getExtensionCommands().forEach(command -> new PluginCommandBuilder(command, SpleefX.this)
-                .command(fromKey(key, def))
-                .register()));
-
-        StorageType storageType = PluginSettings.STATISTICS_STORAGE_TYPE.get();
-
-        if (storageType == StorageType.SQLITE && Bukkit.getPluginManager().getPlugin("SpleefXSQL") == null)
-            SpleefX.logger().warning("The storage type is SQLite, but SpleefXSQL extension is not found. Defaulting to flat file storage");
-
-        dataProvider = storageType.create();
-        dataProvider.createRequiredFiles(fileManager);
-
-        if (storageType == StorageType.UNITED_FILE) {
-            new StorageTypeConverter(dataProvider).run();
-            SpleefX.logger().warning("I noticed you're using UNITED_FILE as a storage type. This is no longer supported as it cannot work with all the new data it has to store. Player data has been converted to use FLAT_FILE instead.");
-        }
-
-        if (GameStats.VAULT_EXISTS.get())
-            vaultHandler = new VaultHandler(this);
-
-        Bukkit.getScheduler().runTaskTimer(this, () -> GameArena.ARENAS.get().values().forEach(arena -> arena.getEngine().getSignManager().update()),
-                ((Integer) PluginSettings.SIGN_UPDATE_INTERVAL.get()).longValue(), ((Integer) PluginSettings.SIGN_UPDATE_INTERVAL.get()).longValue());
-        Bukkit.getScheduler().runTaskTimer(this, () -> {
-            saveArenas();
-            MessageKey.save();
-            dataProvider.saveEntries(this);
-            //PluginSettings.save();
-        }, 24000, 24000); // 20 minutes
-        getServer().getPluginManager().registerEvents(new DoubleJumpHandler(abilityDelays), this);
-        getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
-        getServer().getPluginManager().registerEvents(new GameMenu.MenuListener(), this);
-        getServer().getPluginManager().registerEvents(new BoosterFactory.BoosterListener(), this);
-        PERKS.values().stream().filter(v -> v instanceof Listener).forEach(v -> getServer().getPluginManager().registerEvents((Listener) v, this));
-        abilityDelays.start();
-        activeBoosterLoader.getActiveBoosters().forEach((player, booster) -> {
-            if (booster != null) {
-                if (player.isOnline() || !player.isOnline() && BoosterFactory.CONSUME_WHILE_OFFLINE.get())
-                    booster.activate(player);
-                else
-                    booster.pause();
+            extensions = new TreeConfigurationBuilder<String, GameExtension>(EXTENSIONS_FOLDER, STRING_STRATEGY)
+                    .setExclusionPrefixes(ImmutableList.of("-"))
+                    .setDataMap(new HashMap<>())
+                    .searchSubdirectories()
+                    .setGson(ArenaData.GSON)
+                    .setLazy(false)
+                    .setRestrictedExtensions(ImmutableList.of("json"))
+                    .build();
+            perks = new TreeConfigurationBuilder<String, GamePerk>(PERKS_FOLDER, STRING_STRATEGY)
+                    .setExclusionPrefixes(ImmutableList.of("-"))
+                    .setDataMap(new HashMap<>())
+                    .searchSubdirectories()
+                    .setGson(ArenaData.GSON)
+                    .setLazy(false)
+                    .setRestrictedExtensions(ImmutableList.of("json"))
+                    .build();
+            Map<String, GameExtension> data = extensions.load(GameExtension.class);
+            try {
+                PERKS.putAll(perks.load(GamePerk.class));
+                configurationPack.updateField("perkShop");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
-        boosterConsumer.start(this);
+            extensionsManager = new ExtensionsManager(this);
+            arenasConfig = SelectableConfiguration.of(JsonFile.of(arenasFolder, "arenas.json"), false, ArenaData.GSON)
+                    .register(GameArena.class).associate();
 
-        scoreboardTicker = new ScoreboardTicker();
-        scoreboardTicker.setTicks(((Number) PluginSettings.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
+            int original = GameArena.ARENAS.get().size();
+            GameArena.ARENAS.get().values().removeIf(Objects::isNull); // Filter out arenas which couldn't be loaded
+            int modified = GameArena.ARENAS.get().size();
+            logger().info("Successfully loaded " + modified + " arena" + (modified == 1 ? "" : "s") + " out of " + original);
+            final PluginManager p = Bukkit.getPluginManager();
+            MessageKey.load(false);
+            p.registerEvents(new ChatListener(), this);
+            p.registerEvents(new TripleArrowsAbility(abilityDelays), this);
 
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            if (PlaceholderAPI.unregisterPlaceholderHook("SpleefX")) {
-                new OldExpansionRemover(this).run();
-                logger().info("Removed old SpleefX-PAPI jar to avoid conflict.");
+            p.registerEvents(new SignListener(this), this);
+            p.registerEvents(new ConnectionListener(), this);
+            p.registerEvents(new RenameListener(), this);
+            p.registerEvents(new ArenaListener(), this);
+            p.registerEvents(new CopyStore(), this);
+            p.registerEvents(new BowSpleefListener(this), this);
+            p.registerEvents(new SpleefListener(), this);
+            p.registerEvents(new SpleggListener(this), this);
+            p.registerEvents(new MenuListener(), this);
+            p.registerEvents(new SpectatingListener(), this);
+
+            if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
+                p.registerEvents(new ArenaListener.WGListener(this), this);
+            else
+                p.registerEvents(new ArenaListener.BlockBreakListener(this), this);
+
+            Preconditions.checkNotNull(getCommand("spleefx")).setExecutor(new CommandSpleefX());
+            Preconditions.checkNotNull(getCommand("sploofx")).setExecutor(new CommandSpleefX());
+            CommandExecutor def = new CustomExtensionCommand();
+
+            data.forEach((key, extension) -> extension.getExtensionCommands().forEach(command -> new PluginCommandBuilder(command, SpleefX.this)
+                    .command(fromKey(key, def))
+                    .register()));
+
+            StorageType storageType = PluginSettings.STATISTICS_STORAGE_TYPE.get();
+
+            if (storageType == StorageType.SQLITE && Bukkit.getPluginManager().getPlugin("SpleefXSQL") == null)
+                SpleefX.logger().warning("The storage type is SQLite, but SpleefXSQL extension is not found. Defaulting to flat file storage");
+
+            dataProvider = storageType.create();
+            dataProvider.createRequiredFiles(fileManager);
+
+            if (storageType == StorageType.UNITED_FILE) {
+                new StorageTypeConverter(dataProvider).run();
+                SpleefX.logger().warning("I noticed you're using UNITED_FILE as a storage type. This is no longer supported as it cannot work with all the new data it has to store. Player data has been converted to use FLAT_FILE instead.");
             }
-            logger().info("Found PlaceholderAPI. Registering hooks");
-            new SpleefXPAPI(this).register();
-        }
 
-        getLogger().info("Establishing connection to bstats.org");
-        Metrics metrics = new Metrics(this, 7694);
-        metrics.addCustomChart(new AdvancedPie("most_used_modes", () -> {
-            Map<String, Integer> m = new HashMap<>(BSTATS_EXTENSIONS);
-            BSTATS_EXTENSIONS.clear();
-            return m;
-        }));
+            if (GameStats.VAULT_EXISTS.get())
+                vaultHandler = new VaultHandler(this);
+
+            Bukkit.getScheduler().runTaskTimer(this, () -> GameArena.ARENAS.get().values().forEach(arena -> arena.getEngine().getSignManager().update()),
+                    ((Integer) PluginSettings.SIGN_UPDATE_INTERVAL.get()).longValue(), ((Integer) PluginSettings.SIGN_UPDATE_INTERVAL.get()).longValue());
+            Bukkit.getScheduler().runTaskTimer(this, () -> {
+                saveArenas();
+                MessageKey.save();
+                dataProvider.saveEntries(this);
+                //PluginSettings.save();
+            }, 24000, 24000); // 20 minutes
+            getServer().getPluginManager().registerEvents(new DoubleJumpHandler(abilityDelays), this);
+            getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
+            getServer().getPluginManager().registerEvents(new GameMenu.MenuListener(), this);
+            getServer().getPluginManager().registerEvents(new BoosterFactory.BoosterListener(), this);
+            PERKS.values().stream().filter(v -> v instanceof Listener).forEach(v -> getServer().getPluginManager().registerEvents((Listener) v, this));
+            abilityDelays.start();
+            activeBoosterLoader.getActiveBoosters().forEach((player, booster) -> {
+                if (booster != null) {
+                    if (player.isOnline() || !player.isOnline() && BoosterFactory.CONSUME_WHILE_OFFLINE.get())
+                        booster.activate(player);
+                    else
+                        booster.pause();
+                }
+            });
+            boosterConsumer.start(this);
+
+            scoreboardTicker = new ScoreboardTicker();
+            scoreboardTicker.setTicks(((Number) PluginSettings.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
+
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                if (PlaceholderAPI.unregisterPlaceholderHook("SpleefX")) {
+                    new OldExpansionRemover(this).run();
+                    logger().info("Removed old SpleefX-PAPI jar to avoid conflict.");
+                }
+                logger().info("Found PlaceholderAPI. Registering hooks");
+                new SpleefXPAPI(this).register();
+            }
+
+            getLogger().info("Establishing connection to bstats.org");
+            Metrics metrics = new Metrics(this, 7694);
+            metrics.addCustomChart(new AdvancedPie("most_used_modes", () -> {
+                Map<String, Integer> m = new HashMap<>(BSTATS_EXTENSIONS);
+                BSTATS_EXTENSIONS.clear();
+                return m;
+            }));
+            //scheduler = new SpleefXScheduler(this);
+            if (Protocol.PROTOCOL == 8) // 1.8
+                new ProtocolLibSpectatorAdapter(this);
+        } catch (Exception e) {
+            try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
+                e.printStackTrace(pw);
+                Files.write(fileManager.createFile("crash.log").toPath(), sw.toString().getBytes());
+            } catch (IOException ioe) {
+                throw new IllegalStateException(ioe);
+            }
+
+            SpleefX.logger().severe("Failed to enable plugin. Error has been dumped to /SpleefX/crash.log. Please send the file over on our Discord server for support.");
+            CompatibilityHandler.disable();
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
     }
 
     @Override
     public void onDisable() {
-        if (CompatibilityHandler.shouldDisable() || !CompatibilityHandler.hasWorldEdit()) return;
+        if (CompatibilityHandler.shouldDisable() || CompatibilityHandler.missingWorldEdit() || CompatibilityHandler.missingProtocolLib())
+            return;
         try {
             disableArenas();
         } catch (Exception e) {
-            logger().warning("Failed to regenerate arenasConfig.");
+            logger().warning("Failed to regenerate arenas.");
             e.printStackTrace();
         }
+//        scheduler.shutdown();
         boosterConsumer.cancel();
         saveArenas();
         MessageKey.save();
@@ -411,7 +451,8 @@ public final class SpleefX extends JavaPlugin implements Listener {
      * Invoked when the server stops, to restore everything and end games forcibly
      */
     private void disableArenas() {
-        GameArena.ARENAS.get().values().forEach(arena -> arena.getEngine().forceEnd());
+        GameArena.ARENAS.get().values().stream().filter(arena -> arena.getStage().isEndable())
+                .forEach(arena -> arena.getEngine().forceEnd());
     }
 
     {
@@ -436,6 +477,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
             fileManager.createFile("extensions" + separator + "custom" + separator + "-example-mode.json");
             fileManager.createFile("perks" + separator + "-perks-shop.json");
             fileManager.createFile("perks" + separator + "acidic_snowballs.json");
+            fileManager.createFile("spectator-settings.json");
         }
     }
 
@@ -453,6 +495,11 @@ public final class SpleefX extends JavaPlugin implements Listener {
         }
     }
 
+    public static SpectatorSettings getSpectatorSettings() {
+        return spectatorMenu;
+    }
+
+    @SuppressWarnings("RedundantTypeArguments")
     public static RuntimeException sneakyThrow(@NotNull Throwable t) {
         return SpleefX.<RuntimeException>sneakyThrow0(t);
     }

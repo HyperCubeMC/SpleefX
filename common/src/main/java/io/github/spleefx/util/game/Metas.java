@@ -25,6 +25,8 @@ import org.bukkit.metadata.Metadatable;
  */
 public class Metas {
 
+    public static final String CURRENT_GUI = "spleefx.gui.current";
+
     /**
      * Sets the metadata value of the specified key
      *
@@ -57,8 +59,15 @@ public class Metas {
      * @return The object.
      */
     public static <T> T get(Metadatable metadatable, String key) {
-        //noinspection unchecked
-        return (T) metadatable.getMetadata(key).get(0).value();
+        try {
+            return (T) metadatable.getMetadata(key).get(0).value();
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    public static void remove(Metadatable metadatable, String key) {
+        metadatable.removeMetadata(key, SpleefX.getPlugin());
     }
 
 }

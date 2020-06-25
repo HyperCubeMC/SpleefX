@@ -22,6 +22,7 @@ import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.extension.ItemHolder;
 import io.github.spleefx.util.game.ExplosionSettings;
 import io.github.spleefx.util.plugin.Protocol;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
@@ -51,6 +52,7 @@ public class SpleggExtension extends GameExtension {
     private ExplosionSettings explodeTNTWhenHit;
 
     @Expose
+    @Getter
     private List<Material> nonDestroyableBlocks;
 
     @Expose
@@ -76,10 +78,6 @@ public class SpleggExtension extends GameExtension {
 
     public int getProjectileItemSlot() {
         return projectileItemSlot;
-    }
-
-    public boolean isDestroyable(Material material) {
-        return !nonDestroyableBlocks.contains(material);
     }
 
     public boolean isUpgradeSystemEnabled() {

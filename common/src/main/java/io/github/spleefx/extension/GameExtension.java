@@ -20,7 +20,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
-import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.extension.ability.DoubleJumpHandler;
 import io.github.spleefx.scoreboard.ScoreboardHolder;
@@ -109,7 +108,7 @@ public class GameExtension {
     private List<String> allowedCommands = Collections.emptyList(); // DONE
 
     @Expose
-    private Map<ScoreboardEvent, ScoreboardHolder> scoreboard = Collections.emptyMap(); // DONE
+    private Map<ScoreboardType, ScoreboardHolder> scoreboard = Collections.emptyMap(); // DONE
 
     @Expose
     private QuitItem quitItem; // DONE
@@ -233,7 +232,7 @@ public class GameExtension {
         public abstract void set(Player player, ItemStack itemStack);
     }
 
-    public enum ScoreboardEvent {
+    public enum ScoreboardType {
         WAITING_IN_LOBBY,
         COUNTDOWN_AND_WAITING,
         COUNTDOWN_AND_FULL,

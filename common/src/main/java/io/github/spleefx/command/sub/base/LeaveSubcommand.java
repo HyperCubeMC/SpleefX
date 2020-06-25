@@ -68,9 +68,9 @@ public class LeaveSubcommand extends PluginSubcommand {
         GameArena arena = player.getCurrentArena();
         ArenaStage stage = arena.getEngine().getArenaStage();
         if ((stage == ArenaStage.COUNTDOWN) || ((stage == ArenaStage.WAITING) && arena.getEngine().getPlayerTeams().containsKey(player)))
-            arena.getEngine().quit(player);
+            arena.getEngine().quit(player, true);
         else if (arena.getEngine().getArenaStage() == ArenaStage.ACTIVE)
-            arena.getEngine().lose(player, arena.getEngine().getPlayerTeams().get(player));
+            arena.getEngine().lose(player, arena.getEngine().getPlayerTeams().get(player), true);
         return true;
     }
 }

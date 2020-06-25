@@ -18,6 +18,7 @@ package io.github.spleefx.listeners;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.api.GameArena;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -27,12 +28,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 public class ConnectionListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         ArenaPlayer.adapt(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         ArenaPlayer player = ArenaPlayer.adapt(event.getPlayer());
         GameArena arena = player.getCurrentArena();
@@ -40,10 +41,11 @@ public class ConnectionListener implements Listener {
             return;
         switch (player.getState()) {
             case WAITING:
-                arena.getEngine().quit(player);
+            case SPECTATING:
+                arena.getEngine().quit(player, true);
                 break;
             case IN_GAME:
-                arena.getEngine().lose(player, arena.getEngine().getPlayerTeams().get(player));
+                arena.getEngine().lose(player, arena.getEngine().getPlayerTeams().get(player), true);
                 break;
         }
         ArenaPlayer.remove(event.getPlayer());

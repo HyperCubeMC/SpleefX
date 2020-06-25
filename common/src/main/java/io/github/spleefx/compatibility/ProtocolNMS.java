@@ -17,6 +17,7 @@ package io.github.spleefx.compatibility;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.spleefx.SpleefX;
 import io.github.spleefx.compatibility.chat.ChatComponent;
 import io.github.spleefx.compatibility.chat.ChatComponent.Adapter;
 import io.github.spleefx.compatibility.chat.ComponentJSON;
@@ -55,6 +56,11 @@ public interface ProtocolNMS {
     Gson CHAT_GSON = new GsonBuilder().registerTypeAdapter(ChatComponent.class, new Adapter()).create();
 
     /**
+     * The action bar ID in old protocols
+     */
+    byte ACTION_BAR_ID = 2;
+
+    /**
      * Displays the title
      *
      * @param player   Player to display for
@@ -75,6 +81,14 @@ public interface ProtocolNMS {
     void send(ComponentJSON component, CommandSender player);
 
     /**
+     * Displays the specified action bar
+     *
+     * @param player    Player to display for
+     * @param actionBar The text
+     */
+    void displayActionBar(Player player, String actionBar);
+
+    /**
      * Creates an explosion
      *
      * @param location Location to create for
@@ -91,4 +105,12 @@ public interface ProtocolNMS {
         double d2 = posZ - z;
         return d0 * d0 + d1 * d1 + d2 * d2;
     }
+
+    default void hidePlayer(Player toHide, Player target) {
+        toHide.hidePlayer(SpleefX.getPlugin(), target);
+    }
+    default void showPlayer(Player toHide, Player target) {
+        toHide.showPlayer(SpleefX.getPlugin(), target);
+    }
+
 }

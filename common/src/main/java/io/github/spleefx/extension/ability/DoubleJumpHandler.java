@@ -94,7 +94,7 @@ public class DoubleJumpHandler implements Listener {
     public void doubleJump(GameArena arena, Player player) {
         try {
             BaseArenaEngine<? extends GameArena> engine = (BaseArenaEngine<? extends GameArena>) arena.getEngine();
-            if (engine.getAbilityCount().get(player.getUniqueId()).getOrDefault(GameAbility.DOUBLE_JUMP, 0) <= 0)
+            if (engine.getAbilityCount().getOrDefault(player.getUniqueId(), BaseArenaEngine.DEFAULT_MAP).getOrDefault(GameAbility.DOUBLE_JUMP, 0) <= 0)
                 return; // Player has no more double jumps
             if (delayExecutor.hasDelay(player, GameAbility.DOUBLE_JUMP)) return;
             int v = GameAbility.DOUBLE_JUMP.reduceAbility(engine.getAbilityCount().get(player.getUniqueId()));
@@ -102,7 +102,8 @@ public class DoubleJumpHandler implements Listener {
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
             player.setVelocity(arena.getExtension().getDoubleJumpSettings().getLaunchVelocity().getVector(player));
-            player.setAllowFlight(false);
+            if (!ArenaPlayer.adapt(player).isSpectating())
+                player.setAllowFlight(false);
             engine.addDoubleJumpItems(ArenaPlayer.adapt(player), false);
             if (arena.getExtension().getDoubleJumpSettings().getPlaySoundOnJump() != null)
                 player.playSound(player.getLocation(), arena.getExtension().getDoubleJumpSettings().getPlaySoundOnJump(), 1, 1);
@@ -112,6 +113,8 @@ public class DoubleJumpHandler implements Listener {
                     if (arenaPlayer.getState() == ArenaPlayerState.IN_GAME) {
                         p.getPlayer().setAllowFlight(true);
                         engine.addDoubleJumpItems(arenaPlayer, true);
+                    } else if (arenaPlayer.isSpectating()) {
+                        p.getPlayer().setAllowFlight(true);
                     }
                 }
             }));

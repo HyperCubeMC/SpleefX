@@ -81,6 +81,10 @@ public class ReflectiveProtocolNMS implements ProtocolNMS {
     public void createExplosion(Location location, ExplosionSettings settings) {
     }
 
+    @Override
+    public void displayActionBar(Player player, String text) {
+    }
+
     // @formatter:off
     private static Method getHandle, serialize, sendPacket;
     private static Field playerConnection;

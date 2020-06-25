@@ -106,7 +106,7 @@ public class SignListener implements Listener {
         if (quitItem == null) return;
         if (quitItem.factory().create().isSimilar(event.getItem())) {
             if (!quitItem.give) return;
-            if (quitItem.leaveArena) player.getCurrentArena().getEngine().quit(player);
+            if (quitItem.leaveArena) player.getCurrentArena().getEngine().quit(player, true);
             Player pl = player.getPlayer();
             quitItem.runCommandsByPlayer.forEach(pl::performCommand);
             event.setCancelled(true);

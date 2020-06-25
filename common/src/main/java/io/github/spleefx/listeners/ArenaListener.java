@@ -68,7 +68,7 @@ public class ArenaListener implements Listener {
                 ArenaEngine engine = arena.getEngine();
                 if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
                     GameTeam ffa = arena.getGameTeams().get(0);
-                    engine.lose(p, ffa);
+                    engine.lose(p, ffa, false);
 //                    SpleefX.logger().info("FFA: Player lost due to death: " + p.getPlayer().getName());
                     if (engine.getAlive().size() == 1) {
                         ArenaPlayer winner = ArenaPlayer.adapt(engine.getAlive().get(0));
@@ -79,7 +79,7 @@ public class ArenaListener implements Listener {
                 } else {
                     GameTeam team1 = engine.getPlayerTeams().get(p);
 //                    SpleefX.logger().info("Teams: Player in team " + team1.getColor() + " lost due to death: " + p.getPlayer().getName());
-                    engine.lose(p, team1);
+                    engine.lose(p, team1, false);
                     if (team1.getAlive().size() == 0) {
                         engine.getPlayerTeams().keySet().forEach(e -> MessageKey.TEAM_ELIMINATED.send(e.getPlayer(), arena, team1.getColor(), null, null, null, null, -1, arena.getExtension()));
 //                        SpleefX.logger().info("Teams: Team " + team1.getColor() + " eliminated");

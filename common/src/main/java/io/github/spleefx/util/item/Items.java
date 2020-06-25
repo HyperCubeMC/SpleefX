@@ -110,6 +110,12 @@ public class Items {
             .setLore("&aShould snow melt around players when they are not moving")
             .create();
 
+    public static final ItemStack DESTROYABLE = ItemFactory.create(Material.ANVIL)
+            .setName("&eAll blocks destroyable by default")
+            .setLore("&aWhether are all blocks destroyable by default.", "", "&7If &aenabled&7, blocks in /splegg materials will be ",
+                    "&enon-destroyable&7.", "", "&7If &cdisabled&7, blocks in /splegg materials will be", "&edestroyable", "", "&a/splegg materials")
+            .create();
+
     public static final ItemStack DROP_MINED_BLOCKS = ItemFactory.create(Material.BRICK)
             .setName("&eDrop mined blocks")
             .setLore("&aShould mined blocks have their standard drops dropped")
