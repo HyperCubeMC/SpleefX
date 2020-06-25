@@ -91,6 +91,12 @@ public class ProtocolNMSImpl implements ProtocolNMS {
         }
     }
 
+    @Override
+    public void displayActionBar(Player player, String text) {
+        EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+        nmsPlayer.playerConnection.sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a(String.format(TITLE_TEXT, Chat.colorize(text))), ChatMessageType.GAME_INFO));
+    }
+
     public void doExplosionB(Location location, ExplosionSettings settings, Explosion explosion, WorldServer world) {
         double posX = location.getX();
         double posY = location.getY();

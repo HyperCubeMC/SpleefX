@@ -20,13 +20,16 @@ import io.github.spleefx.compatibility.material.MaterialCompatibility;
 import io.github.spleefx.util.code.MapBuilder;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Trident;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class MaterialCompatibilityImpl implements MaterialCompatibility {
 
@@ -51,6 +54,25 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
     @Override
     public ItemStack wool(DyeColor color) {
         return new ItemStack(Objects.requireNonNull(Material.matchMaterial(color.name() + "_WOOL")));
+    }
+
+    /**
+     * Creates a skull of the specified player
+     *
+     * @param owner Owner of the skull
+     * @return The ItemStack representing this skull
+     */
+    @Override
+    public CompletableFuture<ItemStack> skull(OfflinePlayer owner) {
+        CompletableFuture<ItemStack> future = new CompletableFuture<>();
+        HEAD.submit(() -> {
+            ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+            SkullMeta meta = (SkullMeta) skull.getItemMeta();
+            meta.setOwningPlayer(owner);
+            skull.setItemMeta(meta);
+            future.complete(skull);
+        });
+        return future;
     }
 
     /**

@@ -65,6 +65,12 @@ public class ProtocolNMSImpl implements ProtocolNMS {
     }
 
     @Override
+    public void displayActionBar(Player player, String text) {
+        EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+        nmsPlayer.playerConnection.sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a(String.format(TITLE_TEXT, Chat.colorize(text))), ACTION_BAR_ID));
+    }
+
+    @Override
     public void createExplosion(Location location, ExplosionSettings settings) {
         double x = location.getX();
         double y = location.getY();
@@ -93,7 +99,7 @@ public class ProtocolNMSImpl implements ProtocolNMS {
         double posY = location.getY();
         double posZ = location.getZ();
         Entity source = null;
-        float volume = source instanceof EntityTNTPrimed ? world.paperSpigotConfig.tntExplosionVolume : 4.0F;
+        float volume = 4.0F;
         world.makeSound(posX, posY, posZ, "random.explode", volume, (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
         if (settings.getPower() >= 2.0F && settings.breakBlocks()) {
             world.addParticle(EnumParticle.EXPLOSION_HUGE, posX, posY, posZ, 1.0D, 0.0D, 0.0D);
@@ -193,4 +199,11 @@ public class ProtocolNMSImpl implements ProtocolNMS {
 
     }
 
+    @Override public void hidePlayer(Player toHide, Player target) {
+        toHide.hidePlayer(target);
+    }
+
+    @Override public void showPlayer(Player toHide, Player target) {
+        toHide.showPlayer(target);
+    }
 }

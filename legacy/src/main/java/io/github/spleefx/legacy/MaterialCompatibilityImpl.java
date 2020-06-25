@@ -15,16 +15,20 @@
  */
 package io.github.spleefx.legacy;
 
+import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.material.MaterialCompatibility;
 import io.github.spleefx.util.code.MapBuilder;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class MaterialCompatibilityImpl implements MaterialCompatibility {
 
@@ -70,6 +74,31 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
     @Override
     public Map<String, Material> getCompatibilityMap() {
         return map;
+    }
+
+    /**
+     * Creates a skull of the specified player
+     *
+     * @param owner Owner of the skull
+     * @return The ItemStack representing this skull
+     */
+    @Override
+    public CompletableFuture<ItemStack> skull(OfflinePlayer owner) {
+        CompletableFuture<ItemStack> future = new CompletableFuture<>();
+        HEAD.submit(() -> {
+            ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, ((short) 3));
+            SkullMeta meta = (SkullMeta) skull.getItemMeta();
+            CompatibilityHandler.either(() -> {
+                meta.setOwningPlayer(owner);
+                return false;
+            }, () -> {
+                meta.setOwner(owner.getName());
+                return false;
+            });
+            skull.setItemMeta(meta);
+            future.complete(skull);
+        });
+        return future;
     }
 
     /**
