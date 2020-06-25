@@ -78,9 +78,10 @@ public class ScoreboardHolder {
                 .replace("{plural}", engine.countdown == 1 ? "" : "s");
         if (arena.getArenaType() == ArenaType.TEAMS && player != null) {
             GameTeam team = engine.getPlayerTeams().get(player);
-            message = message
-                    .replace("{team}", team.getColor().chat())
-                    .replace("{team_color}", team.getColor().getChatColor());
+            if (team != null)
+                message = message
+                        .replace("{team}", team.getColor().chat())
+                        .replace("{team_color}", team.getColor().getChatColor());
         }
         if (location != null) {
             message = message
