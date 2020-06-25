@@ -24,7 +24,10 @@ import io.github.spleefx.arena.SimpleArenaEngine;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.team.TeamColor;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 import org.moltenjson.adapter.GameArenaAdapter;
 import org.moltenjson.configuration.select.SelectKey;
 import org.moltenjson.configuration.select.SelectionHolder;
@@ -89,10 +92,17 @@ public class GameArena extends ArenaData {
     @Expose
     private boolean takeBets = false;
 
+    @Expose
+    @Getter
+    @Setter
+    @Nullable
+    private Location spectatingSpawnPoint;
+
     /**
      * The arena's extension mode
      */
     private GameExtension extension = new GameExtension();
+
 
     /**
      * Creates a new spleef arena

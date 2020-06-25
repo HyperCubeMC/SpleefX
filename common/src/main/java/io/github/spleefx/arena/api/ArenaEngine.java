@@ -17,7 +17,7 @@ package io.github.spleefx.arena.api;
 
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaStage;
-import io.github.spleefx.extension.GameExtension.ScoreboardEvent;
+import io.github.spleefx.extension.GameExtension.ScoreboardType;
 import io.github.spleefx.extension.ability.GameAbility;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.sign.SignManager;
@@ -67,7 +67,7 @@ public interface ArenaEngine {
      *
      * @param player Player to quit
      */
-    void quit(ArenaPlayer player);
+    void quit(ArenaPlayer player, boolean disconnect);
 
     /**
      * Invoked when the player loses
@@ -75,7 +75,7 @@ public interface ArenaEngine {
      * @param player Player to lose
      * @param team   The player's team
      */
-    void lose(ArenaPlayer player, GameTeam team);
+    void lose(ArenaPlayer player, GameTeam team, boolean disconnect);
 
     /**
      * Invoked when the player wins
@@ -150,7 +150,7 @@ public interface ArenaEngine {
      *
      * @param player Player to load for
      */
-    void load(ArenaPlayer player);
+    void load(ArenaPlayer player, boolean delayTick);
 
     /**
      * Displays the game scoreboard for the player
@@ -194,7 +194,7 @@ public interface ArenaEngine {
      */
     boolean isFull();
 
-    ScoreboardEvent getCurrentScoreboard();
+    ScoreboardType getCurrentScoreboard();
 
     List<Player> getAlive();
 

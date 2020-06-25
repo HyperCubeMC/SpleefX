@@ -1,0 +1,52 @@
+{
+  "spectatePlayerMenu": {
+    "title": "&2Spectate Players",
+    "playerHeadInfo": {
+      "displayName": "&e{player}",
+      "lore": [
+        "",
+        "&fHealth: &a{player_health} &7HP",
+        "&aClick to teleport!"
+      ]
+    }
+  },
+  "titleOnSpectate": {
+    "enabled": true,
+    "title": "&aSpectating {player}",
+    "subtitle": "&8Sneak to exit",
+    "fadeIn": 5,
+    "display": 30,
+    "fadeOut": 5
+  },
+  "spectatingActionBar": {
+    "enabled": true,
+    "text": "&1Spectating &e{player}"
+  },
+  "spectateItem": {
+    "type": "ender_portal_frame",
+    "count": 1,
+    "enchantments": [],
+    "displayName": "&aSpectate Players",
+    "lore": [
+      "",
+      "&eClick to spectate other players"
+    ],
+    "itemFlags": [],
+    "unbreakable": false,
+    "slot": 0
+  },
+  "exitSpectatingItem": {
+    "type": "iron_door",
+    "count": 1,
+    "enchantments": [],
+    "displayName": "&cExit Spectating",
+    "lore": [],
+    "itemFlags": [],
+    "unbreakable": false,
+    "slot": 8
+  },
+  "givePotionEffects": [
+    "NIGHT_VISION:10000:2",
+    "SPEED:10000:0"
+  ]
+}

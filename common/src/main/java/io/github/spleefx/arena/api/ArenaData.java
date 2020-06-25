@@ -15,14 +15,12 @@
  */
 package io.github.spleefx.arena.api;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaStage;
+import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.economy.booster.ActiveBoosterLoader;
 import io.github.spleefx.extension.ExtensionTitle;
 import io.github.spleefx.extension.ExtensionsManager;
@@ -37,6 +35,7 @@ import io.github.spleefx.util.Percentage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -86,9 +85,21 @@ public abstract class ArenaData {
             .deserialization(element -> element.getAsJsonObject().entrySet().stream().collect(Collectors.toMap(entry -> GameEvent.valueOf(entry.getKey().toUpperCase()), entry -> AdapterBuilder.standard(entry.getValue(), ExtensionTitle.class), (a, b) -> b)));
 
     private static final JsonDeserializer<GameExtension> EXTENSION_ADAPTER = (json, typeOfT, context) -> {
-        GameExtension mode = AdapterBuilder.standard(json, typeOfT);
-        if (ExtensionsManager.mapExtension(mode.getKey(), mode))
-            SpleefX.logger().info("Extension \"" + mode.getKey() + "\" successfully loaded!");
+        GameExtension mode = null;
+        JsonObject o = json.getAsJsonObject();
+        try {
+            mode = AdapterBuilder.standard(json, typeOfT);
+            if (ExtensionsManager.mapExtension(mode.getKey(), mode))
+                SpleefX.logger().info("Extension \"" + mode.getKey() + "\" successfully loaded!");
+        } catch (Exception e) {
+            SpleefX.logger().severe("Failed to load extension \"" + o.get("key").getAsString() + "\".");
+            SpleefX.logger().severe("If the error below is a JsonSyntaxException, then it's most likely a problem in your JSON syntax. If you're unable to spot the problem, or if it's not a JsonSyntaxException,");
+            SpleefX.logger().severe("then drop by the Discord (on SpigotMC page) and ask for support. MAKE SURE TO INCLUDE THE ERROR BELOW!");
+            e.printStackTrace();
+            CompatibilityHandler.disable();
+            Bukkit.getPluginManager().disablePlugin(SpleefX.getPlugin());
+
+        }
         return mode;
     };
 
