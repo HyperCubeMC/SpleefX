@@ -22,7 +22,6 @@ import io.github.spleefx.message.MessageKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.permissions.Permission;
 
 import java.util.Collections;
@@ -55,8 +54,7 @@ public class MessagesSubcommand extends PluginSubcommand {
             MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(), null, -1, null);
             return true;
         }
-        Inventory i = new MessageGUI(MessageCategory.VALUES[0]).createInventory();
-        ((HumanEntity) sender).openInventory(i);
+        new MessageGUI(MessageCategory.VALUES[0]).display((HumanEntity) sender);
         return true;
     }
 }

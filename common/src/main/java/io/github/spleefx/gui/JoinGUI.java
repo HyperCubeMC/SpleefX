@@ -52,7 +52,7 @@ public class JoinGUI extends GameMenu {
                 .filter(a -> a.getExtension().getKey().equals(extension.getKey()))
                 .filter(a -> menu.stagesToDisplay.contains(a.getEngine().getArenaStage()))
                 .forEach(a -> createButton(menu, a, slot));
-        player.openInventory(createInventory());
+        display(player);
     }
 
     private void createButton(MenuSettings menu, GameArena arena, AtomicInteger slot) {

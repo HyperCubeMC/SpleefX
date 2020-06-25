@@ -72,9 +72,4 @@ public class Button {
         return onClick;
     }
 
-    public static Consumer<InventoryClickEvent> createRedirect(GameMenu menu) {
-        if (menu == null) return CLOSE_INVENTORY;
-        return event -> event.getWhoClicked().openInventory(menu.createInventory());
-    }
-
 }

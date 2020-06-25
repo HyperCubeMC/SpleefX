@@ -18,7 +18,7 @@ package io.github.spleefx.gui;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.arena.spleef.SpleefArena;
-import io.github.spleefx.extension.standard.spleef.SpleefExtension;
+import io.github.spleefx.arena.splegg.SpleggArena;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.team.TeamColor;
 import io.github.spleefx.util.game.Chat;
@@ -78,8 +78,11 @@ public class ArenaSettingsGUI extends GameMenu {
         createNumberButtons(2, arena.getMinimum(), 30, 48, arena::setMinimum, new Button(39, Items.MINIMUM));
 
         createBooleanButtons(arena.isDropMinedBlocks(), 42, arena::setDropMinedBlocks, new Button(33, Items.DROP_MINED_BLOCKS));
-        if (arena.getExtension() instanceof SpleefExtension)
+        if (arena instanceof SpleefArena)
             createBooleanButtons(((SpleefArena) arena).isMelt(), 43, ((SpleefArena) arena)::setMelt, new Button(34, Items.MELTING));
+        else if (arena instanceof SpleggArena)
+            createBooleanButtons(((SpleggArena) arena).isDestroyableByDefault(), 43, ((SpleggArena) arena)::setDestroyableByDefault,
+                    new Button(34, Items.DESTROYABLE));
 
         createNumberButtons(1, arena.getBet(), 31, 49, arena::setBet, new Button(40, Items.BET_INT));
         createBooleanButtons(arena.shouldTakeBets(), 44, arena::setTakeBets, new Button(35, Items.BET_BOOL));
@@ -100,9 +103,7 @@ public class ArenaSettingsGUI extends GameMenu {
                         i - 2 + 9, (n) -> team(n, arena, team), new Button(i - 2, team.getGuiItem()));
             }
         }
-        Inventory inventory = createInventory();
-
-        sender.openInventory(inventory);
+        display(sender);
     }
 
     private void createNumberButtons(int minimum, int orig, int slotInc, int slotDec, Consumer<Integer> valueChange, Button itemButton) {

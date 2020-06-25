@@ -94,7 +94,7 @@ public class BoosterMenu extends GameMenu {
 
     private static final Map<IntPredicate, Integer> SLOT_SIZE = new HashMap<>();
 
-    private static int getAppropriateSize(int size) {
+    public static int getAppropriateSize(int size) {
         return SLOT_SIZE.entrySet().stream().filter(e -> e.getKey().test(size)).findFirst().map(Entry::getValue).orElse(6);
     }
 

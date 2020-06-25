@@ -43,10 +43,12 @@ public class PerksSubcommand extends PluginSubcommand {
      */
     @Override
     public boolean handle(Command command, CommandSender sender, String[] args) {
-        if (!(sender instanceof Player))
+        if (!(sender instanceof Player)) {
             MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(), null, -1, null);
+            return true;
+        }
         Player player = ((Player) sender);
-        player.openInventory(new ShopMenu(SpleefX.getPerkShop()).createInventory());
+        new ShopMenu(SpleefX.getPerkShop()).display(player);
         return true;
     }
 }

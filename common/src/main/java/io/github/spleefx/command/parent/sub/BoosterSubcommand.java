@@ -63,7 +63,7 @@ public class BoosterSubcommand extends PluginSubcommand {
                 return false;
             }
             Player p = (Player) sender;
-            p.openInventory(new BoosterMenu(new ArrayList<>(SpleefX.getPlugin().getDataProvider().getStatistics(p).getBoosters().values())).createInventory());
+            new BoosterMenu(new ArrayList<>(SpleefX.getPlugin().getDataProvider().getStatistics(p).getBoosters().values())).display(p);
             return true;
         }
         if (args.length < 3) {

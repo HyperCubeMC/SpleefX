@@ -77,14 +77,10 @@ public class MessageGUI extends GameMenu {
         }
         if (category.ordinal() > 0)
             setButton(new Button(27, Items.PREVIOUS_PAGE)
-                    .addAction(event -> {
-                        Inventory i = new MessageGUI(MessageCategory.VALUES[category.ordinal() - 1]).createInventory();
-                        event.getWhoClicked().openInventory(i);
-                    }));
+                    .addAction(event -> new MessageGUI(MessageCategory.VALUES[category.ordinal() - 1]).display(event.getWhoClicked())));
         if (category.ordinal() != MessageCategory.VALUES.length - 1) // If it is not last page
             setButton(new Button(35, Items.NEXT_PAGE).addAction(event -> {
-                Inventory i = new MessageGUI(MessageCategory.VALUES[category.ordinal() + 1]).createInventory();
-                event.getWhoClicked().openInventory(i);
+                new MessageGUI(MessageCategory.VALUES[category.ordinal() + 1]).display(event.getWhoClicked());
             }));
     }
 

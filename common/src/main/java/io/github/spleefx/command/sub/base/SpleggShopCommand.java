@@ -49,7 +49,7 @@ public class SpleggShopCommand extends PluginSubcommand {
             return true;
         }
         Player pl = ((Player) sender);
-        pl.openInventory(new SpleggShop.SpleggMenu(EXTENSION.getSpleggShop(), pl).createInventory());
+        new SpleggShop.SpleggMenu(EXTENSION.getSpleggShop(), pl).display(pl);
         return true;
     }
 }
