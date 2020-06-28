@@ -17,6 +17,7 @@ package io.github.spleefx.spectate;
 
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
+import io.github.spleefx.event.ability.PlayerDoubleJumpEvent;
 import io.github.spleefx.util.plugin.Protocol;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -28,10 +29,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -92,6 +93,25 @@ public class SpectatingListener implements Listener {
         getSpectatorSettings().getSpectatingActionBar().display(event.getSpectator(), event.getTarget());
     }
 
+    @EventHandler(ignoreCancelled = true) public void onPlayerDoubleJump(PlayerDoubleJumpEvent event) {
+        if (isSpectating(event.getPlayer())) {
+            event.setCancelled(true);
+            event.getPlayer().setAllowFlight(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true) public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+        if (isSpectating(event.getPlayer())) event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true) public void onPlayerBucketFill(PlayerBucketFillEvent event) {
+        if (isSpectating(event.getPlayer())) event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true) public void onPlayerDropItem(PlayerDropItemEvent event) {
+        if (isSpectating(event.getPlayer())) event.setCancelled(true);
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (Protocol.PROTOCOL == 8) return; // 1.8.x
@@ -112,4 +132,19 @@ public class SpectatingListener implements Listener {
     public static boolean isSpectating(Entity entity) {
         return entity instanceof Player && ArenaPlayer.adapt((Player) entity).isSpectating();
     }
+
+    public static class PickupListener implements Listener {
+
+        @EventHandler(ignoreCancelled = true)
+        public void onPlayerPickupArrow(PlayerPickupArrowEvent event) {
+            if (isSpectating(event.getPlayer())) event.setCancelled(true);
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onEntityPickupItem(EntityPickupItemEvent event) {
+            if (isSpectating(event.getEntity())) event.setCancelled(true);
+        }
+
+    }
+
 }

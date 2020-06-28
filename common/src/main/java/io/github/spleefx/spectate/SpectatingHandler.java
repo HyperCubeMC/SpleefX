@@ -21,6 +21,7 @@ import io.github.spleefx.compatibility.CompatibilityHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -29,6 +30,7 @@ import static io.github.spleefx.SpleefX.getSpectatorSettings;
 public class SpectatingHandler {
 
     private static final PotionEffect INVISIBILITY = new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 2);
+    private static final ItemStack[] ARMOR = new ItemStack[4];
 
     public void putSpectationMode(Player sp) {
         ArenaPlayer player = ArenaPlayer.adapt(sp);
@@ -39,6 +41,7 @@ public class SpectatingHandler {
         sp.setFlying(true);
         sp.setGameMode(GameMode.SURVIVAL);
         sp.getInventory().clear();
+        sp.getInventory().setArmorContents(ARMOR);
         getSpectatorSettings().getSpectateItem().give(sp);
         getSpectatorSettings().getExitSpectatingItem().give(sp);
         sp.setHealth(20);

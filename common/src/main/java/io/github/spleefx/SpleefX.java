@@ -43,10 +43,8 @@ import io.github.spleefx.perk.GamePerk;
 import io.github.spleefx.perk.PerkShop;
 import io.github.spleefx.scoreboard.ScoreboardListener;
 import io.github.spleefx.scoreboard.sidebar.ScoreboardTicker;
-import io.github.spleefx.spectate.ProtocolLibSpectatorAdapter;
-import io.github.spleefx.spectate.SpectatingHandler;
-import io.github.spleefx.spectate.SpectatingListener;
-import io.github.spleefx.spectate.SpectatorSettings;
+import io.github.spleefx.spectate.*;
+import io.github.spleefx.spectate.SpectatingListener.PickupListener;
 import io.github.spleefx.util.io.CopyStore;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.menu.GameMenu;
@@ -74,11 +72,7 @@ import org.moltenjson.configuration.tree.TreeConfigurationBuilder;
 import org.moltenjson.json.JsonFile;
 import org.moltenjson.utils.AdapterBuilder;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -314,6 +308,9 @@ public final class SpleefX extends JavaPlugin implements Listener {
             p.registerEvents(new SpleggListener(this), this);
             p.registerEvents(new MenuListener(), this);
             p.registerEvents(new SpectatingListener(), this);
+            p.registerEvents(new JoinWarningListener(), this);
+            if (Protocol.PROTOCOL != 8)
+                p.registerEvents(new PickupListener(), this);
 
             if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
                 p.registerEvents(new ArenaListener.WGListener(this), this);
@@ -393,7 +390,11 @@ public final class SpleefX extends JavaPlugin implements Listener {
         } catch (Exception e) {
             try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
                 e.printStackTrace(pw);
-                Files.write(fileManager.createFile("crash.log").toPath(), sw.toString().getBytes());
+                File crashLog = new File(getDataFolder(), "crash.log");
+                if (!crashLog.exists()) crashLog.createNewFile();
+                FileWriter writer = new FileWriter(crashLog, false);
+                writer.write(sw.toString());
+                writer.close();
             } catch (IOException ioe) {
                 throw new IllegalStateException(ioe);
             }

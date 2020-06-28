@@ -375,6 +375,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (team != null && team.getAlive() != null)
             team.getAlive().remove(player.getPlayer());
         alive.remove(player.getPlayer());
+        Objects.requireNonNull(team);
         if (arena.getArenaType() == ArenaType.TEAMS)
             playerTeams.keySet().forEach((pz) -> MessageKey.PLAYER_LOST_T.send(pz.getPlayer(), arena, team.getColor(), null, player.getPlayer(), null, null, -1, arena.getExtension()));
         else

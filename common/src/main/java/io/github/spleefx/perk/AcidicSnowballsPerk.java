@@ -103,7 +103,6 @@ public class AcidicSnowballsPerk extends GamePerk implements Listener {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof Projectile)) return;
         Projectile projectile = event.getEntity();
         if (!projectile.hasMetadata(METADATA)) return;
         ArenaPlayer shooter = Metas.get(projectile, METADATA);
