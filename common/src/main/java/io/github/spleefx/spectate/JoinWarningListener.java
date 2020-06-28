@@ -19,11 +19,9 @@ public class JoinWarningListener implements Listener {
 
     private Set<UUID> warned = Collections.synchronizedSet(new HashSet<>());
 
-    private static final ChatComponent WARNING = new ChatComponent().setText(("&b&lNote: &7While it has been heavily tested, ironed and polished, spectating is still in beta and may still contain certain bugs" +
-            " that may have consequences (such as inventory loss, etc). It's &c&lHIGHLY " +
-            "&7recommended that you test this version on a local server before using it in production. Should any bugs arise, downgrade to the before-lastest and send us a report over on").replace(" ", " &7"), true);
+    private static final ChatComponent WARNING = new ChatComponent().setText(("&b&lNote: &7Spectating is still in &e&lBETA&7. While it should work fine, it is recommended that you try it on a local server in case of any unreported bugs. Should any bugs arise, report them over on").replace(" ", " &7"), true);
 
-    private static final ChatComponent DISCORD = new ChatComponent().setText("&9&lDISCORD", false)
+    private static final ChatComponent DISCORD = new ChatComponent().setText("&9&lDISCORD&7.", false)
             .setClickAction(ClickEvent.OPEN_URL, "https://discord.gg/uwf72ZN")
             .setHoverAction(HoverEvent.SHOW_TEXT, "Click to prompt the Discord server");
 
