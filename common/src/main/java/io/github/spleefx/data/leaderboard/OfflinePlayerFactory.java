@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  */
 public interface OfflinePlayerFactory {
 
-    OfflinePlayerFactory FACTORY = CompatibilityHandler.create(Protocol.VERSION + "OfflinePlayerFactoryImpl", () -> null);
+    OfflinePlayerFactory FACTORY = CompatibilityHandler.create(Protocol.VERSION + ".OfflinePlayerFactoryImpl", () -> null);
 
     /**
      * The Mojang endpoint
@@ -105,5 +105,7 @@ public interface OfflinePlayerFactory {
             return UUID.fromString(STRIPPED_UUID_PATTERN.matcher(uuid).replaceAll("$1-$2-$3-$4-$5"));
         }
     }
+
+
 
 }

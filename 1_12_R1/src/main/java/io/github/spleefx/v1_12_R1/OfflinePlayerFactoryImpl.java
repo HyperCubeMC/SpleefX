@@ -34,6 +34,7 @@ public class OfflinePlayerFactoryImpl implements OfflinePlayerFactory {
 
     @Override
     public CompletableFuture<OfflinePlayer> requestPlayer(UUID uuid) {
+        if (!Bukkit.getOnlineMode()) return CompletableFuture.completedFuture(Bukkit.getOfflinePlayer(uuid));
         CompletableFuture<OfflinePlayer> future = new CompletableFuture<>();
         THREAD_POOL.submit(() -> {
             try {
@@ -58,7 +59,7 @@ public class OfflinePlayerFactoryImpl implements OfflinePlayerFactory {
 
                     future.complete(player);
                 } else {
-                    future.completeExceptionally(new IllegalStateException(con.getResponseMessage()));
+                    future.complete(((CraftServer) Bukkit.getServer()).getOfflinePlayer(new GameProfile(uuid, "InvalidName")));
                 }
             } catch (Throwable e) {
                 future.completeExceptionally(e);

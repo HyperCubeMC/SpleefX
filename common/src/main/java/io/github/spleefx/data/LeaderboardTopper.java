@@ -15,11 +15,12 @@
  */
 package io.github.spleefx.data;
 
-import org.bukkit.Bukkit;
+import io.github.spleefx.data.leaderboard.OfflinePlayerFactory;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents a leaderboard topper
@@ -36,8 +37,9 @@ public class LeaderboardTopper {
         this.count = count;
     }
 
-    public OfflinePlayer getPlayer() {
-        return playerOff == null ? playerOff = Bukkit.getOfflinePlayer(player) : playerOff;
+    public CompletableFuture<OfflinePlayer> getPlayer() {
+        return playerOff == null ? OfflinePlayerFactory.FACTORY.getOrRequest(player).thenApply(p -> playerOff = p)
+                : CompletableFuture.completedFuture(playerOff);
     }
 
     public int getCount() {

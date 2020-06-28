@@ -35,6 +35,7 @@ public class OfflinePlayerFactoryImpl implements OfflinePlayerFactory {
 
     @Override
     public CompletableFuture<OfflinePlayer> requestPlayer(UUID uuid) {
+        if (!Bukkit.getOnlineMode()) return CompletableFuture.completedFuture(Bukkit.getOfflinePlayer(uuid));
         CompletableFuture<OfflinePlayer> future = new CompletableFuture<>();
         THREAD_POOL.submit(() -> {
             try {

@@ -21,7 +21,6 @@ import io.github.spleefx.data.LeaderboardTopper;
 import io.github.spleefx.data.PlayerStatistic;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.util.code.Printable;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.plugin.PluginSettings;
 import lombok.AllArgsConstructor;
@@ -29,10 +28,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * PlaceholderAPI expansion for SpleefX
@@ -96,14 +93,13 @@ public class SpleefXPAPI extends PlaceholderExpansion {
             } catch (IndexOutOfBoundsException e) {
                 topper = toppers.get(toppers.size() - 1);
             }
-            if (topper != null)
-                Printable.print("With UUID: " + topper.getPlayer().getUniqueId() + " (name: " + topper.getPlayer().getName() + ")");
-            else return "Invalid player";
-            if (!topper.getPlayer().hasPlayedBefore())
-                return "Invalid player";
+            CompletableFuture<OfflinePlayer> playerFuture = topper.getPlayer();
+            if (!playerFuture.isDone())
+                return "Player not cached yet";
+            OfflinePlayer lbPlayer = playerFuture.join();
             switch (request) {
                 case "name":
-                    return topper.getPlayer().getName();
+                    return lbPlayer.getName();
                 case "pos":
                     return format(pos);
                 case "stat":
@@ -115,7 +111,7 @@ public class SpleefXPAPI extends PlaceholderExpansion {
                 case "format": {
                     String format = PluginSettings.LEADERBOARDS_FORMAT.get();
                     return Chat.colorize(format)
-                            .replace("{player}", topper.getPlayer().getName())
+                            .replace("{player}", Objects.requireNonNull(lbPlayer.getName(), "Player name is null!"))
                             .replace("{pos}", format(pos))
                             .replace("{score}", format(topper.getCount()));
                 }

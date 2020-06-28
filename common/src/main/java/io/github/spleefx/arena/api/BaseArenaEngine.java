@@ -395,10 +395,16 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         Player player = p.getPlayer();
         getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
-            playerTeams.keySet().forEach(e -> arena.getExtension().getGameTitles().get(GameEvent.WIN).display(e.getPlayer(), player.getName()));
+            playerTeams.keySet().forEach(e -> {
+                arena.getExtension().getGameTitles().get(GameEvent.WIN).display(e.getPlayer(), player.getName());
+                MessageKey.PLAYER_WINS_FFA.send(e.getPlayer(), arena, team.getColor(), null, p.getPlayer(), null, null, -1, arena.getExtension());
+            });
             dead.add(p);
         } else {
-            playerTeams.keySet().forEach(e -> arena.getExtension().getGameTitles().get(GameEvent.WIN).display(e.getPlayer(), team.getColor().chat()));
+            playerTeams.keySet().forEach(e -> {
+                arena.getExtension().getGameTitles().get(GameEvent.WIN).display(e.getPlayer(), team.getColor().chat());
+                MessageKey.PLAYER_WINS_T.send(e.getPlayer(), arena, team.getColor(), null, p.getPlayer(), null, null, -1, arena.getExtension());
+            });
             deadTeams.add(team);
         }
         load(p, true);

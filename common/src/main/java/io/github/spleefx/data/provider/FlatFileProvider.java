@@ -196,13 +196,14 @@ public class FlatFileProvider implements DataProvider {
             throw new IllegalStateException("Leaderboards are not enabled! Enable them in the config.yml.");
         if (!MessageKey.PAPI)
             throw new IllegalStateException("PlaceholderAPI is not found! Get PlaceholderAPI for leaderboards to work.");
-        if (extension == null) try {
-            return new ArrayList<>(TOP.get(statistic));
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("The plugin hasn't started loading leaderboards data yet! Please wait. If this occured even after 5 seconds of loading the plugin, report (all of) the errors above. Otherwise, ignore it and wait!");
-        }
-        else
+        if (extension == null) {
+            try {
+                return new ArrayList<>(TOP.get(statistic));
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                throw new IllegalStateException("The plugin hasn't started loading leaderboards data yet! Please wait. If this occured even after 5 seconds of loading the plugin, report (all of) the errors above. Otherwise, ignore it and wait!");
+            }
+        } else
             return new ArrayList<>(TOP_BY_EXTENSION.get(statistic).get(extension));
     }
 
