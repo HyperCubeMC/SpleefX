@@ -90,6 +90,7 @@ public class CommandSpleefX implements TabExecutor {
                 new MessagesSubcommand(),
                 new BalanceSubcommand(),
                 new DebugSubcommand(),
+                new DiscordSubcommand(),
                 new CoinsSubcommand(),
                 new ReloadSubcommand());
     }
