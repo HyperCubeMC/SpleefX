@@ -19,7 +19,7 @@ import static io.github.spleefx.util.PlaceholderUtil.PlaceholderFiller.p;
 public class PlaceholderUtil {
 
     private static final boolean PAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
-    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+    public static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     /**
      * Placeholder filler for offline players

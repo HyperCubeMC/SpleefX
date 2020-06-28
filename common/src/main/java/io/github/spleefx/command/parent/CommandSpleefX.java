@@ -89,6 +89,7 @@ public class CommandSpleefX implements TabExecutor {
                 new HelpSubcommand(CommandManager.SPLEEFX),
                 new MessagesSubcommand(),
                 new BalanceSubcommand(),
+                new DebugSubcommand(),
                 new CoinsSubcommand(),
                 new ReloadSubcommand());
     }

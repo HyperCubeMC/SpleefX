@@ -30,8 +30,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import static io.github.spleefx.util.plugin.Protocol.getCraftBukkitClass;
-import static io.github.spleefx.util.plugin.Protocol.getProtocolClass;
+import static io.github.spleefx.util.plugin.Protocol.*;
 
 @SuppressWarnings("unchecked")
 public class ReflectiveProtocolNMS implements ProtocolNMS {
@@ -88,18 +87,19 @@ public class ReflectiveProtocolNMS implements ProtocolNMS {
     // @formatter:off
     private static Method getHandle, serialize, sendPacket;
     private static Field playerConnection;
-    private static Constructor packetTitle, packetLength;
-    private static Enum titleEnum, subtitleEnum, resetEnum;
-    private static Constructor packetPlayOutChat;
+    private static Constructor<?> packetTitle, packetLength;
+    private static Enum<?> titleEnum, subtitleEnum, resetEnum;
+    private static Constructor<?> packetPlayOutChat;
     //@formatter:on
 
-    static {
+    public ReflectiveProtocolNMS() {
+        if (PROTOCOL == 16) return;
         try {
             getHandle = Reflect.method(getCraftBukkitClass("entity.CraftPlayer"), "getHandle");
             serialize = Reflect.method(getProtocolClass("IChatBaseComponent$ChatSerializer"), "a", String.class);
             sendPacket = Reflect.method(getProtocolClass("PlayerConnection"), "sendPacket", getProtocolClass("Packet"));
             playerConnection = getProtocolClass("EntityPlayer").getDeclaredField("playerConnection");
-            Class packetPlayOutTitle = getProtocolClass("PacketPlayOutTitle");
+            Class<?> packetPlayOutTitle = getProtocolClass("PacketPlayOutTitle");
             Class enumTitleAction = getProtocolClass("PacketPlayOutTitle$EnumTitleAction");
             packetTitle = packetPlayOutTitle.getDeclaredConstructor(enumTitleAction, getProtocolClass("IChatBaseComponent"));
             packetLength = packetPlayOutTitle.getDeclaredConstructor(int.class, int.class, int.class);

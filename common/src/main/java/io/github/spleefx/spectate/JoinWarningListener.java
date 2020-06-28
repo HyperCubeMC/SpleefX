@@ -1,5 +1,6 @@
 package io.github.spleefx.spectate;
 
+import io.github.spleefx.SpleefX;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.chat.ChatComponent;
 import io.github.spleefx.compatibility.chat.ChatEvents.ClickEvent;
@@ -28,11 +29,16 @@ public class JoinWarningListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (!event.getPlayer().isOp()) return;
+        if (!SpleefX.getSpectatorSettings().isSendWarningOnStart()) return;
         if (warned.add(event.getPlayer().getUniqueId())) {
             ComponentJSON jsonMessage = new ComponentJSON();
             jsonMessage.append(WARNING).space().append(DISCORD);
             CompatibilityHandler.getProtocol().send(jsonMessage, event.getPlayer());
             Chat.plugin(event.getPlayer(), "&cYou have been warned!");
+            jsonMessage.clear().append(new ChatComponent().setText("&e&lClick here to disable this warning message".replace(" ", "&e&l"), true)
+                    .setClickAction(ClickEvent.RUN_COMMAND, "/spleefx debug disablespectatingwarningmessage")
+                    .setHoverAction(HoverEvent.SHOW_TEXT, "Click to disable."));
+            CompatibilityHandler.getProtocol().send(jsonMessage, event.getPlayer());
         }
     }
 }

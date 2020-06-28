@@ -5,6 +5,8 @@ import io.github.spleefx.extension.ActionBar;
 import io.github.spleefx.extension.ExtensionTitle;
 import io.github.spleefx.extension.SlotItemHolder;
 import io.github.spleefx.spectate.SpectatePlayerMenu.MenuData;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
@@ -45,6 +47,11 @@ public class SpectatorSettings {
 
     @Expose
     private List<PotionEffect> givePotionEffects = new ArrayList<>();
+
+    @Expose
+    @Getter
+    @Setter
+    private boolean sendWarningOnStart = true;
 
     public MenuData getSpectatePlayerMenu() {
         return spectatePlayerMenu;

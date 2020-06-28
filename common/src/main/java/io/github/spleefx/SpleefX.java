@@ -224,6 +224,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
             return;
         }
         try {
+            getLogger().info("Detected server version: " + Protocol.VERSION);
             compatibilityHandler = new CompatibilityHandler();
             arenaManager = new ArenaManager(this);
 

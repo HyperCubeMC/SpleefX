@@ -17,7 +17,9 @@ package org.moltenjson.json;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.moltenjson.utils.Gsons;
 import org.moltenjson.utils.JsonUtils;
 
@@ -79,7 +81,7 @@ public class JsonBuilder {
      * @return This builder instance
      */
     public JsonBuilder map(String key, Object value) {
-        jsonMap.put(key, value);
+        jsonMap.put(key, value == null ? JsonNull.INSTANCE : value);
         return this;
     }
 
@@ -196,7 +198,7 @@ public class JsonBuilder {
      * @param profile GSON profile to construct from
      * @return The mapped JSON string
      */
-    public String build(Gson profile) {
+    public String build(@NotNull Gson profile) {
         return profile.toJson(jsonMap);
     }
 

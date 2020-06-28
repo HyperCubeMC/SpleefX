@@ -74,7 +74,9 @@ public class SpleggArena extends GameArena {
     }
 
     public boolean canDestroy(Material material) {
-        return destroyableByDefault != materials.contains(material);
+        if (material == Material.TNT && SpleggExtension.EXTENSION.getExplodeTNTWhenHit().isEnabled())
+            return true;
+        return destroyableByDefault != getMaterials().contains(material);
     }
 
     class ClearTask extends GameTask {
