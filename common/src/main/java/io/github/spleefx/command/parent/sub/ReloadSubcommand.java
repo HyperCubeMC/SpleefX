@@ -24,6 +24,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,17 +34,18 @@ public class ReloadSubcommand extends PluginSubcommand {
 
     private static final Permission PERMISSION = new Permission("spleefx.admin.reload");
 
-    private static final List<String> TABS = Arrays.asList("config", "arenas", "statsFile", "joinGuiFile", "messagesFile");
+    private static final List<String> TABS = Arrays.asList("config", "arenas", "statsFile", "joinGuiFile", "messagesFile", "spectator");
 
     private static final List<String> HELP = Arrays.asList(
             "&ereload &aarenas &7- &dReload the arenas storage &c(Not recommended!)",
             "&ereload &aconfig &7- &dReload the config to update values",
             "&ereload &astatsFile &7- &dReload the statistics GUI file",
-            "&ereload &ajoinGuiFile &7- &dReload the join GUI file"
+            "&ereload &ajoinGuiFile &7- &dReload the join GUI file",
+            "&ereload &aspectator &7- &dReload the spectator settings file"
     );
 
     public ReloadSubcommand() {
-        super("reload", (c) -> PERMISSION, "Reloads the specified element", (c) -> "/spleefx reload <arenas | config | statsFile>");
+        super("reload", (c) -> PERMISSION, "Reloads the specified element", (c) -> "/spleefx reload <arenas | config | statsFile | spectator>");
         super.aliases = Collections.singletonList("rl");
         super.helpMenu = HELP;
     }
@@ -76,6 +78,9 @@ public class ReloadSubcommand extends PluginSubcommand {
                     return true;
                 case "messagesfile":
                     reloadMessagesFile(sender);
+                    return true;
+                case "spectator":
+                    reloadSpectatorSettings(sender);
                     return true;
                 case "arenas":
                     Chat.plugin(sender, "&cAre you sure you want to reload arenas? This is not recommended and may lead to unexpected behavior for running arenas (a restart should fix this).");
@@ -117,6 +122,18 @@ public class ReloadSubcommand extends PluginSubcommand {
     private void reloadStatsFile(CommandSender sender) {
         Chat.plugin(sender, "&eReloading statistics-gui.json...");
         SpleefX.getPlugin().getStatsFile().refresh();
+        Chat.plugin(sender, "&aFile reloaded!");
+    }
+
+    private void reloadSpectatorSettings(CommandSender sender) {
+        Chat.plugin(sender, "&eReloading spectator-settings.json...");
+        try {
+            SpleefX.getPlugin().getConfigurationPack().updateField("spectatorSettings");
+        } catch (IOException e) {
+            Chat.plugin(sender, "&cCould not reload: &e" + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
         Chat.plugin(sender, "&aFile reloaded!");
     }
 

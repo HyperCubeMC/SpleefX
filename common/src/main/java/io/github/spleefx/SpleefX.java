@@ -165,8 +165,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
     private static PerkShop perkShop = new PerkShop("&ePerk Shop", 3, new HashMap<>());
 
     @DeriveFrom("spectator-settings.json")
-    @Getter
-    private static SpectatorSettings spectatorMenu = new SpectatorSettings();
+    private static SpectatorSettings spectatorSettings = new SpectatorSettings();
 
     private final ConfigurationPack<SpleefX> configurationPack = new ConfigurationPack<>(this, getDataFolder(), ArenaData.GSON);
 
@@ -498,7 +497,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
     }
 
     public static SpectatorSettings getSpectatorSettings() {
-        return spectatorMenu;
+        return spectatorSettings;
     }
 
     @SuppressWarnings("RedundantTypeArguments")
