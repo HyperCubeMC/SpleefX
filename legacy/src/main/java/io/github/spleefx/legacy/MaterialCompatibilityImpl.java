@@ -42,6 +42,7 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
             .put(SNOWBALL, Material.SNOW_BALL)
             .put(SUNFLOWER, Material.DOUBLE_PLANT)
             .put(CAULDRON, Material.CAULDRON_ITEM)
+            .put(END_FRAME, Material.ENDER_PORTAL_FRAME)
             .build();
 
     /**
@@ -129,6 +130,7 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
                 .replace("GOLDEN_SHOVEL", "GOLD_SPADE")
                 .replace("GOLDEN_AXE", "GOLD_AXE")
                 .replace("GOLDEN_SWORD", "GOLD_SWORD")
+                .replace("ENDER_PORTAL_FRAME", "END_PORTAL_FRAME")
                 .replace("GOLDEN_PICKAXE", "GOLD_PICKAXE")
                 .replace("_SHOVEL", "_SPADE");
     }

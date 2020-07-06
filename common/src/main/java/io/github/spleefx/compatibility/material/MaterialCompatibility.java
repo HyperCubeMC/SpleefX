@@ -42,6 +42,7 @@ public interface MaterialCompatibility {
     String SNOWBALL = "snowball";
     String SUNFLOWER = "sunflower";
     String CAULDRON = "cauldron";
+    String END_FRAME = "end_portal_frame";
 
     /**
      * Returns the appropriate material that represents this wool color
