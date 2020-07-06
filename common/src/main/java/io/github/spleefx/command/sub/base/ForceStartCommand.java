@@ -58,7 +58,7 @@ public class ForceStartCommand extends PluginSubcommand {
             return true;
         }
         if (player.getCurrentArena().getEngine().getArenaStage() != ArenaStage.COUNTDOWN) {
-            Chat.prefix(sender, extension, "&cYou must be in an arena!");
+            Chat.prefix(sender, extension, "&cThe arena hasn't started countdown yet!");
             return true;
         }
         Chat.prefix(sender, extension, "&aForcibly starting arena!");
