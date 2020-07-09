@@ -1,5 +1,5 @@
 # This branch is no longer maintained!
-Check the **(rewrite)[https://github.com/SpleefX/SpleefX/tree/rewrite]** branch for the most active development.
+Check the **[https://github.com/SpleefX/SpleefX/tree/rewrite](rewrite)** branch for the most active development.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 # SpleefX
