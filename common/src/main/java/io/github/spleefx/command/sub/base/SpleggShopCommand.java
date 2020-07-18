@@ -17,7 +17,7 @@ package io.github.spleefx.command.sub.base;
 
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.standard.splegg.SpleggShop;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class SpleggShopCommand extends PluginSubcommand {
     @Override
     public boolean handle(Command command, CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(), null, -1, null);
+            Message.NOT_PLAYER.reply(sender, EXTENSION);
             return true;
         }
         Player pl = ((Player) sender);

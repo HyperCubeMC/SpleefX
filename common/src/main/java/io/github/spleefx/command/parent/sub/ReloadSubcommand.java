@@ -17,14 +17,13 @@ package io.github.spleefx.command.parent.sub;
 
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.PluginSubcommand;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -127,13 +126,7 @@ public class ReloadSubcommand extends PluginSubcommand {
 
     private void reloadSpectatorSettings(CommandSender sender) {
         Chat.plugin(sender, "&eReloading spectator-settings.json...");
-        try {
-            SpleefX.getPlugin().getConfigurationPack().updateField("spectatorSettings");
-        } catch (IOException e) {
-            Chat.plugin(sender, "&cCould not reload: &e" + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
+        SpleefX.getPlugin().getConfigurationPack().refresh();
         Chat.plugin(sender, "&aFile reloaded!");
     }
 
@@ -145,7 +138,7 @@ public class ReloadSubcommand extends PluginSubcommand {
 
     private void reloadMessagesFile(CommandSender sender) {
         Chat.plugin(sender, "&eReloading messages.json...");
-        MessageKey.load(true);
+        SpleefX.getPlugin().getMessageManager().load(true);
         Chat.plugin(sender, "&aFile reloaded!");
     }
 

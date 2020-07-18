@@ -15,8 +15,14 @@
  */
 package io.github.spleefx.util.plugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * A simple utility for dealing with protocol-specific code
@@ -105,4 +111,29 @@ public class Protocol {
         final String packageName = server.getClass().getPackage().getName();
         return packageName.substring(packageName.lastIndexOf('.') + 1);
     }
+
+    public static void broadcastPacket(Iterable<Player> players, PacketContainer packet) {
+        for (Player player : players) {
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * Sends a packet to the given player.
+     *
+     * @param player the player
+     * @param packet the packet
+     */
+    public static void sendPacket(@NotNull Player player, @NotNull PacketContainer packet) {
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

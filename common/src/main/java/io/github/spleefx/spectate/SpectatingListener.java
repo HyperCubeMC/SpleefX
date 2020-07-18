@@ -15,6 +15,7 @@
  */
 package io.github.spleefx.spectate;
 
+import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.event.ability.PlayerDoubleJumpEvent;
@@ -35,7 +36,9 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
+import static io.github.spleefx.SpleefX.getPlugin;
 import static io.github.spleefx.SpleefX.getSpectatorSettings;
 
 public class SpectatingListener implements Listener {
@@ -75,7 +78,9 @@ public class SpectatingListener implements Listener {
             ArenaPlayer arenaPlayer = ArenaPlayer.adapt(event.getPlayer());
             ItemStack item = event.getItem();
             if (item.isSimilar(getSpectatorSettings().getSpectateItem().factory().create())) {
-                new SpectatePlayerMenu(arenaPlayer.getCurrentArena()).display(event.getPlayer());
+                if (event.getPlayer().getGameMode() == GameMode.SPECTATOR)
+                    event.getPlayer().setSpectatorTarget(null);
+                new SpectatePlayerMenu(arenaPlayer.getCurrentArena(), false).display(event.getPlayer());
             } else if (item.isSimilar(getSpectatorSettings().getExitSpectatingItem().factory().create())) {
                 arenaPlayer.getCurrentArena().getEngine().quit(arenaPlayer, false);
             }
@@ -88,15 +93,24 @@ public class SpectatingListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerSpectateAnother(PlayerSpectateAnotherEvent event) {
-        getSpectatorSettings().getTitleOnSpectate().display(event.getSpectator(), event.getTarget());
-        getSpectatorSettings().getSpectatingActionBar().display(event.getSpectator(), event.getTarget());
+    public void onPlayerSpectateAnother(@NotNull PlayerSpectateAnotherEvent event) {
+        if (getSpectatorSettings().enabled) {
+            getSpectatorSettings().getTitleOnSpectate().display(event.getSpectator(), event.getTarget());
+            getSpectatorSettings().getSpectatingActionBar().display(event.getSpectator(), event.getTarget());
+        } else {
+            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
+                ArenaPlayer arenaPlayer = ArenaPlayer.adapt(event.getSpectator());
+                arenaPlayer.getCurrentArena().getEngine().quit(arenaPlayer, false);
+            }, 1);
+        }
     }
 
-    @EventHandler(ignoreCancelled = true) public void onPlayerDoubleJump(PlayerDoubleJumpEvent event) {
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDoubleJump(@NotNull PlayerDoubleJumpEvent event) {
         if (isSpectating(event.getPlayer())) {
             event.setCancelled(true);
             event.getPlayer().setAllowFlight(true);
+            event.getPlayer().setFlying(true);
         }
     }
 
@@ -130,7 +144,7 @@ public class SpectatingListener implements Listener {
     }
 
     public static boolean isSpectating(Entity entity) {
-        return entity instanceof Player && ArenaPlayer.adapt((Player) entity).isSpectating();
+        return getSpectatorSettings().enabled && entity instanceof Player && ArenaPlayer.adapt((Player) entity).isSpectating();
     }
 
     public static class PickupListener implements Listener {

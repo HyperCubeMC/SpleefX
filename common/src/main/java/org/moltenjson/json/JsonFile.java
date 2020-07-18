@@ -57,7 +57,7 @@ public class JsonFile {
      */
     public JsonFile(File file, boolean createIfNotExist) throws IOException {
         this.file = file;
-        this.path = file.getPath();
+        path = file.getPath();
         prepare(createIfNotExist);
     }
 
@@ -71,8 +71,8 @@ public class JsonFile {
      * @throws IOException I/O exceptions whilst connecting to the file.
      */
     public JsonFile(File parent, String child, boolean createIfNotExist) throws IOException {
-        this.file = new File(parent, child);
-        this.path = file.getPath();
+        file = new File(parent, child);
+        path = file.getPath();
         prepare(createIfNotExist);
     }
 
@@ -85,8 +85,8 @@ public class JsonFile {
      * @throws IOException I/O exceptions while connecting to the file
      */
     public JsonFile(String parent, String child, boolean createIfNotExist) throws IOException {
-        this.file = new File(parent, child);
-        this.path = file.getPath();
+        file = new File(parent, child);
+        path = file.getPath();
         prepare(createIfNotExist);
     }
 

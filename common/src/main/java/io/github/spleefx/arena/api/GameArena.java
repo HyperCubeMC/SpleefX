@@ -205,10 +205,10 @@ public class GameArena extends ArenaData {
     }
 
     public void post() {
-        this.modeType = getClass().getSimpleName();
-        this.stage = ArenaStage.WAITING;
-        this.engine = new SimpleArenaEngine<>(this);
-        this.gameTeams = new ArrayList<>();
+        modeType = getClass().getSimpleName();
+        stage = ArenaStage.WAITING;
+        engine = new SimpleArenaEngine<>(this);
+        gameTeams = new ArrayList<>();
         ARENAS.get().put(getKey(), this);
         linkTeams();
     }

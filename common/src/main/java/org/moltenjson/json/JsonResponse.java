@@ -61,8 +61,8 @@ public class JsonResponse {
      * @param gson GSON profile to use
      */
     public JsonResponse(JsonObject json, Gson gson) {
-        this.response = json;
-        this.responseText = json.toString();
+        response = json;
+        responseText = json.toString();
         this.gson = gson;
     }
 

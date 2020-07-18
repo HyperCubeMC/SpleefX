@@ -5,8 +5,8 @@ import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
-import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
+import io.github.spleefx.util.message.message.Message;
 import io.github.spleefx.util.plugin.ArenaSelector;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -45,18 +45,16 @@ public class JoinSubcommand extends PluginSubcommand {
      */
     @Override
     public boolean handle(Command command, CommandSender sender, String[] args) {
-        GameExtension mode = extension.apply(command);
+        GameExtension extension = this.extension.apply(command);
         if (checkSender(sender)) {
-            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                    null, -1, mode);
+            Message.NOT_PLAYER.reply(sender, extension);
             return true;
         }
         ArenaPlayer player = ArenaPlayer.adapt(((Player) sender));
         if (args.length == 0) {
-            GameArena arena = ArenaSelector.pick(mode);
+            GameArena arena = ArenaSelector.pick(extension);
             if (arena == null) {
-                MessageKey.NO_AVAILABLE_ARENA.send(sender, null, null, null, player.getPlayer(), command.getName(),
-                        null, -1, mode);
+                Message.NO_AVAILABLE_ARENA.reply(sender, player.getPlayer(), command.getName(), extension);
                 return true;
             }
             arena.getEngine().join(player, null);
@@ -66,7 +64,7 @@ public class JoinSubcommand extends PluginSubcommand {
         GameArena arena = GameArena.getByKey(arenaKey); // Get by key
         if (arena == null) arena = GameArena.getByName(arenaKey = combine(args, 0)); // Get by display name
         if (arena == null) {
-            Chat.sendUnprefixed(sender, mode.getChatPrefix() + MessageKey.INVALID_ARENA.getText().replace("{arena}", arenaKey));
+            Message.INVALID_ARENA.reply(sender, extension, new CommandEntry(command.getName(), args[1]));
             return true;
         }
         arena.getEngine().join(player, null);

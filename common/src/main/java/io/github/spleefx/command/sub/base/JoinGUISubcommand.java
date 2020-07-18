@@ -20,8 +20,7 @@ import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.gui.JoinGUI;
 import io.github.spleefx.gui.JoinGUI.MenuSettings;
-import io.github.spleefx.message.MessageKey;
-import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,7 +38,7 @@ public class JoinGUISubcommand extends PluginSubcommand {
     public boolean handle(Command command, CommandSender sender, String[] args) {
         GameExtension extension = ExtensionsManager.getFromCommand(command.getName());
         if (!(sender instanceof Player)) {
-            Chat.prefix(sender, extension, MessageKey.NOT_PLAYER.getText());
+            Message.NOT_PLAYER.reply(sender, extension);
             return true;
         }
         MenuSettings menu = MenuSettings.MENU.get();

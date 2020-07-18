@@ -120,20 +120,11 @@ public class GameMenu {
     }
 
     /**
-     * Registers this menu to other menus
-     *
-     * @return This menu.
-     */
-    public GameMenu registerToMenus() {
-        return this;
-    }
-
-    /**
      * Creates the kit
      *
      * @return The kit
      */
-    private Inventory createInventory() {
+    protected Inventory createInventory() {
         Inventory inventory = Bukkit.createInventory(null, size, title);
         buttons.forEach((slot, button) -> inventory.setItem(slot, button.getItem()));
         if (scenery != null)

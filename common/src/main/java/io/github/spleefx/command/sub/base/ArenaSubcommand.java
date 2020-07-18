@@ -26,12 +26,13 @@ import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.gui.ArenaSettingsGUI;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.team.TeamColor;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.game.Metas;
 import io.github.spleefx.util.io.CopyStore;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -79,7 +80,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
     private Permission permission;
 
     public ArenaSubcommand(ModeType type, ArenaFactory<T> arenaFactory) {
-        super("arena", null, "Control arenas", (c) -> "/" + c.getName() + " arena <create | remove | teams | spawnpoint | displayname | settings> <arena> [args...]");
+        super("arena", null, "Control arenas", (Command c) -> "/" + (c.getName()) + " arena <create | remove | teams | spawnpoint | displayname | settings> <arena> [args...]");
         permission = new Permission("spleefx.arena." + type.name().toLowerCase());
         super.permission = (c) -> permission;
         super.helpMenu = HELP;
@@ -158,35 +159,32 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                         try {
                             T removed = (T) SpleefX.getPlugin().getArenaManager().removeArena(args[1]);
                             if (removed == null)
-                                Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                                Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             else
-                                MessageKey.ARENA_DELETED.send(sender, removed, null, null, null, command.getName(),
-                                        null, -1, ex);
+                                Message.ARENA_DELETED.reply(sender, ex, removed);
                         } catch (IllegalStateException e) {
                             Chat.plugin(sender, "&c" + e.getMessage());
                         }
                         return true;
                     case "lobby": {
                         if (checkSender(sender)) {
-                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                    null, -1, ex);
+                            Message.NOT_PLAYER.reply(sender, ex);
                             return true;
                         }
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) {
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         Location old = ((Player) sender).getLocation();
                         Location lobby = arena.setLobby(new Location(old.getWorld(), old.getBlockX() + 0.5, old.getBlockY(), old.getBlockZ() + 0.5, old.getYaw(), old.getPitch()));
-                        MessageKey.LOBBY_SET.send(sender, arena, null, lobby, null, command.getName(),
-                                null, -1, ex);
+                        Message.LOBBY_SET.reply(sender, arena, lobby, command.getName(), ex);
                         return true;
                     }
                     case "removelobby": {
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) {
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         arena.setLobby(null);
@@ -194,13 +192,12 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     }
                     case "finishingloc": {
                         if (checkSender(sender)) {
-                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                    null, -1, ex);
+                            Message.NOT_PLAYER.reply(sender, ex);
                             return true;
                         }
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) {
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         Location old = ((Player) sender).getLocation();
@@ -211,7 +208,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     case "removefinishingloc": {
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) {
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         arena.setFinishingLocation(null);
@@ -222,7 +219,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     case "regen": {
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) {
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         Chat.prefix(sender, arena, "&eRegenerating...");
@@ -232,13 +229,12 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     return true;
                     case "settings":
                         if (checkSender(sender)) {
-                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                    null, -1, ex);
+                            Message.NOT_PLAYER.reply(sender, ex);
                             return true;
                         }
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) {
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         Metas.set(((Player) sender), "spleefx.editing", new FixedMetadataValue(SpleefX.getPlugin(), arena));
@@ -253,7 +249,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     case "settings": {
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) {
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
 
@@ -276,13 +272,12 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     }
                     case "spawnpoint": {
                         if (checkSender(sender)) {
-                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                    null, -1, ex);
+                            Message.NOT_PLAYER.reply(sender, ex);
                             return true;
                         }
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) { // An arena with that key already exists
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
@@ -307,27 +302,25 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                                 return true;
                             }
                             if (!arena.getTeams().contains(color)) {
-                                MessageKey.TEAM_NOT_REGISTERED.send(sender, arena, color, null, null, command.getName(),
-                                        null, -1, ex);
+                                Message.TEAM_NOT_REGISTERED.reply(sender, arena, color, command.getName(), -1, ex);
                                 return true;
                             }
                             Location old = ((Player) sender).getLocation();
                             Location spawn = new Location(old.getWorld(), old.getBlockX() + 0.5, old.getBlockY(), old.getBlockZ() + 0.5, old.getYaw(), old.getPitch());
                             arena.registerSpawnPoint(color, spawn);
-                            MessageKey.SPAWNPOINT_SET.send(sender, arena, color, spawn, null, command.getName(),
+                            Message.SPAWNPOINT_SET.reply(sender, arena, color, spawn, command.getName(),
                                     null, -1, ex);
                         }
                         return true;
                     }
                     case "lobby": {
                         if (checkSender(sender)) {
-                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                    null, -1, ex);
+                            Message.NOT_PLAYER.reply(sender, ex);
                             return true;
                         }
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) { // An arena with that key already exists
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
@@ -352,7 +345,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                                 return true;
                             }
                             if (!arena.getTeams().contains(color)) {
-                                MessageKey.TEAM_NOT_REGISTERED.send(sender, arena, color, null, null, command.getName(),
+                                Message.TEAM_NOT_REGISTERED.reply(sender, arena, color, command.getName(),
                                         null, -1, ex);
                                 return true;
                             }
@@ -365,13 +358,12 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                     }
                     case "removelobby": {
                         if (checkSender(sender)) {
-                            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                    null, -1, ex);
+                            Message.NOT_PLAYER.reply(sender, ex);
                             return true;
                         }
                         T arena = (T) GameArena.getByKey(args[1]);
                         if (arena == null) { // An arena with that key already exists
-                            Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                            Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                             return true;
                         }
                         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
@@ -394,7 +386,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                                 return true;
                             }
                             if (!arena.getTeams().contains(color)) {
-                                MessageKey.TEAM_NOT_REGISTERED.send(sender, arena, color, null, null, command.getName(),
+                                Message.TEAM_NOT_REGISTERED.reply(sender, arena, color, command.getName(),
                                         null, -1, ex);
                                 return true;
                             }
@@ -408,13 +400,12 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
             default: // 4+
                 if (args[0].equalsIgnoreCase("create")) {
                     if (checkSender(sender)) {
-                        MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                                null, -1, ex);
+                        Message.NOT_PLAYER.reply(sender, ex);
                         return true;
                     }
                     GameArena arena = GameArena.getByKey(args[1]);
                     if (arena != null) { // An arena with that key already exists
-                        MessageKey.ARENA_ALREADY_EXISTS.send(sender, arena, null, null, null, command.getName(),
+                        Message.ARENA_ALREADY_EXISTS.reply(sender, arena, command.getName(),
                                 null, -1, ex);
                         return true;
                     }
@@ -431,7 +422,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                 if (args[0].equalsIgnoreCase("settings")) {
                     T arena = (T) GameArena.getByKey(args[1]);
                     if (arena == null) {
-                        Chat.prefix(sender, ex, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[1]));
+                        Message.INVALID_ARENA.reply(sender, ex, new CommandEntry(command.getName(), args[1]));
                         return true;
                     }
                     switch (args[2].toLowerCase()) {

@@ -17,8 +17,8 @@ package io.github.spleefx.command.parent.sub;
 
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.PluginSubcommand;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.perk.PerkShop.ShopMenu;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class PerksSubcommand extends PluginSubcommand {
     @Override
     public boolean handle(Command command, CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(), null, -1, null);
+            Message.NOT_PLAYER.reply(sender);
             return true;
         }
         Player player = ((Player) sender);

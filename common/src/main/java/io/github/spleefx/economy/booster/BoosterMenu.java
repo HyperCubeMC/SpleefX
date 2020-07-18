@@ -15,9 +15,9 @@
  */
 package io.github.spleefx.economy.booster;
 
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.menu.Button;
 import io.github.spleefx.util.menu.GameMenu;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -51,7 +51,7 @@ public class BoosterMenu extends GameMenu {
                             .addAction(e -> {
                                 if (BoosterFactory.CAN_BE_PAUSED.get()) {
                                     booster.pause();
-                                    MessageKey.BOOSTER_PAUSED.sendBooster(e.getWhoClicked(), booster);
+                                    Message.BOOSTER_PAUSED.reply(e.getWhoClicked(), booster);
                                 }
                             }));
                     break;
@@ -59,14 +59,14 @@ public class BoosterMenu extends GameMenu {
                     setButton(new Button(i, applyPlaceholders(booster, booster.getType().getItems().get(AVAILABLE).factory().create()))
                             .addAction(Button.CLOSE_INVENTORY).addAction(p -> {
                                 if (booster.activate(((Player) p.getWhoClicked())))
-                                    MessageKey.BOOSTER_ACTIVATED.sendBooster(p.getWhoClicked(), booster);
+                                    Message.BOOSTER_ACTIVATED.reply(p.getWhoClicked(), booster);
                             }));
                     break;
                 case PAUSED:
                     setButton(new Button(i, applyPlaceholders(booster, booster.getType().getItems().get(PAUSED).factory().create()))
                             .addAction(Button.CLOSE_INVENTORY).addAction(p -> {
                                 if (booster.activate(((Player) p.getWhoClicked())))
-                                    MessageKey.BOOSTER_ACTIVATED.sendBooster(p.getWhoClicked(), booster);
+                                    Message.BOOSTER_ACTIVATED.reply(p.getWhoClicked(), booster);
                             }));
             }
         }

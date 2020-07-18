@@ -15,7 +15,7 @@
  */
 package io.github.spleefx.arena;
 
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.message.message.Message;
 
 /**
  * Represents a running arena stage
@@ -25,37 +25,37 @@ public enum ArenaStage {
     /**
      * The arena is waiting for players to join
      */
-    WAITING(MessageKey.WAITING, true, true),
+    WAITING(Message.WAITING, true, true),
 
     /**
      * The arena is in countdown
      */
-    COUNTDOWN(MessageKey.COUNTDOWN, true, true),
+    COUNTDOWN(Message.COUNTDOWN, true, true),
 
     /**
      * The arena is running and is active
      */
-    ACTIVE(MessageKey.ACTIVE, false, true),
+    ACTIVE(Message.ACTIVE, false, true),
 
     /**
      * The arena is regenerating
      */
-    REGENERATING(MessageKey.REGENERATING, false, false),
+    REGENERATING(Message.REGENERATING, false, false),
 
     /**
      * The arena's setup is not finished
      */
-    NEEDS_SETUP(MessageKey.NEEDS_SETUP, false, false),
+    NEEDS_SETUP(Message.NEEDS_SETUP, false, false),
 
     /**
      * The arena mode is disabled
      */
-    DISABLED(MessageKey.DISABLED, false, false);
+    DISABLED(Message.DISABLED, false, false);
 
     /**
      * The text representing the state
      */
-    private MessageKey key;
+    private Message key;
 
     /**
      * Whether is the arena playable in this arena state or not
@@ -69,7 +69,7 @@ public enum ArenaStage {
      * @param key      The message key representing this state
      * @param playable Whether is the arena playable in this arena state or not
      */
-    ArenaStage(MessageKey key, boolean playable, boolean endable) {
+    ArenaStage(Message key, boolean playable, boolean endable) {
         this.key = key;
         this.playable = playable;
         this.endable = endable;
@@ -81,7 +81,7 @@ public enum ArenaStage {
      * @return Value for property 'state'.
      */
     public String getState() {
-        return key.getText();
+        return key.getValue();
     }
 
     /**

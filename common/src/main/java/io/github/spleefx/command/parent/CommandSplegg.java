@@ -19,8 +19,10 @@ import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.splegg.SpleggArena;
 import io.github.spleefx.command.sub.CommandManager;
 import io.github.spleefx.command.sub.base.*;
+import io.github.spleefx.extension.standard.bowspleef.BowSpleefExtension;
 import io.github.spleefx.extension.standard.splegg.SpleggExtension;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -48,8 +50,7 @@ public class CommandSplegg implements TabExecutor {
         if (args.length == 0)
             args = HELP;
         if (!CommandManager.SPLEGG.runSub(command, sender, args))
-            MessageKey.UNKNOWN_SUBCOMMAND.send(sender, null, null, null, null,
-                    command.getName(), null, -1, SpleggExtension.EXTENSION);
+            Message.UNKNOWN_SUBCOMMAND.reply(sender, new CommandEntry(command.getName()), SpleggExtension.EXTENSION);
         return false;
     }
 

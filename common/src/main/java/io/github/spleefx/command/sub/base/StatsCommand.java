@@ -19,9 +19,9 @@ import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.game.Metas;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -99,14 +99,14 @@ public class StatsCommand extends PluginSubcommand {
                         if (sender.hasPermission("spleefx." + command.getName() + ".stats.others")) {
                             Player player = Bukkit.getPlayer(args[0]);
                             if (player == null) {
-                                Chat.prefix(sender, e, MessageKey.UNKNOWN_PLAYER.getText().replace("{player}", args[0]));
+                                Chat.sendUnprefixed(sender, Message.UNKNOWN_PLAYER.create(e).replace("{player}", args[0]));
                                 return true;
                             }
                             Inventory inventory = SpleefX.getPlugin().getDataProvider().createGUI(player, e);
                             s.openInventory(inventory);
                             Metas.set(s, "spleefx.viewing_stats", VIEWING);
                         } else {
-                            Chat.prefix(sender, e, MessageKey.NO_PERMISSION_STATISTICS.getText());
+                            Message.NO_PERMISSION_STATISTICS.reply(sender, e);
                         }
                     }
                     return true;
@@ -119,14 +119,14 @@ public class StatsCommand extends PluginSubcommand {
                         if (sender.hasPermission("spleefx." + command.getName() + ".stats.others")) {
                             Player player = Bukkit.getPlayer(args[0]);
                             if (player == null) {
-                                Chat.prefix(sender, e, MessageKey.UNKNOWN_PLAYER.getText().replace("{player}", args[0]));
+                                Chat.prefix(sender, e, Message.UNKNOWN_PLAYER.create().replace("{player}", args[0]));
                                 return true;
                             }
                             Inventory inventory = SpleefX.getPlugin().getDataProvider().createGUI(player, null);
                             s.openInventory(inventory);
                             Metas.set(s, "spleefx.viewing_stats", VIEWING);
                         } else {
-                            Chat.prefix(sender, e, MessageKey.NO_PERMISSION_STATISTICS.getText());
+                            Chat.prefix(sender, e, Message.NO_PERMISSION_STATISTICS.create());
                         }
                         return true;
                     }

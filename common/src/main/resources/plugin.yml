@@ -9,6 +9,7 @@ loadbefore:
   - ShopGUIPlus
 softdepend:
   - Vault
+  - helper
   - ProtocolLib
   - WorldEdit
   - FastAsyncWorldEdit

@@ -86,6 +86,7 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
     @Override
     public CompletableFuture<ItemStack> skull(OfflinePlayer owner) {
         CompletableFuture<ItemStack> future = new CompletableFuture<>();
+
         HEAD.submit(() -> {
             ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, ((short) 3));
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
@@ -130,7 +131,7 @@ public class MaterialCompatibilityImpl implements MaterialCompatibility {
                 .replace("GOLDEN_SHOVEL", "GOLD_SPADE")
                 .replace("GOLDEN_AXE", "GOLD_AXE")
                 .replace("GOLDEN_SWORD", "GOLD_SWORD")
-                .replace("ENDER_PORTAL_FRAME", "END_PORTAL_FRAME")
+                .replace("END_PORTAL_FRAME", "ENDER_PORTAL_FRAME")
                 .replace("GOLDEN_PICKAXE", "GOLD_PICKAXE")
                 .replace("_SHOVEL", "_SPADE");
     }

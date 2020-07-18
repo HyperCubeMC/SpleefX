@@ -21,6 +21,7 @@ import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.extension.ItemHolder;
+import io.github.spleefx.util.PlaceholderUtil;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.item.ItemFactory;
 import io.github.spleefx.util.menu.Button;
@@ -100,14 +101,7 @@ public class JoinGUI extends GameMenu {
         }
 
         private static String placeholders(String string, GameArena arena) {
-            return string.replace("{arena}", arena.getKey())
-                    .replace("{arena_displayname}", arena.getDisplayName())
-                    .replace("{arena_bet}", FORMAT.format(arena.getBet()))
-                    .replace("{arena_minimum}", Integer.toString(arena.getMinimum()))
-                    .replace("{arena_playercount}", Integer.toString(arena.getEngine().getPlayerTeams().size()))
-                    .replace("{arena_maximum}", Integer.toString(arena.getMaximum()))
-                    .replace("{arena_stage}", arena.getEngine().getArenaStage().getState())
-                    .replace("{extension}", arena.getExtension().getDisplayName());
+            return PlaceholderUtil.all(string, arena);
         }
 
     }

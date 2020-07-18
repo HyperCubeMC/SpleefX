@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static io.github.spleefx.SpleefX.getSpectatorSettings;
+
 /**
  * Represents a player who may join an arena
  */
@@ -86,11 +88,14 @@ public class ArenaPlayer {
     }
 
     public void setSpectating(boolean spectating) {
-        this.spectating = spectating;
+        if (!getSpectatorSettings().enabled)
+            this.spectating = false;
+        else
+            this.spectating = spectating;
     }
 
     public boolean isSpectating() {
-        return spectating;
+        return getSpectatorSettings().enabled && spectating;
     }
 
     @Override public boolean equals(Object o) {

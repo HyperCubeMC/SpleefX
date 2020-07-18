@@ -17,7 +17,7 @@ package io.github.spleefx.util.game;
 
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public class Chat {
 
     public static void plugin(CommandSender sender, String message) {
-        sender.sendMessage(MessageKey.prefix() + colorize(message));
+        sender.sendMessage(Message.PREFIX.create() + colorize(message));
     }
 
     public static void sendUnprefixed(CommandSender sender, String message) {

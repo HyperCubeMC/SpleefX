@@ -167,7 +167,7 @@ public class TreeConfigurationBuilder<N, E> {
      */
     public TreeConfigurationBuilder<N, E> setDataMap(Map<N, E> map) {
         if (map == null) return this;
-        this.dataMap = map;
+        dataMap = map;
         return this;
     }
 
@@ -185,7 +185,7 @@ public class TreeConfigurationBuilder<N, E> {
     public TreeConfigurationBuilder<N, E> setExclusionPrefixes(ImmutableList<String> prefixes) {
         if (prefixes == null) return this;
         Preconditions.checkArgument(prefixes.size() > 0, "Exclusion prefixes must channelTo at least one element!");
-        this.exclusionPrefixes = prefixes;
+        exclusionPrefixes = prefixes;
         return this;
     }
 
@@ -203,7 +203,7 @@ public class TreeConfigurationBuilder<N, E> {
     public TreeConfigurationBuilder<N, E> setRestrictedExtensions(ImmutableList<String> extensions) {
         if (extensions == null) return this;
         Preconditions.checkArgument(extensions.size() > 0, "Restricted extensions must channelTo at least one element!");
-        this.restrictedExtensions = extensions;
+        restrictedExtensions = extensions;
         return this;
     }
 
@@ -214,7 +214,7 @@ public class TreeConfigurationBuilder<N, E> {
      * @return A reference to this builder
      */
     public TreeConfigurationBuilder<N, E> setNamingStrategy(TreeNamingStrategy<N> strategy) {
-        this.namingStrategy = strategy;
+        namingStrategy = strategy;
         return this;
     }
 

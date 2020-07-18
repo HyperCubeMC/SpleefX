@@ -18,8 +18,8 @@ package io.github.spleefx.command.sub.base;
 import io.github.spleefx.command.sub.CommandManager;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.ExtensionsManager;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
@@ -60,7 +60,7 @@ public class HelpSubcommand extends PluginSubcommand {
      */
     @Override
     public boolean handle(Command command, CommandSender sender, String[] args) {
-        String prefix = command.getName().equals("spleefx") ? MessageKey.prefix() : ExtensionsManager.getFromCommand(command.getName()).getChatPrefix();
+        String prefix = command.getName().equals("spleefx") ? Message.PREFIX.getValue() : ExtensionsManager.getFromCommand(command.getName()).getChatPrefix();
         if (args.length == 0) {
             commandManager.getCommands().stream().filter(c -> sender.hasPermission(c.getPermission(command))).forEachOrdered(c -> Chat.sendUnprefixed(sender, prefix + "&e" + c.getUsage(command) + " &7- &d" + c.getDescription()));
             Chat.sendUnprefixed(sender, prefix + "&dRun &e/" + command.getName() + " help <subcommand> &dfor more details.");

@@ -20,7 +20,8 @@ import io.github.spleefx.arena.bow.BowSpleefArena;
 import io.github.spleefx.command.sub.CommandManager;
 import io.github.spleefx.command.sub.base.*;
 import io.github.spleefx.extension.standard.bowspleef.BowSpleefExtension;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -48,8 +49,7 @@ public class CommandBowSpleef implements TabExecutor {
         if (args.length == 0)
             args = HELP;
         if (!CommandManager.BOW_SPLEEF.runSub(command, sender, args))
-            MessageKey.UNKNOWN_SUBCOMMAND.send(sender, null, null, null, null,
-                    command.getName(), null, -1, BowSpleefExtension.EXTENSION);
+            Message.UNKNOWN_SUBCOMMAND.reply(sender, new CommandEntry(command.getName()), BowSpleefExtension.EXTENSION);
         return false;
     }
 

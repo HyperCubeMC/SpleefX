@@ -22,8 +22,8 @@ import io.github.spleefx.compatibility.chat.ChatEvents.ClickAction;
 import io.github.spleefx.compatibility.chat.ChatEvents.ClickEvent;
 import io.github.spleefx.compatibility.chat.ChatEvents.HoverAction;
 import io.github.spleefx.compatibility.chat.ChatEvents.HoverEvent;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.moltenjson.json.JsonBuilder;
 
 import java.lang.reflect.Type;
@@ -65,7 +65,7 @@ public class ChatComponent {
      * @return This component
      */
     public ChatComponent setText(String text, boolean prefix) {
-        this.text = (prefix ? MessageKey.prefix() : "") + Chat.colorize(text);
+        this.text = (prefix ? Message.PREFIX.create() : "") + Chat.colorize(text);
         return this;
     }
 
@@ -76,7 +76,7 @@ public class ChatComponent {
      * @return This component
      */
     public ChatComponent setHoverAction(HoverEvent action, String value) {
-        this.hoverAction.action(action.toString()).value(Chat.colorize(value));
+        hoverAction.action(action.toString()).value(Chat.colorize(value));
         return this;
     }
 
@@ -87,7 +87,7 @@ public class ChatComponent {
      * @return This component
      */
     public ChatComponent setClickAction(ClickEvent action, String value) {
-        this.clickAction.action(action.toString()).value(value);
+        clickAction.action(action.toString()).value(value);
         return this;
     }
 

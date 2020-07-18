@@ -15,8 +15,8 @@
  */
 package io.github.spleefx.team;
 
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.item.Items;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -38,37 +38,37 @@ public enum TeamColor {
     /**
      * The FFA color
      */
-    FFA("FFA", MessageKey.FFA_COLOR, false),
+    FFA("FFA", Message.FFA_COLOR, false),
 
     /**
      * Represents the Red team
      */
-    RED("Red", MessageKey.RED, Items.RED_TEAM),
+    RED("Red", Message.RED, Items.RED_TEAM),
 
     /**
      * Represents the Green team
      */
-    GREEN("Green", MessageKey.GREEN, Items.GREEN_TEAM),
+    GREEN("Green", Message.GREEN, Items.GREEN_TEAM),
 
     /**
      * Represents the Blue team
      */
-    BLUE("Blue", MessageKey.BLUE, Items.BLUE_TEAM),
+    BLUE("Blue", Message.BLUE, Items.BLUE_TEAM),
 
     /**
      * Represents the Yellow team
      */
-    YELLOW("Yellow", MessageKey.YELLOW, Items.YELLOW_TEAM),
+    YELLOW("Yellow", Message.YELLOW, Items.YELLOW_TEAM),
 
     /**
      * Represents the Pink team
      */
-    PINK("Pink", MessageKey.PINK, Items.PINK_TEAM),
+    PINK("Pink", Message.PINK, Items.PINK_TEAM),
 
     /**
      * Represents the Gray team
      */
-    GRAY("Gray", MessageKey.GRAY, Items.GRAY_TEAM);
+    GRAY("Gray", Message.GRAY, Items.GRAY_TEAM);
 
     /**
      * A human-friendly name of the color
@@ -80,7 +80,7 @@ public enum TeamColor {
      */
     private String chatColor;
 
-    private MessageKey key;
+    private Message key;
 
     /**
      * A map of all colors
@@ -99,7 +99,7 @@ public enum TeamColor {
      * @param name Name of the color
      * @param key  Message key of the color
      */
-    TeamColor(String name, MessageKey key) {
+    TeamColor(String name, Message key) {
         this(name, key, true);
     }
 
@@ -110,11 +110,11 @@ public enum TeamColor {
      * @param key    Message key of the color
      * @param usable Whether can the team be maintained by the user or not
      */
-    TeamColor(String name, MessageKey key, boolean usable) {
+    TeamColor(String name, Message key, boolean usable) {
         this.name = name;
         this.key = key;
         this.usable = usable;
-        this.guiItem = null;
+        guiItem = null;
     }
 
     /**
@@ -123,11 +123,11 @@ public enum TeamColor {
      * @param name Name of the color
      * @param key  Message key of the color
      */
-    TeamColor(String name, MessageKey key, ItemStack guiItem) {
+    TeamColor(String name, Message key, ItemStack guiItem) {
         this.name = name;
-        this.chatColor = getChatColor();
+        chatColor = getChatColor();
         this.key = key;
-        this.usable = true;
+        usable = true;
         this.guiItem = guiItem;
     }
 
@@ -136,7 +136,7 @@ public enum TeamColor {
     }
 
     public String chat() {
-        return this == INVALID ? "§0Invalid" : key.getText();
+        return this == INVALID ? "§0Invalid" : key.getValue();
     }
 
     @Override
@@ -152,7 +152,7 @@ public enum TeamColor {
         ChatColor c = null;
         if (key != null)
             try {
-                c = ChatColor.getByChar(key.getText().charAt(1));
+                c = ChatColor.getByChar(key.getValue().charAt(1));
             } catch (Exception e) {
                 c = ChatColor.UNDERLINE;
             }

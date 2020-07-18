@@ -21,8 +21,8 @@ import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,8 +48,7 @@ public class ForceStartCommand extends PluginSubcommand {
     public boolean handle(Command command, CommandSender sender, String[] args) {
         GameExtension extension = ExtensionsManager.getFromCommand(command.getName());
         if (checkSender(sender)) {
-            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
-                    null, -1, extension);
+            Message.NOT_PLAYER.reply(sender, extension);
             return true;
         }
         ArenaPlayer player = ArenaPlayer.adapt(((Player) sender));

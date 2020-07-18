@@ -18,11 +18,11 @@ package io.github.spleefx.perk;
 import com.google.gson.annotations.Expose;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.extension.ItemHolder;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.item.ItemFactory;
 import io.github.spleefx.util.menu.Button;
 import io.github.spleefx.util.menu.GameMenu;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -92,7 +92,7 @@ public class PerkShop {
             shop.items.forEach((slot, item) -> setButton(new Button(slot, item.createItem(item.getPurchasePerk()))
                     .addAction(e -> {
                         if (!item.getPurchasePerk().purchase(ArenaPlayer.adapt(((Player) e.getWhoClicked())))) {
-                            MessageKey.NOT_ENOUGH_COINS.sendPerk(e.getWhoClicked(), item.getPurchasePerk());
+                            Message.NOT_ENOUGH_COINS.reply(e.getWhoClicked(), item.getPurchasePerk());
                         }
                     })));
         }

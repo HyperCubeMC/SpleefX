@@ -40,7 +40,7 @@ public class GameTeam {
     public GameTeam(TeamColor color, List<Player> members) {
         this.color = color;
         this.members = members;
-        this.alive = new CopyOnWriteArrayList<>(members);
+        alive = new CopyOnWriteArrayList<>(members);
     }
 
     public boolean isEliminated() {

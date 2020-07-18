@@ -35,7 +35,7 @@ public class JoinWarningListener implements Listener {
             jsonMessage.append(WARNING).space().append(DISCORD);
             CompatibilityHandler.getProtocol().send(jsonMessage, event.getPlayer());
             Chat.plugin(event.getPlayer(), "&cYou have been warned!");
-            jsonMessage.clear().append(new ChatComponent().setText("&e&lClick here to disable this warning message".replace(" ", "&e&l"), true)
+            jsonMessage.clear().append(new ChatComponent().setText("&e&lClick here to disable this warning message".replace(" ", "&e&l "), true)
                     .setClickAction(ClickEvent.RUN_COMMAND, "/spleefx debug disablespectatingwarningmessage")
                     .setHoverAction(HoverEvent.SHOW_TEXT, "Click to disable."));
             CompatibilityHandler.getProtocol().send(jsonMessage, event.getPlayer());

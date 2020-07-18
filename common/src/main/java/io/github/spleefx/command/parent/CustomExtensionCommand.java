@@ -22,7 +22,8 @@ import io.github.spleefx.arena.custom.ExtensionArena;
 import io.github.spleefx.command.sub.CommandManager;
 import io.github.spleefx.command.sub.base.*;
 import io.github.spleefx.extension.ExtensionsManager;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -58,8 +59,7 @@ public class CustomExtensionCommand implements TabExecutor {
         if (args.length == 0)
             args = HELP;
         if (!CommandManager.CUSTOM.runSub(command, sender, args))
-            MessageKey.UNKNOWN_SUBCOMMAND.send(sender, null, null, null, null,
-                    command.getName(), null, -1, ExtensionsManager.getFromCommand(command.getName()));
+            Message.UNKNOWN_SUBCOMMAND.reply(sender, new CommandEntry(command.getName()), ExtensionsManager.getFromCommand(command.getName()));
         return false;
     }
 

@@ -23,7 +23,7 @@ import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.data.GameStats;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.message.message.Message;
 import lombok.Getter;
 
 import java.io.File;
@@ -80,9 +80,9 @@ public class GamePerk {
         GameStats stats = player.getStats();
         if (stats.getCoins(player.getPlayer()) >= price) {
             if (getPurchaseSettings().getGamesUsableFor() < 0)
-                MessageKey.ALREADY_PURCHASED.sendPerk(player.getPlayer(), this);
+                Message.PERK_ALREADY_PURCHASED.reply(player.getPlayer(), this);
             else {
-                MessageKey.ITEM_PURCHASED.sendPerk(player.getPlayer(), this);
+                Message.ITEM_PURCHASED.reply(player.getPlayer(), this);
                 stats.getPerks().merge(this, getPurchaseSettings().getGamesUsableFor(), Integer::sum);
                 stats.takeCoins(player.getPlayer(), price);
             }

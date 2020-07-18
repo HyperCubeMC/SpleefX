@@ -26,8 +26,9 @@ import io.github.spleefx.compatibility.chat.ChatEvents.HoverEvent;
 import io.github.spleefx.compatibility.chat.ComponentJSON;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -95,7 +96,7 @@ public class WhyDisabledCommand extends PluginSubcommand {
         }
         GameArena arena = GameArena.getByKey(args[0]);
         if (arena == null) {
-            Chat.prefix(sender, extension, MessageKey.INVALID_ARENA.getText().replace("{arena}", args[0]));
+            Message.INVALID_ARENA.reply(sender, extension, new CommandEntry(command.getName(), args[1]));
             return true;
         }
         Set<String> violations = DISABLED.apply(arena);

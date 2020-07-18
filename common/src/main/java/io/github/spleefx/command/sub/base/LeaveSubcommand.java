@@ -21,7 +21,7 @@ import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,7 +42,7 @@ public class LeaveSubcommand extends PluginSubcommand {
                 (c) -> new Permission("spleefx." + c.getName() + ".leave", PermissionDefault.TRUE),
                 "Leave the current arena",
                 (c) -> "/" + c.getName() + " leave");
-        this.helpMenu = HELP;
+        helpMenu = HELP;
     }
 
     /**
@@ -57,12 +57,12 @@ public class LeaveSubcommand extends PluginSubcommand {
     public boolean handle(Command command, CommandSender sender, String[] args) {
         GameExtension extension = ExtensionsManager.getFromCommand(command.getName());
         if (!(sender instanceof Player)) {
-            MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(), null, -1, extension);
+            Message.NOT_PLAYER.reply(sender, extension);
             return true;
         }
         ArenaPlayer player = ArenaPlayer.adapt((Player) sender);
         if (player.getCurrentArena() == null) {
-            MessageKey.NOT_IN_ARENA.send(sender, null, null, null, null, command.getName(), null, -1, extension);
+            Message.NOT_IN_ARENA.reply(sender, extension);
             return true;
         }
         GameArena arena = player.getCurrentArena();

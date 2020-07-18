@@ -24,8 +24,8 @@ import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.data.PlayerStatistic;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.team.GameTeam;
+import io.github.spleefx.util.message.message.Message;
 import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -44,6 +44,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ArenaListener implements Listener {
@@ -69,20 +70,16 @@ public class ArenaListener implements Listener {
                 if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
                     GameTeam ffa = arena.getGameTeams().get(0);
                     engine.lose(p, ffa, false);
-//                    SpleefX.logger().info("FFA: Player lost due to death: " + p.getPlayer().getName());
                     if (engine.getAlive().size() == 1) {
                         ArenaPlayer winner = ArenaPlayer.adapt(engine.getAlive().get(0));
-//                        SpleefX.logger().info("FFA: Player won: " + winner.getPlayer().getName());
                         engine.win(winner, ffa);
                         engine.end(true);
                     }
                 } else {
                     GameTeam team1 = engine.getPlayerTeams().get(p);
-//                    SpleefX.logger().info("Teams: Player in team " + team1.getColor() + " lost due to death: " + p.getPlayer().getName());
                     engine.lose(p, team1, false);
                     if (team1.getAlive().size() == 0) {
-                        engine.getPlayerTeams().keySet().forEach(e -> MessageKey.TEAM_ELIMINATED.send(e.getPlayer(), arena, team1.getColor(), null, null, null, null, -1, arena.getExtension()));
-//                        SpleefX.logger().info("Teams: Team " + team1.getColor() + " eliminated");
+                        engine.broadcast(Message.TEAM_ELIMINATED, arena, team1.getColor(), arena.getExtension());
                         engine.getDeadTeams().add(team1);
                     }
                     List<GameTeam> teamsLeft =
@@ -90,14 +87,12 @@ public class ArenaListener implements Listener {
                                     .collect(Collectors.toList());
                     if (teamsLeft.size() == 1) {
                         GameTeam team = teamsLeft.get(0);
-//                        SpleefX.logger().info("Teams: Team " + team.getColor() + " won");
                         team.getAlive().forEach(winner -> {
                             ArenaPlayer player = ArenaPlayer.adapt(winner);
                             engine.win(player, team);
                         });
                         engine.end(true);
                     }
-
                 }
             }
         }
@@ -121,7 +116,15 @@ public class ArenaListener implements Listener {
             if (allowed.stream().anyMatch(event.getMessage()::startsWith)) return;
             if (player.getPlayer().hasPermission("spleefx.arena.command-exempt")) return;
             event.setCancelled(true);
-            MessageKey.DISALLOWED_COMMAND.send(player.getPlayer(), null, null, null, null, event.getMessage(), null, -1, player.getCurrentArena().getExtension());
+            Message.DISALLOWED_COMMAND.reply(player.getPlayer(), event.getMessage(), player.getCurrentArena().getExtension());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockBreak(BlockBreakEvent event) {
+        ArenaPlayer player = ArenaPlayer.adapt(event.getPlayer());
+        if (player.getState() == ArenaPlayerState.WAITING) {
+            event.setCancelled(true);
         }
     }
 
@@ -130,9 +133,9 @@ public class ArenaListener implements Listener {
         if (!(event.getDamager() instanceof Player)) return;
         Player damager = (Player) event.getDamager();
         ArenaPlayer d = ArenaPlayer.adapt(damager);
-        if (d.getCurrentArena().equals(p.getCurrentArena())) {
+        if (Objects.equals(d.getCurrentArena(), p.getCurrentArena())) {
             ArenaEngine a = d.getCurrentArena().getEngine();
-            if (a.getPlayerTeams().get(d).equals(a.getPlayerTeams().get(p)) && (boolean) PluginSettings.ARENA_CANCEL_TEAM_DAMAGE.get())
+            if (Objects.equals(a.getPlayerTeams().get(d), a.getPlayerTeams().get(p)) && (boolean) PluginSettings.ARENA_CANCEL_TEAM_DAMAGE.get())
                 event.setCancelled(true);
         }
     }

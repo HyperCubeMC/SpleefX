@@ -1,4 +1,5 @@
 {
+  "enabled": true,
   "spectatePlayerMenu": {
     "title": "&2Spectate Players",
     "playerHeadInfo": {

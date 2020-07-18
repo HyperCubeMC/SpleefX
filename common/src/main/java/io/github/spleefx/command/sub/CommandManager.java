@@ -17,8 +17,8 @@ package io.github.spleefx.command.sub;
 
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -86,7 +86,7 @@ public class CommandManager {
             GameExtension ex = ExtensionsManager.getFromCommand(bukkitCommand.getName());
             if (sub == null) return false;
             if (!sender.hasPermission(sub.getPermission(bukkitCommand))) {
-                Chat.sendUnprefixed(sender, ex.getChatPrefix() + MessageKey.NO_PERMISSION.getText());
+                Message.NO_PERMISSION.reply(sender, ex);
                 return true;
             }
             if (!sub.handle(bukkitCommand, sender, args))

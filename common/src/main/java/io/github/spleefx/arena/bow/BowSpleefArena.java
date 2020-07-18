@@ -46,7 +46,7 @@ public class BowSpleefArena extends GameArena {
     @Override
     public void post() {
         super.post();
-        this.type = ModeType.BOW_SPLEEF;
+        type = ModeType.BOW_SPLEEF;
         setEngine(new BowSpleefEngine(this));
         setExtension(BowSpleefExtension.EXTENSION);
         damageMap = new HashMap<>();

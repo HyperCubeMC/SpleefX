@@ -17,6 +17,9 @@ import java.util.List;
 public class SpectatorSettings {
 
     @Expose
+    public boolean enabled = true;
+
+    @Expose
     private MenuData spectatePlayerMenu = new MenuData();
 
     @Expose

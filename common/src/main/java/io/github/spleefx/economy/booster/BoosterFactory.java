@@ -86,7 +86,7 @@ public class BoosterFactory {
     public BoosterFactory(String key, String displayName, double multiplier, Duration duration, Map<BoosterState, ItemHolder> items) {
         this.key = key;
         this.displayName = displayName;
-        this.enabled = true;
+        enabled = true;
         this.multiplier = multiplier;
         this.duration = duration;
         this.items = items;

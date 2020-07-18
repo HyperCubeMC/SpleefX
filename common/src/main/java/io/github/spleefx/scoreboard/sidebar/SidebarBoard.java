@@ -41,10 +41,11 @@ public class SidebarBoard {
         // Setup sidebar objective
         objective = scoreboard.registerNewObjective("Default", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(getScoreboardTicker().getProvider().getTitle(player));
-
+        getScoreboardTicker().getProvider().getTitle(player).thenAcceptSync((name) -> {
+            objective.setDisplayName(name);
+            player.setScoreboard(scoreboard);
+        });
         // Update scoreboard
-        player.setScoreboard(scoreboard);
 
     }
 

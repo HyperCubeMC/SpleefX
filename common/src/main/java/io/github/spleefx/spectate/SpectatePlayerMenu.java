@@ -25,9 +25,11 @@ import io.github.spleefx.util.menu.Button;
 import io.github.spleefx.util.menu.GameMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,10 +44,10 @@ public class SpectatePlayerMenu extends GameMenu {
      *
      * @param arena Arena to create for
      */
-    public SpectatePlayerMenu(GameArena arena) {
+    public SpectatePlayerMenu(GameArena arena, boolean createDummy) {
         super(getSpectatorSettings().getSpectatePlayerMenu().getTitle(), getAppropriateSize(arena.getEngine().getAlive().size()));
         cancelAllClicks = true;
-        List<Player> alivePlayers = arena.getEngine().getAlive();
+        List<Player> alivePlayers = new ArrayList<>(arena.getEngine().getAlive());
         for (AtomicInteger i = new AtomicInteger(); i.get() < alivePlayers.size(); i.getAndIncrement()) {
             Player player = alivePlayers.get(i.get());
             setButton(new Button(i.get(), ((BaseArenaEngine<?>) arena.getEngine()).playerHeads.get(player.getUniqueId()))
@@ -55,9 +57,15 @@ public class SpectatePlayerMenu extends GameMenu {
                         spectator.setGameMode(GameMode.SPECTATOR);
                         spectator.setSpectatorTarget(player.getPlayer());
                         Bukkit.getPluginManager().callEvent(new PlayerSpectateAnotherEvent(spectator, player.getPlayer(), arena));
-
                     }));
         }
+        if (createDummy) createInventory();
+    }
+
+    @Override public void display(HumanEntity entity) {
+        CompletableFuture.runAsync(() -> {
+            super.display(entity);
+        });
     }
 
     public static class MenuData {

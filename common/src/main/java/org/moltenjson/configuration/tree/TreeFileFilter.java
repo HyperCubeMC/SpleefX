@@ -50,9 +50,9 @@ public class TreeFileFilter<N, E> implements FileFilter {
     private boolean searchSubdirectories;
 
     public TreeFileFilter(TreeConfiguration<N, E> configuration) {
-        this.exclusionPrefixes = configuration.getExclusionPrefixes();
-        this.restrictedExtensions = configuration.getRestrictedExtensions();
-        this.searchSubdirectories = configuration.searchSubdirectories;
+        exclusionPrefixes = configuration.getExclusionPrefixes();
+        restrictedExtensions = configuration.getRestrictedExtensions();
+        searchSubdirectories = configuration.searchSubdirectories;
     }
 
     /**

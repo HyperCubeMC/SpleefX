@@ -19,7 +19,9 @@ import io.github.spleefx.command.parent.sub.*;
 import io.github.spleefx.command.sub.CommandManager;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.command.sub.base.HelpSubcommand;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.extension.standard.bowspleef.BowSpleefExtension;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
+import io.github.spleefx.util.message.message.Message;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -50,8 +52,7 @@ public class CommandSpleefX implements TabExecutor {
         if (args.length == 0)
             args = HELP;
         if (!CommandManager.SPLEEFX.runSub(command, sender, args))
-            MessageKey.UNKNOWN_SUBCOMMAND.send(sender, null, null, null, null,
-                    command.getName(), null, -1, null);
+            Message.UNKNOWN_SUBCOMMAND.reply(sender, new CommandEntry(command.getName()));
         return false;
     }
 
@@ -87,7 +88,6 @@ public class CommandSpleefX implements TabExecutor {
                 new BoosterSubcommand(),
                 new PerksSubcommand(),
                 new HelpSubcommand(CommandManager.SPLEEFX),
-                new MessagesSubcommand(),
                 new BalanceSubcommand(),
                 new DebugSubcommand(),
                 new DiscordSubcommand(),

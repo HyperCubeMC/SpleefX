@@ -49,7 +49,7 @@ public class SpleefArena extends GameArena {
     @Override
     public void post() {
         super.post();
-        this.type = ModeType.SPLEEF;
+        type = ModeType.SPLEEF;
         setEngine(new SpleefEngine(this));
         setExtension(EXTENSION);
     }

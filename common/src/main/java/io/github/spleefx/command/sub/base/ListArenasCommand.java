@@ -25,8 +25,8 @@ import io.github.spleefx.compatibility.chat.ChatEvents.HoverEvent;
 import io.github.spleefx.compatibility.chat.ComponentJSON;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,7 +53,7 @@ public class ListArenasCommand extends PluginSubcommand {
                 "List all arenas of a specific type", (c) -> "/" + c.getName() + " listarenas");
         this.arenas = arenas;
         super.aliases = Collections.singletonList("list");
-        this.helpMenu = HELP;
+        helpMenu = HELP;
     }
 
     private static final ChatComponent DASH = new ChatComponent().setText("&7-", false);
@@ -71,7 +71,7 @@ public class ListArenasCommand extends PluginSubcommand {
         GameExtension e = ExtensionsManager.getFromCommand(command.getName());
         List<GameArena> arenas = this.arenas.apply(command);
         if (arenas.isEmpty()) {
-            MessageKey.NO_ARENAS.send(sender, null, null, null, null, command.getName(), null, -1, e);
+            Message.NO_ARENAS.reply(sender, command.getName(), -1, e);
             return true;
         }
         if (sender.hasPermission("spleefx.admin")) {

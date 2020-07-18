@@ -20,8 +20,8 @@ import com.google.gson.annotations.SerializedName;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.data.GameStats;
 import io.github.spleefx.extension.ItemHolder;
-import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.util.item.ItemFactory;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -97,7 +97,7 @@ public class SpleggUpgrade {
         List<String> purchased = (List<String>) stats.getCustomDataMap().computeIfAbsent("purchasedSpleggUpgrades", (k) -> new ArrayList<String>());
         purchased.addAll(SpleggExtension.EXTENSION.getUpgrades().values().stream().filter(upgrade -> upgrade.isDefault() && !purchased.contains(upgrade.getKey())).map(SpleggUpgrade::getKey).collect(Collectors.toList()));
         if (isDefault || purchased.contains(getKey())) {
-            MessageKey.UPGRADE_SELECTED.sendSpleggUpgrade(player.getPlayer(), this);
+            Message.UPGRADE_SELECTED.reply(player.getPlayer(), this);
             stats.getCustomDataMap().put("selectedSpleggUpgrade", getKey());
         } else {
             if (stats.getCoins(player.getPlayer()) >= price) {
@@ -106,9 +106,9 @@ public class SpleggUpgrade {
                             .add(getKey());
                     stats.getCustomDataMap().put("selectedSpleggUpgrade", getKey());
                     stats.takeCoins(player.getPlayer(), price);
-                    MessageKey.UPGRADE_PURCHASED.sendSpleggUpgrade(player.getPlayer(), this);
+                    Message.UPGRADE_PURCHASED.reply(player.getPlayer(), this);
                 } else {
-                    MessageKey.MUST_PURCHASE_BEFORE.sendSpleggUpgrade(player.getPlayer(), this);
+                    Message.MUST_PURCHASE_BEFORE.reply(player.getPlayer(), this);
                 }
             } else
                 return false;

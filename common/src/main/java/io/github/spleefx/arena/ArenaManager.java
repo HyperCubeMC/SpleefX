@@ -23,8 +23,9 @@ import io.github.spleefx.arena.api.ArenaEngine;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.compatibility.worldedit.NoSchematicException;
 import io.github.spleefx.compatibility.worldedit.SchematicManager;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.PlaceholderUtil.CommandEntry;
 import io.github.spleefx.util.game.Chat;
+import io.github.spleefx.util.message.message.Message;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -51,8 +52,7 @@ public class ArenaManager {
             processor.write(clipboard);
             if (arena.getRegenerationPoint() == null) throw new EmptyClipboardException();
             GameArena.ARENAS.get().put(arena.getKey(), arena);
-            MessageKey.ARENA_CREATED.send(player, arena, null, null, null, command,
-                    null, -1, arena.getExtension());
+            Message.ARENA_CREATED.reply(player, arena, arena.getExtension(), new CommandEntry(command));
             return arena;
         } catch (EmptyClipboardException e) {
             Chat.prefix(player, arena, "&cYou must select and copy the arena to your clipboard (with WorldEdit)!");

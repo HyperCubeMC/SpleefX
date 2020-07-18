@@ -23,7 +23,7 @@ import io.github.spleefx.data.LeaderboardTopper;
 import io.github.spleefx.data.PlayerStatistic;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.PlaceholderUtil;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Bukkit;
@@ -151,7 +151,7 @@ public class FlatFileProvider implements DataProvider {
      */
     @Override
     public void createRequiredFiles(FileManager<SpleefX> fileManager) {
-        if (MessageKey.PAPI && (boolean) PluginSettings.LEADERBOARDS.get()) {
+        if (PlaceholderUtil.PAPI && (boolean) PluginSettings.LEADERBOARDS.get()) {
             AtomicBoolean firstTime = new AtomicBoolean(true);
             SpleefX.logger().info("Leaderboards are enabled. Loading player data after 5 seconds to allow it to be sorted beforehand. This may take some time depending on the amount of data it has to process.");
             Bukkit.getScheduler().runTaskTimer(fileManager.getPlugin(), () -> {
@@ -181,7 +181,7 @@ public class FlatFileProvider implements DataProvider {
                 SpleefX.logger().info("Finished loading and sorting all leaderboards in " + timer.elapsed(TimeUnit.MILLISECONDS) + " milliseconds.");
                 firstTime.set(false);
                 timer.stop();
-            }, 5 * 20, 600 * 20);
+            }, 0, 600 * 20);
         }
     }
 
@@ -194,7 +194,7 @@ public class FlatFileProvider implements DataProvider {
     public List<LeaderboardTopper> getTopPlayers(PlayerStatistic statistic, GameExtension extension) {
         if (!(boolean) PluginSettings.LEADERBOARDS.get())
             throw new IllegalStateException("Leaderboards are not enabled! Enable them in the config.yml.");
-        if (!MessageKey.PAPI)
+        if (!PlaceholderUtil.PAPI)
             throw new IllegalStateException("PlaceholderAPI is not found! Get PlaceholderAPI for leaderboards to work.");
         if (extension == null) {
             try {

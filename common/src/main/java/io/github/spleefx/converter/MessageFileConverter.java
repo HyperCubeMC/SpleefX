@@ -29,8 +29,8 @@ import java.util.Map;
 public class MessageFileConverter implements Runnable {
 
     private static final Map<String, String> ECO = MapBuilder.of(new HashMap<String, String>())
-            .put("moneyGiven", "&aYou have been given &e${value}&a.")
-            .put("moneyTaken", "&e${value} &ahas been taken from you.")
+            .put("moneyGiven", "&aYou have been given &e${colored_number}&a.")
+            .put("moneyTaken", "&e${colored_number} &ahas been taken from you.")
             .put("boosterPaused", "&aThis booster has been paused.")
             .put("boosterGiven", "&aYou have been given a booster of type &e{booster_type_displayname}")
             .put("boosterActivated", "&aYour booster will be activated for &e{duration}&a.")

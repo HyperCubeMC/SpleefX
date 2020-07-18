@@ -93,22 +93,28 @@ public class DoubleJumpHandler implements Listener {
      */
     public void doubleJump(GameArena arena, Player player) {
         try {
+            ArenaPlayer ap = ArenaPlayer.adapt(player);
             BaseArenaEngine<? extends GameArena> engine = (BaseArenaEngine<? extends GameArena>) arena.getEngine();
-            if (engine.getAbilityCount().getOrDefault(player.getUniqueId(), BaseArenaEngine.DEFAULT_MAP).getOrDefault(GameAbility.DOUBLE_JUMP, 0) <= 0)
+            if (engine.getAbilityCount().getOrDefault(player.getUniqueId(), BaseArenaEngine.DEFAULT_MAP).getOrDefault(GameAbility.DOUBLE_JUMP, 0) <= 0) {
+                if (ap.isSpectating()) {
+                    player.setAllowFlight(true);
+                    player.setFlying(true);
+                }
                 return; // Player has no more double jumps
+            }
             if (delayExecutor.hasDelay(player, GameAbility.DOUBLE_JUMP)) return;
-            int v = GameAbility.DOUBLE_JUMP.reduceAbility(engine.getAbilityCount().get(player.getUniqueId()));
+            int v = ap.isSpectating() ? engine.getAbilityCount().get(player.getUniqueId()).get(GameAbility.DOUBLE_JUMP) : GameAbility.DOUBLE_JUMP.reduceAbility(engine.getAbilityCount().get(player.getUniqueId()));
             PlayerDoubleJumpEvent event = new PlayerDoubleJumpEvent(player, v, arena);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
             player.setVelocity(arena.getExtension().getDoubleJumpSettings().getLaunchVelocity().getVector(player));
-            if (!ArenaPlayer.adapt(player).isSpectating())
+            if (!ap.isSpectating())
                 player.setAllowFlight(false);
-            engine.addDoubleJumpItems(ArenaPlayer.adapt(player), false);
+            engine.addDoubleJumpItems(ap, false);
             if (arena.getExtension().getDoubleJumpSettings().getPlaySoundOnJump() != null)
                 player.playSound(player.getLocation(), arena.getExtension().getDoubleJumpSettings().getPlaySoundOnJump(), 1, 1);
             delayExecutor.setDelay(player, GameAbility.DOUBLE_JUMP, new DelayData(arena.getExtension().getDoubleJumpSettings().getCooldownBetween()).setOnFinish((p) -> {
-                if (p.isOnline() && v > 0) {
+                if (p.getPlayer() != null && v > 0) {
                     ArenaPlayer arenaPlayer = ArenaPlayer.adapt(p.getPlayer());
                     if (arenaPlayer.getState() == ArenaPlayerState.IN_GAME) {
                         p.getPlayer().setAllowFlight(true);

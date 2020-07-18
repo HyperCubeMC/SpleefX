@@ -19,7 +19,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.economy.booster.BoosterFactory.FactoryStringAdapter;
-import io.github.spleefx.message.MessageKey;
+import io.github.spleefx.util.message.message.Message;
 import io.github.spleefx.util.plugin.Duration;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -68,7 +68,7 @@ public class BoosterInstance {
     public BoosterInstance(UUID owner, BoosterFactory type, double multiplier, Duration duration) {
         this.owner = owner;
         this.type = type;
-        this.state = BoosterState.AVAILABLE;
+        state = BoosterState.AVAILABLE;
         this.multiplier = multiplier;
         this.duration = duration.getSeconds();
     }
@@ -127,7 +127,7 @@ public class BoosterInstance {
         } else {
             if (SpleefX.getPlugin().getDataProvider().getStatistics(player).getActiveBoosters().size() >= ALLOW_MULTIPLE.get()) {
                 if (player.isOnline()) {
-                    MessageKey.CANNOT_ACTIVATE_MORE.sendBooster(player.getPlayer(), this);
+                    Message.CANNOT_ACTIVATE_MORE.reply(player.getPlayer(), this);
                     return false;
                 }
             } else {

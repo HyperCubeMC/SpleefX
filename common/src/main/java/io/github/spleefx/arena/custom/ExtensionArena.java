@@ -50,7 +50,7 @@ public class ExtensionArena extends GameArena {
     @Override
     public void post() {
         super.post();
-        this.type = ModeType.CUSTOM;
+        type = ModeType.CUSTOM;
         setEngine(new SimpleArenaEngine<>(this));
         setExtension(getExtension());
     }
