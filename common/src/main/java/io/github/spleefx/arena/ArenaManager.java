@@ -79,7 +79,7 @@ public class ArenaManager {
     /**
      * Regenerates the specified arena.
      * <p>
-     * Note: It is not recommended to use this method directly. Use {@link ArenaEngine#regenerate()}.
+     * Note: It is not recommended to use this method directly. Use {@link ArenaEngine#regenerate(ArenaStage)}.
      *
      * @param key Arena key to regenerate
      */

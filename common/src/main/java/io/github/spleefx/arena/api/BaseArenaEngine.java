@@ -261,6 +261,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         team.getMembers().add(player);
         playerTeams.put(p, team);
         prepare(p, team);
+        broadcasted.add(player.getUniqueId());
         if (arena.getArenaType() == ArenaType.TEAMS) {
             for (Player pl : toBroadcast()) {
                 Message.PLAYER_JOINED_T.reply(pl, arena, team.getColor(), player, arena.getExtension());
@@ -271,8 +272,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             }
         }
         getSignManager().update();
-        if (playerTeams.size() >= arena.getMinimum())
+        if (playerTeams.size() >= arena.getMinimum()) {
             countdown();
+        }
         abilityCount.put(player.getUniqueId(), (EnumMap<GameAbility, Integer>)
                 MapBuilder.of(new EnumMap<GameAbility, Integer>(GameAbility.class))
                         .put(GameAbility.DOUBLE_JUMP, arena.getExtension().getDoubleJumpSettings().getDefaultAmount()).build());
@@ -282,7 +284,6 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             stats.takeCoins(player, arena.getBet());
             Message.BET_TAKEN.reply(player, arena, player, arena.getExtension(), new BetEntry(arena.getBet(), null));
         }
-        broadcasted.add(player.getUniqueId());
         return true;
     }
 
@@ -507,9 +508,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (ARENA_REGENERATE_BEFORE_COUNTDOWN.get())
             getPlugin().getArenaManager().regenerateArena(arena.getKey());
 
-        playerTeams.forEach((p, team) -> Message.GAME_STARTING.reply(p.getPlayer(), arena, team.getColor(), p.getPlayer(), countdown, arena.getExtension()));
-        arena.getExtension().getRunCommandsWhenGameFills().forEach(c -> SenderType.CONSOLE.run(null, c, arena));
         Map<String, String> numbersToDisplay = TITLE_ON_COUNTDOWN_NUMBERS.get();
+        playerTeams.forEach((p, team) -> Message.GAME_STARTING.reply(p.getPlayer(), arena, team.getColor(), p.getPlayer(), countdown, new ColoredNumberEntry(numbersToDisplay.getOrDefault(countdown + "", "&e" + countdown)), arena.getExtension()));
+        arena.getExtension().getRunCommandsWhenGameFills().forEach(c -> SenderType.CONSOLE.run(null, c, arena));
         countdownTask = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
             countdown--;
             currentScoreboard = isFull() ? ScoreboardType.COUNTDOWN_AND_FULL : ScoreboardType.COUNTDOWN_AND_WAITING;
@@ -690,7 +691,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         spectators.clear();
         endTasks.stream().filter(task -> task.getPhase() == Phase.AFTER).forEach(GameTask::run);
         broadcasted.clear();
-        regenerate();
+        regenerate(ArenaStage.WAITING);
         setArenaStage(ArenaStage.WAITING);
     }
 
@@ -712,10 +713,11 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
 
     /**
      * Regenerates the arena
+     * @param newStage
      */
     @SneakyThrows @Override
-    public void regenerate() {
-        ArenaStage oldStage = getArenaStage();
+    public void regenerate(@Nullable ArenaStage newStage) {
+        ArenaStage oldStage = newStage == null ? getArenaStage() : newStage;
         setArenaStage(ArenaStage.REGENERATING);
         getPlugin().getArenaManager().regenerateArena(arena.getKey()).thenAccept((v) -> {
             setArenaStage(oldStage);

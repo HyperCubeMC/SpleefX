@@ -16,6 +16,7 @@
 package io.github.spleefx.command.sub.base;
 
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.api.ArenaType;
@@ -223,7 +224,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             return true;
                         }
                         Chat.prefix(sender, arena, "&eRegenerating...");
-                        arena.getEngine().regenerate();
+                        arena.getEngine().regenerate(ArenaStage.WAITING);
                         Chat.prefix(sender, arena, "&aArena &e" + arena.getKey() + " &ahas been regenerated.");
                     }
                     return true;
