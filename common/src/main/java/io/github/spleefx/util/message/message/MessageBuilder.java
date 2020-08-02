@@ -12,7 +12,7 @@ public class MessageBuilder {
 
     private static final int DESCRIPTION_LENGTH = 37;
 
-    private String key;
+    private final String key;
     private String defaultValue;
     private String comment;
     private String[] description;

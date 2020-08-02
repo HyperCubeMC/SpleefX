@@ -59,7 +59,7 @@ public class SpleggExtension extends GameExtension {
     private List<Action> clickActions;
 
     @Expose
-    private Map<String, SpleggUpgrade> upgrades = new HashMap<>();
+    private final Map<String, SpleggUpgrade> upgrades = new HashMap<>();
 
     @Expose
     private SpleggShop spleggShop;
@@ -129,7 +129,7 @@ public class SpleggExtension extends GameExtension {
         /**
          * The projectile class
          */
-        private Class<? extends Projectile> clazz;
+        private final Class<? extends Projectile> clazz;
 
         ProjectileType(int protocol, Class<? extends Projectile> clazz) {
             if (protocol == -1) {

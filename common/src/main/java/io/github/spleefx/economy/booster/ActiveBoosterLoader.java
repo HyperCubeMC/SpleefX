@@ -20,6 +20,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.data.PlayerRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -38,7 +39,7 @@ public class ActiveBoosterLoader {
 
     @JsonAdapter(MapAdapter.class)
     @Expose
-    private Map<UUID, Integer> activeBoostersMap = new HashMap<>();
+    private final Map<UUID, Integer> activeBoostersMap = new HashMap<>();
 
     public Map<OfflinePlayer, BoosterInstance> getActiveBoosters() {
         Map<UUID, Integer> a = activeBoostersMap;
@@ -49,7 +50,7 @@ public class ActiveBoosterLoader {
             int index = entry.getValue();
             OfflinePlayer p = Bukkit.getOfflinePlayer(owner);
             try {
-                boosters.put(p, SpleefX.getPlugin().getDataProvider().getStatistics(p).getBoosters().get(index));
+                boosters.put(p, PlayerRepository.REPOSITORY.lookup(owner).getBoosters().get(index));
             } catch (IndexOutOfBoundsException e) {
                 SpleefX.logger().warning("Failed to load an active booster for player " + p.getName() + ".");
             }

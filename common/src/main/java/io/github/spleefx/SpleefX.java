@@ -15,18 +15,24 @@ import io.github.spleefx.command.plugin.PluginCommandBuilder;
 import io.github.spleefx.command.sub.base.StatsCommand.MenuListener;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.worldedit.SchematicManager;
-import io.github.spleefx.converter.*;
-import io.github.spleefx.data.DataProvider;
-import io.github.spleefx.data.DataProvider.StorageType;
-import io.github.spleefx.data.GameStats;
-import io.github.spleefx.data.StatisticsConfig;
-import io.github.spleefx.data.papi.OldExpansionRemover;
-import io.github.spleefx.data.papi.SpleefXPAPI;
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.converter.ConfigConverter;
+import io.github.spleefx.converter.LegacyExtensionConverter;
+import io.github.spleefx.converter.SpectatorFileConverter;
+import io.github.spleefx.converter.SpleggExtensionConverter;
+import io.github.spleefx.data.PlayerRepository;
+import io.github.spleefx.data.PlayerRepository.QueryListener;
+import io.github.spleefx.data.SpleefXPAPI;
+import io.github.spleefx.data.menu.StatisticsConfig;
+import io.github.spleefx.dep.Dependency;
+import io.github.spleefx.dep.DependencyManager;
+import io.github.spleefx.dep.classloader.ReflectionClassLoader;
 import io.github.spleefx.economy.booster.ActiveBoosterLoader;
 import io.github.spleefx.economy.booster.BoosterConsumer;
 import io.github.spleefx.economy.booster.BoosterFactory;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
+import io.github.spleefx.extension.GameExtension.ExtensionType;
 import io.github.spleefx.extension.ability.DoubleJumpHandler;
 import io.github.spleefx.extension.ability.GameAbility;
 import io.github.spleefx.extension.ability.TripleArrowsAbility;
@@ -43,21 +49,17 @@ import io.github.spleefx.scoreboard.ScoreboardListener;
 import io.github.spleefx.scoreboard.sidebar.ScoreboardTicker;
 import io.github.spleefx.spectate.*;
 import io.github.spleefx.spectate.SpectatingListener.PickupListener;
+import io.github.spleefx.util.FileWatcher;
 import io.github.spleefx.util.io.CopyStore;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.menu.GameMenu;
 import io.github.spleefx.util.message.message.MessageImporter;
 import io.github.spleefx.util.message.message.MessageManager;
 import io.github.spleefx.util.plugin.DelayExecutor;
-import io.github.spleefx.util.plugin.PluginSettings;
 import io.github.spleefx.util.plugin.Protocol;
 import io.github.spleefx.vault.VaultHandler;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.lucko.helper.maven.LibraryLoader;
-import me.lucko.helper.maven.LibraryLoader.Dependency;
-import me.lucko.helper.maven.MavenLibrary;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -84,19 +86,28 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
 
+import static io.github.spleefx.dep.Dependency.*;
 import static io.github.spleefx.extension.ExtensionsManager.EXTENSIONS_FOLDER;
 import static io.github.spleefx.perk.GamePerk.PERKS;
 import static io.github.spleefx.perk.GamePerk.PERKS_FOLDER;
+import static io.github.spleefx.util.FileWatcher.registerWatcher;
 import static java.io.File.separator;
 import static org.moltenjson.configuration.tree.strategy.TreeNamingStrategy.STRING_STRATEGY;
 
+@SuppressWarnings("FieldMayBeFinal")
 @Getter
-@MavenLibrary(groupId = "com.google.code.gson", artifactId = "gson", version = "2.8.5")
 public final class SpleefX extends JavaPlugin implements Listener {
 
     public static final Map<String, Integer> BSTATS_EXTENSIONS = new ConcurrentHashMap<>();
+
+    /**
+     * This will allow us to run separately from {@link ForkJoinPool#commonPool()} which is
+     * used badly by some plugins.
+     */
+    public static final ForkJoinPool POOL = new ForkJoinPool();
 
     /**
      * The extensions tree
@@ -114,18 +125,30 @@ public final class SpleefX extends JavaPlugin implements Listener {
     @Getter
     private static SpleefX plugin;
 
+    private boolean protocolLib;
     private WorldEditPlugin worldEdit;
-    private DelayExecutor<GameAbility> abilityDelays = new DelayExecutor<>(this);
-    private CompatibilityHandler compatibilityHandler;
     private ArenaManager arenaManager;
-    private BoosterConsumer boosterConsumer = new BoosterConsumer();
     private VaultHandler vaultHandler;
-    private final FileManager<SpleefX> fileManager = new FileManager<>(this);
-    private Logger pluginLogger;
     private SelectableConfiguration arenasConfig;
-    private SelectableConfiguration statsFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("gui" + separator + "statistics-gui.json")), false, AdapterBuilder.GSON);
-    private final SelectableConfiguration boostersFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("boosters" + separator + "boosters.json")), false, AdapterBuilder.GSON);
-    private final SelectableConfiguration joinGuiFile = SelectableConfiguration.of(JsonFile.of(fileManager.createFile("gui" + separator + "join-gui.json")), false, AdapterBuilder.GSON);
+
+    private final DelayExecutor<GameAbility> abilityDelays = new DelayExecutor<>(this);
+    private final BoosterConsumer boosterConsumer = new BoosterConsumer();
+    private final FileManager<SpleefX> fileManager = new FileManager<>(this);
+    private final Logger pluginLogger;
+
+    private final SelectableConfiguration statsFile = SelectableConfiguration.of(JsonFile.of(
+            registerWatcher(fileManager.createFile("gui" + separator + "statistics-gui.json"))
+                    .onChange(path -> getStatsFile().refresh())
+                    .getFile()), false, AdapterBuilder.GSON);
+
+    private final SelectableConfiguration boostersFile = SelectableConfiguration.of(JsonFile.of(
+            registerWatcher(fileManager.createFile("boosters" + separator + "boosters.json"))
+                    .onChange(path -> getBoostersFile().refresh()).getFile()), false, AdapterBuilder.GSON);
+
+    private final SelectableConfiguration joinGuiFile = SelectableConfiguration.of(JsonFile.of(
+            registerWatcher(fileManager.createFile("gui" + separator + "join-gui.json"))
+                    .onChange((p) -> getJoinGuiFile().refresh())
+                    .getFile()), false, AdapterBuilder.GSON);
 
     private final SpectatingHandler spectatingHandler = new SpectatingHandler();
     private final ConfigurationPack<SpleefX> configurationPack = new ConfigurationPack<>(this, getDataFolder(), ArenaData.GSON);
@@ -147,17 +170,27 @@ public final class SpleefX extends JavaPlugin implements Listener {
     private ExtensionsManager extensionsManager;
     private MessageManager messageManager;
 
-    private DataProvider dataProvider;
+    @Getter
+    private ReflectionClassLoader reflectionClassLoader = new ReflectionClassLoader(this);
 
     public void loadMissing() {
-        downloadIfMissing("ProtocolLib", "https://github.com/dmulloy2/ProtocolLib/releases/download/4.5.1/ProtocolLib.jar");
-        downloadIfMissing("helper", "https://ci.lucko.me/job/helper/lastSuccessfulBuild/artifact/helper/target/helper.jar");
+        if (downloadIfMissing("ProtocolLib", "https://github.com/dmulloy2/ProtocolLib/releases/download/4.5.1/ProtocolLib.jar"))
+            protocolLib = true;
+    }
+
+    @Override
+    public void onLoad() {
+        plugin = this;
+        DependencyManager dependencyManager = new DependencyManager(this);
+        EnumSet<Dependency> deps = EnumSet.of(OKIO, OKHTTP, CAFFEINE, HIKARI);
         if (Protocol.PROTOCOL == 8)
-            LibraryLoader.load(new Dependency("com.google.code.gson", "gson", "2.8.5", "https://repo1.maven.org/maven2"));
+            deps.add(GSON);
+        dependencyManager.loadDependencies(deps);
+        dependencyManager.loadStorageDependencies(io.github.spleefx.data.StorageType.fromName(Objects.requireNonNull(getConfig().getString("StorageMethod", "H2"))));
     }
 
     @SneakyThrows
-    private void downloadIfMissing(String plugin, String url) {
+    private boolean downloadIfMissing(String plugin, String url) {
         if (Bukkit.getPluginManager().getPlugin(plugin) == null) {
             getLogger().info(StringUtils.capitalize(plugin) + " plugin not found. Downloading...");
             File pluginJAR = new File(getDataFolder(), ".." + separator + plugin + ".jar");
@@ -170,13 +203,17 @@ public final class SpleefX extends JavaPlugin implements Listener {
             ReadableByteChannel rbc = Channels.newChannel(connection.getInputStream());
             FileOutputStream fos = new FileOutputStream(pluginJAR);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-            Bukkit.getPluginManager().loadPlugin(pluginJAR);
+            Bukkit.getPluginManager().loadPlugin(pluginJAR).onLoad();
+            return true;
         }
+        return false;
     }
 
     @Override
     public void onEnable() {
         loadMissing();
+        if (protocolLib)
+            Bukkit.getPluginManager().enablePlugin(Bukkit.getPluginManager().getPlugin("ProtocolLib"));
         if (CompatibilityHandler.shouldDisable()) {
             SpleefX.logger().severe("Unsupported server protocol: 1." + Protocol.EXACT);
             SpleefX.logger().severe("Please use one of the following: 1.8.8, 1.8.9, 1.12.2, 1.13.2, 1.14.X, 1.15.X for the plugin to function");
@@ -206,11 +243,11 @@ public final class SpleefX extends JavaPlugin implements Listener {
 
             new MessageImporter(this);
 
-            compatibilityHandler = new CompatibilityHandler();
+            CompatibilityHandler.init();
             arenaManager = new ArenaManager(this);
 
-            PluginSettings.load();
-            fileManager.createDirectory(PluginSettings.STATISTICS_DIRECTORY.get());
+            SpleefXConfig.load(true);
+            //fileManager.createDirectory(SpleefXConfig.STATISTICS_DIRECTORY.get());
             arenasFolder.mkdirs();
             statsFile.register(StatisticsConfig.class).associate();
             boostersFile.register(BoosterFactory.class).associate();
@@ -278,6 +315,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
             PluginManager p = Bukkit.getPluginManager();
 
             p.registerEvents(new TripleArrowsAbility(abilityDelays), this);
+            p.registerEvents(new QueryListener(), this);
 
             p.registerEvents(new SignListener(this), this);
             p.registerEvents(new ConnectionListener(), this);
@@ -306,28 +344,26 @@ public final class SpleefX extends JavaPlugin implements Listener {
                     .command(fromKey(key, def))
                     .register()));
 
-            StorageType storageType = PluginSettings.STATISTICS_STORAGE_TYPE.get();
-
-            if (storageType == StorageType.SQLITE && Bukkit.getPluginManager().getPlugin("SpleefXSQL") == null)
-                SpleefX.logger().warning("The storage type is SQLite, but SpleefXSQL extension is not found. Defaulting to flat file storage");
-
+            /*
+TODO
             dataProvider = storageType.create();
             dataProvider.createRequiredFiles(fileManager);
 
             if (storageType == StorageType.UNITED_FILE) {
-                new StorageTypeConverter(dataProvider).run();
-                SpleefX.logger().warning("I noticed you're using UNITED_FILE as a storage type. This is no longer supported as it cannot work with all the new data it has to store. Player data has been converted to use FLAT_FILE instead.");
+                SpleefX.logger().warning("I noticed you're using UNITED_FILE as a storage type. This is no longer supported as it cannot work with all the new data_old it has to store. Player data_old has been converted to use FLAT_FILE instead.");
             }
 
-            if (GameStats.VAULT_EXISTS.get())
+*/
+            if (SpleefXConfig.VAULT_EXISTS)
                 vaultHandler = new VaultHandler(this);
 
+
             Bukkit.getScheduler().runTaskTimer(this, () -> GameArena.ARENAS.get().values().forEach(arena -> arena.getEngine().getSignManager().update()),
-                    ((Integer) PluginSettings.SIGN_UPDATE_INTERVAL.get()).longValue(), ((Integer) PluginSettings.SIGN_UPDATE_INTERVAL.get()).longValue());
+                    SpleefXConfig.SIGN_UPDATE_INTERVAL.get().longValue(), SpleefXConfig.SIGN_UPDATE_INTERVAL.get().longValue());
             Bukkit.getScheduler().runTaskTimer(this, () -> {
                 saveArenas();
                 messageManager.save();
-                dataProvider.saveEntries(this);
+                PlayerRepository.REPOSITORY.save();
                 //PluginSettings.save();
             }, 24000, 24000); // 20 minutes
             getServer().getPluginManager().registerEvents(new DoubleJumpHandler(abilityDelays), this);
@@ -347,13 +383,9 @@ public final class SpleefX extends JavaPlugin implements Listener {
             boosterConsumer.start(this);
 
             scoreboardTicker = new ScoreboardTicker();
-            scoreboardTicker.setTicks(((Number) PluginSettings.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
+            scoreboardTicker.setTicks(((Number) SpleefXConfig.SCOREBOARD_UPDATE_INTERVAL.get()).intValue());
 
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                if (PlaceholderAPI.unregisterPlaceholderHook("SpleefX")) {
-                    new OldExpansionRemover(this).run();
-                    logger().info("Removed old SpleefX-PAPI jar to avoid conflict.");
-                }
                 logger().info("Found PlaceholderAPI. Registering hooks");
                 new SpleefXPAPI(this).register();
             }
@@ -366,8 +398,9 @@ public final class SpleefX extends JavaPlugin implements Listener {
                 return m;
             }));
             //scheduler = new SpleefXScheduler(this);
-            if (Protocol.PROTOCOL == 8) // 1.8
                 new ProtocolLibSpectatorAdapter(this);
+            FileWatcher.pollDirectory(getDataFolder().toPath());
+            PlayerRepository.REPOSITORY.cacheAll();
         } catch (Exception e) {
             try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
                 e.printStackTrace(pw);
@@ -388,8 +421,15 @@ public final class SpleefX extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        try {
+            FileWatcher.getService().close();
+            FileWatcher.getPool().shutdownNow();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (CompatibilityHandler.shouldDisable() || CompatibilityHandler.missingWorldEdit() || CompatibilityHandler.missingProtocolLib())
             return;
+        PlayerRepository.REPOSITORY.save();
         try {
             disableArenas();
         } catch (Exception e) {
@@ -399,7 +439,6 @@ public final class SpleefX extends JavaPlugin implements Listener {
         boosterConsumer.cancel();
         saveArenas();
         messageManager.save();
-        dataProvider.saveEntries(this);
         statsFile.save();
         boostersFile.save();
         try {
@@ -441,10 +480,14 @@ public final class SpleefX extends JavaPlugin implements Listener {
         pluginLogger = getLogger();
         if (!CompatibilityHandler.shouldDisable()) {
             File ext = new File(getDataFolder(), "extensions");
-            fileManager.createFile("config.yml");
+            registerWatcher(fileManager.createFile("config.yml"))
+                    .onChange(path -> {
+                        SpleefX.getPlugin().reloadConfig();
+                        SpleefXConfig.load(false);
+                    });
             new ConfigConverter(new File(getDataFolder(), "config.yml")).run();
             new LegacyExtensionConverter(ext).run();
-            new SpleefExtensionConverter(ext).run();
+            //new SpleefExtensionConverter(ext).run();
             new SpleggExtensionConverter(ext).run();
             new SpectatorFileConverter(getDataFolder()).run();
             //saveDefaultConfig();
@@ -452,13 +495,23 @@ public final class SpleefX extends JavaPlugin implements Listener {
             fileManager.createDirectory("perks");
             fileManager.createDirectory("extensions" + separator + "custom");
             fileManager.createDirectory("extensions" + separator + "standard");
-            fileManager.createFile("extensions" + separator + "standard" + separator + "spleef.json");
-            fileManager.createFile("extensions" + separator + "standard" + separator + "bow_spleef.json");
-            fileManager.createFile("extensions" + separator + "standard" + separator + "splegg.json");
+
+            registerWatcher(fileManager.createFile("extensions" + separator + "standard" + separator + "spleef.json"))
+                    .onChange(path -> ExtensionsManager.getByKey("spleef").refresh(ExtensionType.STANDARD));
+
+            registerWatcher(fileManager.createFile("extensions" + separator + "standard" + separator + "bow_spleef.json"))
+                    .onChange(path -> ExtensionsManager.getByKey("bow_spleef").refresh(ExtensionType.STANDARD));
+
+            registerWatcher(fileManager.createFile("extensions" + separator + "standard" + separator + "splegg.json"))
+                    .onChange(path -> ExtensionsManager.getByKey("splegg").refresh(ExtensionType.STANDARD));
+
+            registerWatcher(fileManager.createFile("spectator-settings.json"))
+                    .onChange(path -> SpleefX.getPlugin().getConfigurationPack().refresh());
+
             fileManager.createFile("extensions" + separator + "custom" + separator + "-example-mode.json");
-            fileManager.createFile("perks" + separator + "-perks-shop.json");
+            registerWatcher(fileManager.createFile("perks" + separator + "-perks-shop.json"));
             fileManager.createFile("perks" + separator + "acidic_snowballs.json");
-            fileManager.createFile("spectator-settings.json");
+
         }
     }
 
@@ -492,7 +545,5 @@ public final class SpleefX extends JavaPlugin implements Listener {
     public static Logger logger() {
         return plugin.pluginLogger;
     }
-
-    private static Thread mainThread = null;
 
 }

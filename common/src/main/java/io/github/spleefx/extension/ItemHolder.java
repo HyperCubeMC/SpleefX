@@ -36,7 +36,7 @@ import java.util.Objects;
 import static io.github.spleefx.util.plugin.Protocol.PROTOCOL;
 
 /**
- * A class which holds data for an {@link ItemStack}
+ * A class which holds data_old for an {@link ItemStack}
  */
 @Setter
 @Accessors(chain = true)

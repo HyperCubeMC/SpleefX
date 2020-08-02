@@ -11,7 +11,7 @@ import java.util.StringJoiner;
 
 public class SpectatorFileConverter implements Runnable {
 
-    private File dataFolder;
+    private final File dataFolder;
 
     public SpectatorFileConverter(File dataFolder) {
         this.dataFolder = dataFolder;

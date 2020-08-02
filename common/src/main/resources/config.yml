@@ -139,8 +139,8 @@ PlayerGameStatistics:
   AllModesName: "&1All Modes"
 
   # The storage type. Each type is cached accordingly and only requested when needed. Can be either:
-  # 1- FLAT_FILE (default) - Player data is saved in JSON files (recommended for servers with 500-700 players)
-  # 2- SQLITE - Player data is saved in a SQLite file (recommended for VERY large servers (1000+ players))
+  # 1- FLAT_FILE (default) - Player data_old is saved in JSON files (recommended for servers with 500-700 players)
+  # 2- SQLITE - Player data_old is saved in a SQLite file (recommended for VERY large servers (1000+ players))
   #
   # Fill the appropriate settings for the selected option. When one is selected, the settings of the other ones are ignored.
   #
@@ -148,9 +148,9 @@ PlayerGameStatistics:
   # TOOLS TO CONVERT.
   StorageType: "FLAT_FILE"
 
-  # The data directory in which the files should be in. This directory will automatically be created if
+  # The data_old directory in which the files should be in. This directory will automatically be created if
   # it does not exist already.
-  Directory: "player-data"
+  Directory: "player-data_old"
 
   # How players should be stored and referenced in files. Can be either:
   # 1- UUID (default, recommended) - Store players by their UUID. Recommended for premium servers (could work with cracked, idk)
@@ -164,7 +164,7 @@ PlayerGameStatistics:
   SQLite:
 
     # The SQLite file in which all players are stored in
-    FileName: "player-data.db"
+    FileName: "player-data_old.db"
 
 # Game countdown settings
 Countdown:
@@ -245,7 +245,7 @@ Leaderboards:
 
   # Whether should the plugin allow leaderboards.
   #
-  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data.
+  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data_old.
   #
   # After enabling, you must restart the server in order for it to take effect. Reload will not work!
   Enabled: false
@@ -269,3 +269,10 @@ Leaderboards:
   # {player} - The player name
   # {score} - The player's score in this stat
   Format: "&d#{pos} &e{player} &7- &b{score}"
+
+# Database:
+#   Name: dbname
+#   Host: 127.0.0.1
+#   Username: passis551
+#   Password: 555
+#   Port: 3306

@@ -31,7 +31,7 @@ public class PlayerDoubleJumpEvent extends ArenaEvent implements Cancellable {
     /**
      * The player that just jumped
      */
-    private Player player;
+    private final Player player;
 
     /**
      * The cancelled state of this arena
@@ -41,7 +41,7 @@ public class PlayerDoubleJumpEvent extends ArenaEvent implements Cancellable {
     /**
      * The amount double-jumps this player has left
      */
-    private int doubleJumpsLeft;
+    private final int doubleJumpsLeft;
 
     public PlayerDoubleJumpEvent(Player player, int doubleJumpsLeft, GameArena arena) {
         super(arena);

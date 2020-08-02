@@ -44,13 +44,13 @@ public class CommandManager {
     /**
      * A list of all commands
      */
-    private List<PluginSubcommand> commands = new ArrayList<>();
+    private final List<PluginSubcommand> commands = new ArrayList<>();
 
     /**
      * A map which contains all the registered commands. String parameter is the command name,
      * and the {@link PluginSubcommand} parameter is the command instance
      */
-    private Map<String, PluginSubcommand> commandsMap = new LinkedHashMap<>();
+    private final Map<String, PluginSubcommand> commandsMap = new LinkedHashMap<>();
 
     /**
      * Registers the given commands

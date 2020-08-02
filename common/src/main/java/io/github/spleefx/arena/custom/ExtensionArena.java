@@ -30,7 +30,7 @@ import org.bukkit.Location;
 public class ExtensionArena extends GameArena {
 
     @Expose
-    private String extension;
+    private final String extension;
 
     private GameExtension gameExtension;
 

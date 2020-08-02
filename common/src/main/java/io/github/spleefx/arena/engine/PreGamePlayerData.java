@@ -26,7 +26,7 @@ import org.bukkit.potion.PotionEffect;
 import java.util.Collection;
 
 /**
- * The data context which is stored in the player's metadata when they join a game, and is loaded back onto them
+ * The data_old context which is stored in the player's metadata when they join a game, and is loaded back onto them
  * when they are no longer in it.
  */
 public class PreGamePlayerData {
@@ -59,7 +59,7 @@ public class PreGamePlayerData {
     private final boolean flying;
 
     /**
-     * Fetches all the data from the player
+     * Fetches all the data_old from the player
      *
      * @param player Player to fetch from
      */

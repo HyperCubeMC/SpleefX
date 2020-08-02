@@ -31,7 +31,7 @@ public class ComponentJSON {
      * A list which contains all JSON components
      */
     @Expose
-    private List<ChatComponent> components = new LinkedList<>();
+    private final List<ChatComponent> components = new LinkedList<>();
 
     /**
      * Appends a {@link ChatComponent} so it gets included in the parent message components

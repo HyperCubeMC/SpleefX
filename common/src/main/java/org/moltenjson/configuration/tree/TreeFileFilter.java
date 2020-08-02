@@ -37,17 +37,17 @@ public class TreeFileFilter<N, E> implements FileFilter {
     /**
      * The exclusion prefixes
      */
-    private ImmutableList<String> exclusionPrefixes;
+    private final ImmutableList<String> exclusionPrefixes;
 
     /**
      * The restricted file extensions
      */
-    private ImmutableList<String> restrictedExtensions;
+    private final ImmutableList<String> restrictedExtensions;
 
     /**
      * Whether or not to search sub-directories
      */
-    private boolean searchSubdirectories;
+    private final boolean searchSubdirectories;
 
     public TreeFileFilter(TreeConfiguration<N, E> configuration) {
         exclusionPrefixes = configuration.getExclusionPrefixes();

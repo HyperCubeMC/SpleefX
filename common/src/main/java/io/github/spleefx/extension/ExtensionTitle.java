@@ -19,6 +19,7 @@ import com.google.gson.annotations.Expose;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.util.PlaceholderUtil;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 
 /**
@@ -28,9 +29,10 @@ import org.bukkit.entity.Player;
 public class ExtensionTitle {
 
     @Expose
-    private boolean enabled;
+    public boolean enabled;
 
     @Expose
+    @Setter
     private String title;
 
     @Expose
@@ -46,6 +48,15 @@ public class ExtensionTitle {
     private int fadeOutTicks;
 
     public ExtensionTitle() {
+    }
+
+    public ExtensionTitle(ExtensionTitle clone) {
+        enabled = clone.enabled;
+        title = clone.title;
+        subtitle = clone.subtitle;
+        fadeInTicks = clone.fadeInTicks;
+        displayTicks = clone.displayTicks;
+        fadeOutTicks = clone.fadeOutTicks;
     }
 
     public void display(Player player, String winner) {

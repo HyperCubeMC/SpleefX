@@ -6,10 +6,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 
 import java.util.Collections;
+import java.util.List;
 
 public class ScoreboardThread extends Thread {
 
-    private ScoreboardTicker ticker;
+    private final ScoreboardTicker ticker;
 
     ScoreboardThread(ScoreboardTicker ticker) {
         this.ticker = ticker;
@@ -39,47 +40,46 @@ public class ScoreboardThread extends Thread {
             if (board == null) continue;
 
             Objective objective = board.getObjective();
-            ticker.getProvider().getTitle(player).thenAcceptSync((c) -> {
-                if (c == null) {
-                    ticker.getBoards().remove(player.getUniqueId());
-                    player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-                    return;
-                }
-                String title = ChatColor.translateAlternateColorCodes('&', c);
-                if (!objective.getDisplayName().equals(title)) {
-                    objective.setDisplayName(title);
-                }
-            }).thenAcceptSync((v) -> ticker.getProvider().getLines(player).thenAcceptSync(newLines -> {
-                if (newLines == null || newLines.isEmpty()) {
-                    board.getEntries().forEach(ScoreboardEntry::remove);
-                    board.getEntries().clear();
-                } else {
-                    Collections.reverse(newLines);
+            String c = ticker.getProvider().getTitle(player);
+            System.out.println("Title: '" + c + "'");
+            if (c == null) {
+                ticker.getBoards().remove(player.getUniqueId());
+                player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+                return;
+            }
+            List<String> newLines = ticker.getProvider().getLines(player);
+            if (!objective.getDisplayName().equals(c)) {
+                objective.setDisplayName(c);
+            }
+            if (newLines == null || newLines.isEmpty()) {
+                board.getEntries().forEach(ScoreboardEntry::remove);
+                board.getEntries().clear();
+            } else {
+                Collections.reverse(newLines);
 
-                    if (board.getEntries().size() > newLines.size()) {
-                        for (int i = newLines.size(); i < board.getEntries().size(); i++) {
-                            ScoreboardEntry entry = board.getEntryAtPosition(i);
-
-                            if (entry != null) {
-                                entry.remove();
-                            }
-                        }
-                    }
-
-                    int cache = 1;
-                    for (int i = 0; i < newLines.size(); i++) {
+                if (board.getEntries().size() > newLines.size()) {
+                    for (int i = newLines.size(); i < board.getEntries().size(); i++) {
                         ScoreboardEntry entry = board.getEntryAtPosition(i);
 
-                        String line = ChatColor.translateAlternateColorCodes('&', newLines.get(i));
-                        if (entry == null) {
-                            entry = new ScoreboardEntry(board, line);
+                        if (entry != null) {
+                            entry.remove();
                         }
-                        entry.setText(line);
-                        entry.setup();
-                        entry.send(cache++);
                     }
                 }
-            }));
+
+                int cache = 1;
+                for (int i = 0; i < newLines.size(); i++) {
+                    ScoreboardEntry entry = board.getEntryAtPosition(i);
+
+                    String line = ChatColor.translateAlternateColorCodes('&', newLines.get(i));
+                    if (entry == null) {
+                        entry = new ScoreboardEntry(board, line);
+                    }
+                    entry.setText(line);
+                    entry.setup();
+                    entry.send(cache++);
+                }
+            }
         }
     }
 }

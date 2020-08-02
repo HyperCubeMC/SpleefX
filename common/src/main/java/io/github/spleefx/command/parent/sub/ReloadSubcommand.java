@@ -17,9 +17,8 @@ package io.github.spleefx.command.parent.sub;
 
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.PluginSubcommand;
+import io.github.spleefx.config.SpleefXConfig;
 import io.github.spleefx.util.game.Chat;
-import io.github.spleefx.util.message.message.Message;
-import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
@@ -31,11 +30,11 @@ import java.util.stream.Collectors;
 
 public class ReloadSubcommand extends PluginSubcommand {
 
-    private static final Permission PERMISSION = new Permission("spleefx.admin.reload");
+    public static final Permission PERMISSION = new Permission("spleefx.admin.reload");
 
-    private static final List<String> TABS = Arrays.asList("config", "arenas", "statsFile", "joinGuiFile", "messagesFile", "spectator");
+    public static final List<String> TABS = Arrays.asList("config", "arenas", "statsFile", "joinGuiFile", "messagesFile", "spectator");
 
-    private static final List<String> HELP = Arrays.asList(
+    public static final List<String> HELP = Arrays.asList(
             "&ereload &aarenas &7- &dReload the arenas storage &c(Not recommended!)",
             "&ereload &aconfig &7- &dReload the config to update values",
             "&ereload &astatsFile &7- &dReload the statistics GUI file",
@@ -49,7 +48,7 @@ public class ReloadSubcommand extends PluginSubcommand {
         super.helpMenu = HELP;
     }
 
-    private static final List<String> CONFIRM = Collections.singletonList("confirm");
+    public static final List<String> CONFIRM = Collections.singletonList("confirm");
 
     /**
      * Handles the command input
@@ -111,38 +110,38 @@ public class ReloadSubcommand extends PluginSubcommand {
         return Collections.emptyList();
     }
 
-    private void reloadConfig(CommandSender sender) {
+    public static void reloadConfig(CommandSender sender) {
         Chat.plugin(sender, "&eReloading config...");
         SpleefX.getPlugin().reloadConfig();
-        Arrays.stream(PluginSettings.values).forEach(PluginSettings::request);
+        SpleefXConfig.load(false);
         Chat.plugin(sender, "&aConfig reloaded!");
     }
 
-    private void reloadStatsFile(CommandSender sender) {
+    public static void reloadStatsFile(CommandSender sender) {
         Chat.plugin(sender, "&eReloading statistics-gui.json...");
         SpleefX.getPlugin().getStatsFile().refresh();
         Chat.plugin(sender, "&aFile reloaded!");
     }
 
-    private void reloadSpectatorSettings(CommandSender sender) {
+    public static void reloadSpectatorSettings(CommandSender sender) {
         Chat.plugin(sender, "&eReloading spectator-settings.json...");
         SpleefX.getPlugin().getConfigurationPack().refresh();
         Chat.plugin(sender, "&aFile reloaded!");
     }
 
-    private void reloadJoinGuiFile(CommandSender sender) {
+    public static void reloadJoinGuiFile(CommandSender sender) {
         Chat.plugin(sender, "&eReloading join-gui.json...");
         SpleefX.getPlugin().getJoinGuiFile().refresh();
         Chat.plugin(sender, "&aFile reloaded!");
     }
 
-    private void reloadMessagesFile(CommandSender sender) {
+    public static void reloadMessagesFile(CommandSender sender) {
         Chat.plugin(sender, "&eReloading messages.json...");
         SpleefX.getPlugin().getMessageManager().load(true);
         Chat.plugin(sender, "&aFile reloaded!");
     }
 
-    private void reloadArenas(CommandSender sender) {
+    public static void reloadArenas(CommandSender sender) {
         Chat.plugin(sender, "&eReloading &darenas.json&e...");
         SpleefX.getPlugin().getArenasConfig().refresh();
         Chat.plugin(sender, "&darenas.json &areloaded!");

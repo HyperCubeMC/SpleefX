@@ -39,7 +39,7 @@ public class ArenaManager {
     /**
      * Main plugin instance
      */
-    private SpleefX plugin;
+    private final SpleefX plugin;
 
     public ArenaManager(SpleefX plugin) {
         this.plugin = plugin;
@@ -62,7 +62,7 @@ public class ArenaManager {
     }
 
     /**
-     * Deletes an arena and all its data
+     * Deletes an arena and all its data_old
      *
      * @param key Key of the arena to remove
      * @return The previous arena
@@ -79,7 +79,7 @@ public class ArenaManager {
     /**
      * Regenerates the specified arena.
      * <p>
-     * Note: It is not recommended to use this method directly. Use {@link ArenaEngine#regenerate()}.
+     * Note: It is not recommended to use this method directly. Use {@link ArenaEngine#regenerate(ArenaStage)}.
      *
      * @param key Arena key to regenerate
      */

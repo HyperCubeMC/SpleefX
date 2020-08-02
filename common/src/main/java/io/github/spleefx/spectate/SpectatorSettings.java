@@ -20,16 +20,16 @@ public class SpectatorSettings {
     public boolean enabled = true;
 
     @Expose
-    private MenuData spectatePlayerMenu = new MenuData();
+    private final MenuData spectatePlayerMenu = new MenuData();
 
     @Expose
-    private ExtensionTitle titleOnSpectate = new ExtensionTitle(true, "&aSpectating {target}", "&8Sneak to exit", 5, 30, 5);
+    private final ExtensionTitle titleOnSpectate = new ExtensionTitle(true, "&aSpectating {target}", "&8Sneak to exit", 5, 30, 5);
 
     @Expose
-    private ActionBar spectatingActionBar = new ActionBar(true, "&1Spectating &e{player}");
+    private final ActionBar spectatingActionBar = new ActionBar(true, "&1Spectating &e{player}");
 
     @Expose
-    private SlotItemHolder spectateItem = (SlotItemHolder) new SlotItemHolder()
+    private final SlotItemHolder spectateItem = (SlotItemHolder) new SlotItemHolder()
             .setSlot(0)
             .setType("ender_portal_frame")
             .setCount(1)
@@ -39,7 +39,7 @@ public class SpectatorSettings {
             .setLore(Arrays.asList("", "&eClick to spectate other players"));
 
     @Expose
-    private SlotItemHolder exitSpectatingItem = (SlotItemHolder) new SlotItemHolder()
+    private final SlotItemHolder exitSpectatingItem = (SlotItemHolder) new SlotItemHolder()
             .setSlot(8)
             .setType("iron_door")
             .setCount(1)
@@ -49,7 +49,7 @@ public class SpectatorSettings {
             .setLore(Collections.emptyList());
 
     @Expose
-    private List<PotionEffect> givePotionEffects = new ArrayList<>();
+    private final List<PotionEffect> givePotionEffects = new ArrayList<>();
 
     @Expose
     @Getter

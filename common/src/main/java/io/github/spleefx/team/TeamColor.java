@@ -73,14 +73,14 @@ public enum TeamColor {
     /**
      * A human-friendly name of the color
      */
-    private String name;
+    private final String name;
 
     /**
      * The chat color represented by this team color
      */
     private String chatColor;
 
-    private Message key;
+    private final Message key;
 
     /**
      * A map of all colors
@@ -89,9 +89,9 @@ public enum TeamColor {
 
     public static final TeamColor[] values = values();
 
-    private boolean usable;
+    private final boolean usable;
 
-    private ItemStack guiItem;
+    private final ItemStack guiItem;
 
     /**
      * Initiates a new color

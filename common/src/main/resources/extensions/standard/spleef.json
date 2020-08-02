@@ -10,7 +10,8 @@
     "removeSnowballsGraduallyOnMelting": true,
     "removalChance": "50%",
     "allowThrowing": true,
-    "removedAmount": 2
+    "removedAmount": 2,
+    "thrownSnowballsRemoveHitBlocks": ["SNOW_BLOCK"]
   },
   "runCommandsForFFAWinners": {
     "1": {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.spleefx.data.leaderboard;
+package io.github.spleefx.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,15 +22,18 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.util.plugin.Protocol;
-import lombok.Getter;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.regex.Pattern;
 
 /**
@@ -42,6 +45,8 @@ public interface OfflinePlayerFactory {
 
     OfflinePlayerFactory FACTORY = CompatibilityHandler.create(Protocol.VERSION + ".OfflinePlayerFactoryImpl", () -> null);
 
+    OkHttpClient CLIENT = new OkHttpClient();
+
     /**
      * The Mojang endpoint
      */
@@ -50,10 +55,10 @@ public interface OfflinePlayerFactory {
     /**
      * The asynchronous thread pool
      */
-    ExecutorService THREAD_POOL = Executors.newSingleThreadExecutor();
+    ExecutorService THREAD_POOL = new ForkJoinPool();
 
     /**
-     * Gson to deserialize response data
+     * Gson to deserialize response data_old
      */
     Gson GSON = new GsonBuilder()
             .registerTypeAdapter(UUID.class, new UUIDTypeAdapter())
@@ -68,16 +73,54 @@ public interface OfflinePlayerFactory {
     default CompletableFuture<OfflinePlayer> getOrRequest(UUID uuid) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         if (player.getName() == null) return requestPlayer(uuid);
+        return CompletableFuture.completedFuture(player);
+    }
+
+    /**
+     * Requests the player from the Mojang API
+     *
+     * @param uuid UUID of the player
+     * @return A future of the player, after injecting it into Bukkit
+     */
+    default CompletableFuture<OfflinePlayer> requestPlayer(UUID uuid) {
+        if (!Bukkit.getOnlineMode()) return CompletableFuture.completedFuture(Bukkit.getOfflinePlayer(uuid));
         CompletableFuture<OfflinePlayer> future = new CompletableFuture<>();
-        future.complete(player);
+        THREAD_POOL.submit(() -> {
+            try {
+                String url = String.format(ENDPOINT, uuid.toString().replace("-", ""));
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("Content-Type", "application/json")
+                        .addHeader("Accept", "application/json")
+                        .build();
+                try (Response response = CLIENT.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        String responseText = Objects.requireNonNull(response.body()).string();
+                        ProfileResponse p = GSON.fromJson(responseText, ProfileResponse.class);
+                        OfflinePlayer player = injectPlayer(p.id, p.name);
+                        future.complete(player);
+                    } else {
+                        future.complete(injectPlayer(uuid, "NoName"));
+                    }
+                }
+            } catch (IOException e) {
+                future.obtrudeException(e);
+            }
+        });
         return future;
     }
 
-    CompletableFuture<OfflinePlayer> requestPlayer(UUID uuid);
+    /**
+     * Registers the player into Bukkit's offline player cache
+     *
+     * @param uuid     UUID of the player
+     * @param username Username of the player
+     * @return The created player
+     */
+    OfflinePlayer injectPlayer(UUID uuid, String username);
 
     // it's used by gson but whatever
     @SuppressWarnings("unused")
-    @Getter
     class ProfileResponse {
 
         private UUID id;
@@ -105,7 +148,6 @@ public interface OfflinePlayerFactory {
             return UUID.fromString(STRIPPED_UUID_PATTERN.matcher(uuid).replaceAll("$1-$2-$3-$4-$5"));
         }
     }
-
 
 
 }

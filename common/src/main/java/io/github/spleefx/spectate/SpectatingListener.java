@@ -15,11 +15,9 @@
  */
 package io.github.spleefx.spectate;
 
-import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.event.ability.PlayerDoubleJumpEvent;
-import io.github.spleefx.util.plugin.Protocol;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
@@ -34,7 +32,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -124,14 +121,6 @@ public class SpectatingListener implements Listener {
 
     @EventHandler(ignoreCancelled = true) public void onPlayerDropItem(PlayerDropItemEvent event) {
         if (isSpectating(event.getPlayer())) event.setCancelled(true);
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (Protocol.PROTOCOL == 8) return; // 1.8.x
-        if (event.getCause() == TeleportCause.SPECTATE)
-            if (event.getPlayer().getSpectatorTarget() == null)
-                Bukkit.getPluginManager().callEvent(new PlayerExitSpectateEvent(event.getPlayer()));
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -201,7 +201,7 @@ public class Message implements Iterable<Message> {
     @MessageMapping("arena.alreadyInArena")
     public static final Message ALREADY_IN_ARENA = new MessageBuilder("Arena.CannotJoinAlreadyInArena")
             .describe("Sent when the player attempts to join an arena but is in one already.")
-            .defaultTo("null")
+            .defaultTo("&cYou are already in an arena!")
             .build();
 
     @MessageMapping("arena_teams.playerJoined")
@@ -427,9 +427,9 @@ public class Message implements Iterable<Message> {
             .build();
 
     private final String key;
-    private String defaultValue;
-    private String comment;
-    private String[] description;
+    private final String defaultValue;
+    private final String comment;
+    private final String[] description;
 
     private String value;
 

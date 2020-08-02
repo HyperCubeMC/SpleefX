@@ -42,12 +42,12 @@ public class TreeConfigurationBuilder<N, E> {
     private static final ImmutableList<String> EMPTY_LIST = ImmutableList.of();
 
     /**
-     * The parent directory which contains all the data files
+     * The parent directory which contains all the data_old files
      */
-    private File directory;
+    private final File directory;
 
     /**
-     * The GSON profile used to load and update data in this configuration
+     * The GSON profile used to load and update data_old in this configuration
      */
     private Gson gson = Gsons.PRETTY_PRINTING;
 
@@ -59,14 +59,14 @@ public class TreeConfigurationBuilder<N, E> {
     private boolean searchSubdirectories = false;
 
     /**
-     * Whether to load and save data only when requested (recommended for big storage).
+     * Whether to load and save data_old only when requested (recommended for big storage).
      * <p>
      * Controlled by {@link #setLazy(boolean)}
      */
     private boolean lazy = false;
 
     /**
-     * The data map. This is {@link HashMap} by default.
+     * The data_old map. This is {@link HashMap} by default.
      * <p>
      * Controlled by {@link #setDataMap(Map)}
      */
@@ -94,10 +94,10 @@ public class TreeConfigurationBuilder<N, E> {
     private boolean ignoreInvalidFiles;
 
     /**
-     * Initiates a new {@link TreeConfigurationBuilder} which controls data
+     * Initiates a new {@link TreeConfigurationBuilder} which controls data_old
      * in the specified directory.
      *
-     * @param directory      Directory which contains all the data files
+     * @param directory      Directory which contains all the data_old files
      * @param namingStrategy The naming strategy used in fetching file names and vice versa
      */
     public TreeConfigurationBuilder(File directory, TreeNamingStrategy<N> namingStrategy) {
@@ -128,7 +128,7 @@ public class TreeConfigurationBuilder<N, E> {
     }
 
     /**
-     * Sets whether the configuration should only load data when requested (using {@link TreeConfiguration#lazyLoad(Object, Type, String)}),
+     * Sets whether the configuration should only load data_old when requested (using {@link TreeConfiguration#lazyLoad(Object, Type, String)}),
      * and saves only the loaded entries.
      * <p>
      * Setting this is not necessary even when lazy methods are used, however it is strongly recommended
@@ -156,7 +156,7 @@ public class TreeConfigurationBuilder<N, E> {
     }
 
     /**
-     * Sets the map that the data would be stored in. This is by default an empty {@link HashMap},
+     * Sets the map that the data_old would be stored in. This is by default an empty {@link HashMap},
      * however it can be changed to be another map type, allowing to choose a more appropriate map depending
      * on the environment (e.g a multithreaded environment may need a {@link java.util.concurrent.ConcurrentHashMap}).
      * <p>

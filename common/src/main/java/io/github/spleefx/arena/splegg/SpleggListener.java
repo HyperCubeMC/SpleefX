@@ -20,10 +20,11 @@ import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.ModeType;
+import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.compatibility.CompatibilityHandler;
-import io.github.spleefx.data.GameStats;
-import io.github.spleefx.data.PlayerStatistic;
+import io.github.spleefx.data.GameStatType;
+import io.github.spleefx.data.PlayerProfile;
 import io.github.spleefx.extension.standard.splegg.SpleggUpgrade;
 import io.github.spleefx.util.game.ExplosionSettings;
 import io.github.spleefx.util.game.Metas;
@@ -44,6 +45,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 import static io.github.spleefx.compatibility.CompatibilityHandler.getProtocol;
 import static io.github.spleefx.extension.standard.splegg.SpleggExtension.EXTENSION;
 
@@ -51,7 +54,7 @@ public class SpleggListener implements Listener {
 
     public static final SpleggDelayHandler delayHandler = new SpleggDelayHandler();
 
-    private SpleefX plugin;
+    private final SpleefX plugin;
 
     public SpleggListener(SpleefX plugin) {
         this.plugin = plugin;
@@ -67,8 +70,8 @@ public class SpleggListener implements Listener {
         if (!EXTENSION.getClickActions().contains(event.getAction())) return;
         if (EXTENSION.isUpgradeSystemEnabled()) {
             if (delayHandler.has(player.getPlayer())) return;
-            GameStats stats = player.getStats();
-            SpleggUpgrade selected = EXTENSION.getUpgrades().getOrDefault((String) stats.getCustomDataMap().get("selectedSpleggUpgrade"),
+            PlayerProfile stats = player.getStats();
+            SpleggUpgrade selected = EXTENSION.getUpgrades().getOrDefault(stats.getSelectedSpleggUpgrade(),
                     EXTENSION.getUpgrades().values().stream().filter(SpleggUpgrade::isDefault).findFirst().orElse(null));
             if (selected == null) return;
             if (event.getItem().isSimilar(selected.getGameItem().createItem(player.getPlayer(), selected))) {
@@ -107,7 +110,8 @@ public class SpleggListener implements Listener {
                     hitBlock.setType(Material.AIR);
             } else
                 event.getEntity().remove();
-            SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.BLOCKS_MINED, ((Player) event.getEntity().getShooter()), EXTENSION, 1);
+            ((BaseArenaEngine<SpleggArena>) arena.getEngine()).getTracker((Player) Objects.requireNonNull(event.getEntity().getShooter())).
+                    replaceExtensionStat(EXTENSION.getKey(), GameStatType.BLOCKS_MINED, i -> i + 1);
         }
     }
 

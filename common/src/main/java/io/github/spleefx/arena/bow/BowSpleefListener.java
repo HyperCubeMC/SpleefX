@@ -44,7 +44,7 @@ import static io.github.spleefx.arena.bow.BowSpleefEngine.ARROW_METADATA;
 
 public class BowSpleefListener implements Listener {
 
-    private SpleefX plugin;
+    private final SpleefX plugin;
 
     public BowSpleefListener(SpleefX plugin) {
         this.plugin = plugin;

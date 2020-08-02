@@ -78,7 +78,7 @@ public class ExtensionsManager {
         return COMMANDS.get(commandName);
     }
 
-    private SpleefX plugin;
+    private final SpleefX plugin;
 
     public ExtensionsManager(SpleefX plugin) {
         this.plugin = plugin;

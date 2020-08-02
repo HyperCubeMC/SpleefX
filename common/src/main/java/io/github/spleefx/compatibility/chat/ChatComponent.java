@@ -46,12 +46,12 @@ public class ChatComponent {
     /**
      * The component's click event
      */
-    private ClickAction clickAction = new ClickAction();
+    private final ClickAction clickAction = new ClickAction();
 
     /**
      * The component's hover event
      */
-    private HoverAction hoverAction = new HoverAction();
+    private final HoverAction hoverAction = new HoverAction();
 
     public String getText() {
         return text;

@@ -18,6 +18,7 @@ package io.github.spleefx.perk;
 import com.google.gson.annotations.Expose;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.extension.ItemHolder;
+import io.github.spleefx.util.PlaceholderUtil;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.item.ItemFactory;
 import io.github.spleefx.util.menu.Button;
@@ -30,19 +31,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.github.spleefx.data.GameStats.FORMAT;
 import static io.github.spleefx.util.game.Chat.colorize;
 
 public class PerkShop {
 
     @Expose
-    private String title;
+    private final String title;
 
     @Expose
-    private int rows;
+    private final int rows;
 
     @Expose
-    private Map<Integer, PerkItem> items;
+    private final Map<Integer, PerkItem> items;
 
     public PerkShop(String title, int rows, Map<Integer, PerkItem> items) {
         this.title = title;
@@ -54,7 +54,7 @@ public class PerkShop {
         return colorize(value
                 .replace("{perk_key}", perk.getKey())
                 .replace("{perk_displayname}", perk.getDisplayName())
-                .replace("{perk_price}", FORMAT.format(perk.getPurchaseSettings().getPrice()))
+                .replace("{perk_price}", PlaceholderUtil.NUMBER_FORMAT.format(perk.getPurchaseSettings().getPrice()))
                 .replace("{perk_usable_amount}", Integer.toString(perk.getPurchaseSettings().getGamesUsableFor())
                         .replace("{perk_ingame_amount}", Integer.toString(perk.getPurchaseSettings().getIngameAmount()))));
     }

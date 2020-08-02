@@ -108,7 +108,7 @@ public class ReflectiveProtocolNMS implements ProtocolNMS {
             resetEnum = Enum.valueOf(enumTitleAction, "RESET");
             packetPlayOutChat = getProtocolClass("PacketPlayOutChat").getDeclaredConstructor(getProtocolClass("IChatBaseComponent"));
         } catch (ReflectiveOperationException e) {
-            SpleefX.logger().warning("Failed to access required NMS data to send titles. Titles will not be sent");
+            SpleefX.logger().warning("Failed to access required NMS data_old to send titles. Titles will not be sent");
             disable = true;
         }
     }

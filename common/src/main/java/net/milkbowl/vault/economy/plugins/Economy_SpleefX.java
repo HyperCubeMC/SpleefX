@@ -15,9 +15,10 @@
  */
 package net.milkbowl.vault.economy.plugins;
 
-import io.github.spleefx.data.DataProvider;
-import io.github.spleefx.data.GameStats;
-import io.github.spleefx.util.plugin.PluginSettings;
+
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.data.PlayerRepository;
+import io.github.spleefx.util.PlaceholderUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
@@ -26,12 +27,13 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Economy_SpleefX implements Economy {
 
-    private DataProvider dataProvider;
+    private final PlayerRepository dataProvider;
 
-    public Economy_SpleefX(DataProvider dataProvider) {
+    public Economy_SpleefX(PlayerRepository dataProvider) {
         this.dataProvider = dataProvider;
     }
 
@@ -41,7 +43,7 @@ public class Economy_SpleefX implements Economy {
      * @return Success or Failure
      */
     @Override public boolean isEnabled() {
-        return PluginSettings.ECO_HOOK_INTO_VAULT.get();
+        return SpleefXConfig.ECO_HOOK_INTO_VAULT.get();
     }
 
     /**
@@ -83,7 +85,7 @@ public class Economy_SpleefX implements Economy {
      */
     @Override
     public String format(double amount) {
-        return GameStats.FORMAT.format(amount);
+        return PlaceholderUtil.NUMBER_FORMAT.format(amount);
     }
 
     /**
@@ -155,7 +157,7 @@ public class Economy_SpleefX implements Economy {
      */
     @Override public double getBalance(String playerName) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        return dataProvider.getStatistics(player).coins;
+        return dataProvider.lookup(player).getCoins();
     }
 
     /**
@@ -165,7 +167,7 @@ public class Economy_SpleefX implements Economy {
      * @return Amount currently held in players account
      */
     @Override public double getBalance(OfflinePlayer player) {
-        return dataProvider.getStatistics(player).coins;
+        return dataProvider.lookup(player).getCoins();
     }
 
     /**
@@ -249,9 +251,12 @@ public class Economy_SpleefX implements Economy {
      * @return Detailed response of transaction
      */
     @Override public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        GameStats stats = dataProvider.getStatistics(player);
-        stats.onCoins(v -> v - (int) amount);
-        return new EconomyResponse(amount, stats.coins, ResponseType.SUCCESS, null);
+        AtomicInteger coins = new AtomicInteger();
+        dataProvider.apply(player.getUniqueId(), (profile, builder) -> {
+            builder.subtractCoins((int) amount);
+            coins.set(builder.coins());
+        });
+        return new EconomyResponse(amount, coins.get(), ResponseType.SUCCESS, null);
     }
 
     /**
@@ -274,9 +279,12 @@ public class Economy_SpleefX implements Economy {
      * @return Detailed response of transaction
      */
     @Override public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        GameStats stats = dataProvider.getStatistics(player);
-        stats.onCoins(v -> v - (int) amount);
-        return new EconomyResponse(amount, stats.coins, ResponseType.SUCCESS, null);
+        AtomicInteger coins = new AtomicInteger();
+        dataProvider.apply(player.getUniqueId(), (profile, builder) -> {
+            builder.subtractCoins((int) amount);
+            coins.set(builder.coins());
+        });
+        return new EconomyResponse(amount, coins.get(), ResponseType.SUCCESS, null);
     }
 
     /**
@@ -296,9 +304,12 @@ public class Economy_SpleefX implements Economy {
      * @return Detailed response of transaction
      */
     @Override public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        GameStats stats = dataProvider.getStatistics(player);
-        stats.onCoins(v -> v - (int) amount);
-        return new EconomyResponse(amount, stats.coins, ResponseType.SUCCESS, null);
+        AtomicInteger coins = new AtomicInteger();
+        dataProvider.apply(player.getUniqueId(), (profile, builder) -> {
+            builder.addCoins((int) amount);
+            coins.set(builder.coins());
+        });
+        return new EconomyResponse(amount, coins.get(), ResponseType.SUCCESS, null);
     }
 
     /**

@@ -1,60 +1,52 @@
-/*
- * * Copyright 2019-2020 github.com/ReflxctionDev
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.github.spleefx.data;
 
-import io.github.spleefx.data.leaderboard.OfflinePlayerFactory;
+import io.github.spleefx.data.impl.SimpleLeaderboardTopper;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Represents a leaderboard topper
+ * Represents a player that has a leaderboard position in any context.
  */
-public class LeaderboardTopper {
+public interface LeaderboardTopper {
 
-    private UUID player;
-    private int count;
+    /**
+     * Returns the UUID of this player
+     *
+     * @return The UUID
+     */
+    @NotNull
+    UUID getUUID();
 
-    private OfflinePlayer playerOff;
+    /**
+     * Returns the score they have in this context (for example, if context is wins in spleef, then this returns
+     * the wins)
+     *
+     * @return The score
+     */
+    int getScore();
 
-    public LeaderboardTopper(UUID player, int count) {
-        this.player = player;
-        this.count = count;
+    /**
+     * Returns the OfflinePlayer representation of this topper. Do note that if this is the first
+     * time we get this player then it may take some time in order to fetch them from the Mojang API
+     *
+     * @return The player
+     */
+    @NotNull
+    CompletableFuture<OfflinePlayer> getPlayer();
+
+    /**
+     * Creates a new {@link LeaderboardTopper} from the specified UUID and score
+     *
+     * @param uuid  UUID of the player
+     * @param score The score
+     * @return The newly created topper instance
+     */
+    @NotNull
+    static LeaderboardTopper of(@NotNull UUID uuid, int score) {
+        return new SimpleLeaderboardTopper(uuid, score);
     }
 
-    public CompletableFuture<OfflinePlayer> getPlayer() {
-        return playerOff == null ? OfflinePlayerFactory.FACTORY.getOrRequest(player).thenApply(p -> playerOff = p)
-                : CompletableFuture.completedFuture(playerOff);
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LeaderboardTopper that = (LeaderboardTopper) o;
-        return Objects.equals(player, that.player);
-    }
-
-    @Override public int hashCode() {
-        return Objects.hash(player);
-    }
 }

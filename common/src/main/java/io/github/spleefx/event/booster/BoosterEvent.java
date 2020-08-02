@@ -26,7 +26,7 @@ public abstract class BoosterEvent extends Event {
     /**
      * The booster involved in this event
      */
-    private BoosterInstance booster;
+    private final BoosterInstance booster;
 
     /**
      * The default constructor is defined for cleaner code. This constructor

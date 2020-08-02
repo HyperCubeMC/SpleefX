@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class MaterialCompatibilityImpl implements MaterialCompatibility {
 
-    private Map<String, Material> map = MapBuilder.of(new HashMap<String, Material>())
+    private final Map<String, Material> map = MapBuilder.of(new HashMap<String, Material>())
             .put(EXP_BOTTLE, Material.EXP_BOTTLE)
             .put(CLOCK, Material.WATCH)
             .put(REDSTONE_TORCH, Material.REDSTONE_TORCH_ON)

@@ -41,7 +41,7 @@ public class Percentage {
      * The percentage chance
      */
     @Expose
-    private int chance;
+    private final int chance;
 
     /**
      * Creates a percentage with the specified chance

@@ -59,6 +59,8 @@ public class FAWESchematicManager extends WESchematicManager {
                 future.complete(null);
             } catch (NoSchematicException e) {
                 throw sneakyThrow(e);
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
         });
         return future;

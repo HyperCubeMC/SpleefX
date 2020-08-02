@@ -30,7 +30,7 @@ import java.util.StringJoiner;
 
 public class SpleefExtensionConverter implements Runnable {
 
-    private File extensionsDirectory;
+    private final File extensionsDirectory;
 
     public SpleefExtensionConverter(File extensionsDirectory) {
         this.extensionsDirectory = extensionsDirectory;

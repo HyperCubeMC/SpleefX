@@ -16,7 +16,8 @@
 package io.github.spleefx.vault;
 
 import io.github.spleefx.SpleefX;
-import io.github.spleefx.util.plugin.PluginSettings;
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.data.PlayerRepository;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.plugins.Economy_SpleefX;
@@ -43,16 +44,16 @@ public class VaultHandler {
         Plugin vaultPlugin = Bukkit.getPluginManager().getPlugin("Vault");
         if (vaultPlugin != null) {
             SpleefX.logger().info("Vault found. Handling hooks...");
-            Economy spleefxEconomy = new Economy_SpleefX(plugin.getDataProvider());
+            Economy spleefxEconomy = new Economy_SpleefX(PlayerRepository.REPOSITORY);
 
             RegisteredServiceProvider<Economy> provider = getServer().getServicesManager().getRegistration(Economy.class);
             if (provider == null) {
                 SpleefX.logger().info("No economy plugin found (other than SpleefX). Hooking");
             }
-            if (PluginSettings.ECO_HOOK_INTO_VAULT.get()) {
+            if (SpleefXConfig.ECO_HOOK_INTO_VAULT.get()) {
                 SpleefX.logger().info("SpleefX vault hook is enabled in the config. Hooking into vault");
                 Bukkit.getServicesManager().register(Economy.class, economy = spleefxEconomy, vaultPlugin, ServicePriority.Normal);
-            } else if (provider == null || provider.getProvider() == null && ((boolean) PluginSettings.ECO_USE_VAULT.get())) {
+            } else if (provider == null) {
                 SpleefX.logger().warning("Vault hook is enabled, however no Vault-supported economy plugin is found. Defaulting to SpleefX economy.");
                 economy = spleefxEconomy;
             } else {

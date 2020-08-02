@@ -33,7 +33,7 @@ import java.nio.file.Paths;
 import java.util.function.Consumer;
 
 /**
- * Reads and parses JSON data from JSON files
+ * Reads and parses JSON data_old from JSON files
  */
 public class JsonReader implements AutoCloseable, Lockable<JsonReader>, Refreshable<JsonReader> {
 
@@ -112,7 +112,7 @@ public class JsonReader implements AutoCloseable, Lockable<JsonReader>, Refresha
     }
 
     /**
-     * Reads and parses data from JSON, and returns an instance of the given object assignment
+     * Reads and parses data_old from JSON, and returns an instance of the given object assignment
      * <p>
      * After the reader finishes reading, you are better off call {@link JsonReader#close()} to close
      * the IO connection. This is to avoid IO issues and ensures safety for the file and the JVM,
@@ -127,7 +127,7 @@ public class JsonReader implements AutoCloseable, Lockable<JsonReader>, Refresha
     }
 
     /**
-     * Reads and parses data from JSON, and returns an instance of the given object assignment, using the provided
+     * Reads and parses data_old from JSON, and returns an instance of the given object assignment, using the provided
      * GSON profile.
      * <p>
      * After the reader finishes reading, you are better off call {@link JsonReader#close()} to close

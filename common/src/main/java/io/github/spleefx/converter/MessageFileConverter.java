@@ -54,7 +54,7 @@ public class MessageFileConverter implements Runnable {
             "    \"notEnoughToBet\": \"&cYou are required to have at least &e{arena_bet} &cas a betting to join the arena.\"\n" +
             "  }");
 
-    private File file;
+    private final File file;
 
     public MessageFileConverter(File messagesFile) {
         file = messagesFile;

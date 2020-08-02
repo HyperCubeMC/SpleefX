@@ -18,45 +18,43 @@ package io.github.spleefx.extension.standard.splegg;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import io.github.spleefx.arena.ArenaPlayer;
-import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.PlayerProfile;
 import io.github.spleefx.extension.ItemHolder;
+import io.github.spleefx.util.PlaceholderUtil;
 import io.github.spleefx.util.item.ItemFactory;
 import io.github.spleefx.util.message.message.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.github.spleefx.data.GameStats.FORMAT;
 import static io.github.spleefx.util.game.Chat.colorize;
 
-@SuppressWarnings("unchecked")
 public class SpleggUpgrade {
 
     @Expose
-    private String key;
+    private final String key;
 
     @Expose
-    private String displayName;
+    private final String displayName;
 
     @Expose
-    private double delay;
+    private final double delay;
 
     @Expose
     @SerializedName("default")
-    private boolean isDefault;
+    private final boolean isDefault;
 
     @Expose
-    private int price;
+    private final int price;
 
     @Expose
-    private List<String> requiredUpgradesBefore;
+    private final List<String> requiredUpgradesBefore;
 
     @Expose
-    private GameItem gameItem;
+    private final GameItem gameItem;
 
     public SpleggUpgrade(String key, String displayName, double delay, boolean isDefault, int price, List<String> requiredUpgradesBefore, GameItem gameItem) {
         this.key = key;
@@ -93,19 +91,24 @@ public class SpleggUpgrade {
     }
 
     public boolean purchase(ArenaPlayer player) {
-        GameStats stats = player.getStats();
-        List<String> purchased = (List<String>) stats.getCustomDataMap().computeIfAbsent("purchasedSpleggUpgrades", (k) -> new ArrayList<String>());
-        purchased.addAll(SpleggExtension.EXTENSION.getUpgrades().values().stream().filter(upgrade -> upgrade.isDefault() && !purchased.contains(upgrade.getKey())).map(SpleggUpgrade::getKey).collect(Collectors.toList()));
-        if (isDefault || purchased.contains(getKey())) {
+        PlayerProfile profile = player.getStats(); // these are immutable soo
+        PlayerProfile.Builder stats = profile.asBuilder();
+        List<String> upgrades = profile.upgradeKeys();
+
+        // add default upgrades
+        SpleggExtension.EXTENSION.getUpgrades().values().stream()
+                .filter(upgrade -> upgrade.isDefault() && !upgrades.contains(upgrade.getKey()))
+                .forEach(stats::addPurchase);
+
+        if (isDefault || profile.getPurchasedSpleggUpgrades().contains(this)) {
             Message.UPGRADE_SELECTED.reply(player.getPlayer(), this);
-            stats.getCustomDataMap().put("selectedSpleggUpgrade", getKey());
+            stats.setSpleggUpgrade(getKey());
         } else {
-            if (stats.getCoins(player.getPlayer()) >= price) {
-                if (purchased.containsAll(requiredUpgradesBefore)) {
-                    ((List<String>) stats.getCustomDataMap().computeIfAbsent("purchasedSpleggUpgrades", (k) -> new ArrayList<>()))
-                            .add(getKey());
-                    stats.getCustomDataMap().put("selectedSpleggUpgrade", getKey());
-                    stats.takeCoins(player.getPlayer(), price);
+            if (profile.getCoins() >= price) {
+                if (profile.getPurchasedSpleggUpgrades().containsAll(requiredUpgradesBefore)) {
+                    stats.addPurchase(this);
+                    stats.setSpleggUpgrade(getKey());
+                    stats.subtractCoins(price);
                     Message.UPGRADE_PURCHASED.reply(player.getPlayer(), this);
                 } else {
                     Message.MUST_PURCHASE_BEFORE.reply(player.getPlayer(), this);
@@ -133,12 +136,14 @@ public class SpleggUpgrade {
         }
 
         private static String applyPlaceholders(Player player, SpleggUpgrade upgrade, String value) {
-            GameStats stats = ArenaPlayer.adapt(player).getStats();
+            PlayerProfile stats = ArenaPlayer.adapt(player).getStats();
             return colorize(value
                     .replace("{upgrade_key}", upgrade.getKey())
-                    .replace("{upgrade_price}", FORMAT.format(upgrade.getPrice()))
+                    .replace("{upgrade_price}", PlaceholderUtil.NUMBER_FORMAT.format(upgrade.getPrice()))
                     .replace("{upgrade_delay}", Double.toString(upgrade.getDelay())))
-                    .replace("{upgrade_purchased}", ((List<String>) stats.getCustomDataMap().computeIfAbsent("purchasedSpleggUpgrades", (k) -> new ArrayList<String>())).contains(upgrade.getKey()) ? "&aClick to select" : (stats.getCoins(player) >= upgrade.getPrice() ? "&aClick to purchase" : "&cYou don't have enough coins"));
+                    .replace("{upgrade_purchased}", stats.upgradeKeys().contains(upgrade.getKey()) ?
+                            "&aClick to select" : (stats.getCoins() >= upgrade.getPrice() ?
+                            "&aClick to purchase" : "&cYou don't have enough coins"));
         }
 
         public int getSlot() {

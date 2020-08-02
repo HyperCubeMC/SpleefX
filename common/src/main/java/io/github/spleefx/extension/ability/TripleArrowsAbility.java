@@ -46,7 +46,7 @@ public class TripleArrowsAbility implements Listener {
     /**
      * The delay handler
      */
-    private DelayExecutor<GameAbility> delayExecutor;
+    private final DelayExecutor<GameAbility> delayExecutor;
 
     public TripleArrowsAbility(DelayExecutor<GameAbility> delayExecutor) {
         this.delayExecutor = delayExecutor;
@@ -96,19 +96,19 @@ public class TripleArrowsAbility implements Listener {
         private static final List<Action> CLICKS = Arrays.asList(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK);
 
         @Expose
-        private boolean enabled = true;
+        private final boolean enabled = true;
 
         @Expose
-        private int defaultAmount = 5;
+        private final int defaultAmount = 5;
 
         @Expose
-        private Set<Action> actionsToTrigger = new HashSet<>(CLICKS);
+        private final Set<Action> actionsToTrigger = new HashSet<>(CLICKS);
 
         @Expose
-        private List<Material> requiredMaterials = new ArrayList<>(MATERIALS);
+        private final List<Material> requiredMaterials = new ArrayList<>(MATERIALS);
 
         @Expose
-        private int cooldown = 3;
+        private final int cooldown = 3;
 
         public boolean isEnabled() {
             return enabled;

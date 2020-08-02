@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
  */
 public class NumberIncreaseButton extends Button {
 
-    private Binder<Integer> value;
+    private final Binder<Integer> value;
 
     /**
      * Creates a new number-increase button

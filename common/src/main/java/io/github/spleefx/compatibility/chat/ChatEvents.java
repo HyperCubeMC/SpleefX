@@ -53,7 +53,7 @@ public class ChatEvents {
         /**
          * Represents the protocol name for this event type
          */
-        private String protocolName;
+        private final String protocolName;
 
         ClickEvent(String protocolName) {
             this.protocolName = protocolName;
@@ -95,7 +95,7 @@ public class ChatEvents {
         /**
          * Represents the protocol name for this event type
          */
-        private String protocolName;
+        private final String protocolName;
 
         HoverEvent(String protocolName) {
             this.protocolName = protocolName;

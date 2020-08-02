@@ -16,7 +16,8 @@
 package io.github.spleefx.economy.booster;
 
 import io.github.spleefx.SpleefX;
-import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.PlayerProfile;
+import io.github.spleefx.data.PlayerRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
@@ -35,7 +36,7 @@ public class BoosterConsumer {
     /**
      * A map of all active boosters
      */
-    private Map<BoosterInstance, Long> activeBoosters = new HashMap<>();
+    private final Map<BoosterInstance, Long> activeBoosters = new HashMap<>();
 
     /**
      * The consuming task
@@ -49,7 +50,7 @@ public class BoosterConsumer {
      */
     public void consumeBooster(OfflinePlayer player, BoosterInstance booster) {
         activeBoosters.put(booster, booster.getDuration());
-        GameStats s = SpleefX.getPlugin().getDataProvider().getStatistics(player);
+        PlayerProfile s = PlayerRepository.REPOSITORY.lookup(player);
         SpleefX.getActiveBoosterLoader().getActiveBoostersMap().put(booster.getOwner(), s.getBoosters().size());
     }
 
@@ -72,7 +73,7 @@ public class BoosterConsumer {
             if (boosterInstanceLongEntry.setValue(boosterInstanceLongEntry.getValue() - 1) <= 0) {
                 iterator.remove();
                 OfflinePlayer player = Bukkit.getOfflinePlayer(boosterInstanceLongEntry.getKey().getOwner());
-                GameStats stats = SpleefX.getPlugin().getDataProvider().getStatistics(player);
+                PlayerProfile stats = PlayerRepository.REPOSITORY.lookup(player);
                 int boosterId = 0;
                 for (Iterator<Entry<Integer, BoosterInstance>> iter = stats.getBoosters().entrySet().iterator(); iter.hasNext(); ) {
                     Entry<Integer, BoosterInstance> entry = iter.next();

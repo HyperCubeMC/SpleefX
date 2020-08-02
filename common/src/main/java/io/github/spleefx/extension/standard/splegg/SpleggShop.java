@@ -17,8 +17,9 @@ package io.github.spleefx.extension.standard.splegg;
 
 import com.google.gson.annotations.Expose;
 import io.github.spleefx.arena.ArenaPlayer;
-import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.PlayerProfile;
 import io.github.spleefx.extension.ItemHolder;
+import io.github.spleefx.util.PlaceholderUtil;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.item.ItemFactory;
 import io.github.spleefx.util.menu.Button;
@@ -28,24 +29,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.github.spleefx.data.GameStats.FORMAT;
 import static io.github.spleefx.util.game.Chat.colorize;
 
 public class SpleggShop {
 
     @Expose
-    private String title;
+    private final String title;
 
     @Expose
-    private int rows;
+    private final int rows;
 
     @Expose
-    private Map<Integer, SpleggShopItem> items;
+    private final Map<Integer, SpleggShopItem> items;
 
     public SpleggShop(String title, int rows, Map<Integer, SpleggShopItem> items) {
         this.title = title;
@@ -74,12 +72,13 @@ public class SpleggShop {
         }
 
         private static String applyPlaceholders(Player player, SpleggUpgrade upgrade, String value) {
-            GameStats stats = ArenaPlayer.adapt(player).getStats();
+            PlayerProfile stats = ArenaPlayer.adapt(player).getStats();
             return colorize(value
                     .replace("{upgrade_key}", upgrade.getKey())
-                    .replace("{upgrade_price}", FORMAT.format(upgrade.getPrice()))
+                    .replace("{upgrade_price}", PlaceholderUtil.NUMBER_FORMAT.format(upgrade.getPrice()))
                     .replace("{upgrade_delay}", Double.toString(upgrade.getDelay())))
-                    .replace("{upgrade_purchased}", ((List<String>) stats.getCustomDataMap().computeIfAbsent("purchasedSpleggUpgrades", (k) -> new ArrayList<String>())).contains(upgrade.getKey()) ? "&aClick to select" : (stats.getCoins(player) >= upgrade.getPrice() ? "&aClick to purchase" : "&cYou don't have enough coins"));
+                    .replace("{upgrade_purchased}", stats.upgradeKeys().contains(upgrade.getKey()) ? "&aClick to select" :
+                            (stats.getCoins() >= upgrade.getPrice() ? "&aClick to purchase" : "&cYou don't have enough coins"));
         }
 
     }

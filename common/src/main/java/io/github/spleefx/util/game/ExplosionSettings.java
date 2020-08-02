@@ -8,22 +8,22 @@ import com.google.gson.annotations.Expose;
 public class ExplosionSettings {
 
     @Expose
-    private boolean enabled;
+    private final boolean enabled;
 
     @Expose
-    private boolean createFire;
+    private final boolean createFire;
 
     @Expose
-    private boolean breakBlocks;
+    private final boolean breakBlocks;
 
     @Expose
-    private boolean particles;
+    private final boolean particles;
 
     @Expose
-    private float yield;
+    private final float yield;
 
     @Expose
-    private float power;
+    private final float power;
 
     public ExplosionSettings(boolean enabled, boolean createFire, boolean breakBlocks, boolean particles, float yield, float power) {
         this.enabled = enabled;

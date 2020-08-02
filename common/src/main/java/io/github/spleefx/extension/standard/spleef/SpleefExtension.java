@@ -27,7 +27,7 @@ import java.util.Set;
 public class SpleefExtension extends GameExtension {
 
     @Expose
-    private SnowballSettings snowballSettings = new SnowballSettings();
+    private final SnowballSettings snowballSettings = new SnowballSettings();
 
     public SnowballSettings getSnowballSettings() {
         return snowballSettings;
@@ -36,20 +36,20 @@ public class SpleefExtension extends GameExtension {
     public static class SnowballSettings {
 
         @Expose
-        private boolean removeSnowballsGraduallyOnMelting = true;
+        private final boolean removeSnowballsGraduallyOnMelting = true;
 
         @Expose
         @JsonAdapter(Percentage.Adapter.class)
-        private Percentage removalChance = new Percentage(50);
+        private final Percentage removalChance = new Percentage(50);
 
         @Expose
-        private Set<Material> thrownSnowballsRemoveHitBlocks = new HashSet<>();
+        private final Set<Material> thrownSnowballsRemoveHitBlocks = new HashSet<>();
 
         @Expose
-        private int removedAmount = 1;
+        private final int removedAmount = 1;
 
         @Expose
-        private boolean allowThrowing = true;
+        private final boolean allowThrowing = true;
 
         public boolean removeSnowballsGraduallyOnMelting() {
             return removeSnowballsGraduallyOnMelting;

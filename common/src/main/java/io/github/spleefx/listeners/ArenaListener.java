@@ -21,12 +21,13 @@ import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.arena.api.ArenaEngine;
 import io.github.spleefx.arena.api.ArenaType;
+import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.compatibility.CompatibilityHandler;
-import io.github.spleefx.data.PlayerStatistic;
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.data.GameStatType;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.util.message.message.Message;
-import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -135,7 +136,7 @@ public class ArenaListener implements Listener {
         ArenaPlayer d = ArenaPlayer.adapt(damager);
         if (Objects.equals(d.getCurrentArena(), p.getCurrentArena())) {
             ArenaEngine a = d.getCurrentArena().getEngine();
-            if (Objects.equals(a.getPlayerTeams().get(d), a.getPlayerTeams().get(p)) && (boolean) PluginSettings.ARENA_CANCEL_TEAM_DAMAGE.get())
+            if (Objects.equals(a.getPlayerTeams().get(d), a.getPlayerTeams().get(p)) && SpleefXConfig.ARENA_CANCEL_TEAM_DAMAGE.get())
                 event.setCancelled(true);
         }
     }
@@ -143,7 +144,7 @@ public class ArenaListener implements Listener {
     @SuppressWarnings("Convert2MethodRef")
     public static class WGListener implements Listener {
 
-        private SpleefX plugin;
+        private final SpleefX plugin;
 
         public WGListener(SpleefX plugin) {
             this.plugin = plugin;
@@ -166,7 +167,9 @@ public class ArenaListener implements Listener {
                                 if (arena.getExtension().isGiveDroppedItems())
                                     p.getPlayer().getInventory().addItem(oldDrops.toArray(new ItemStack[0]));
                             }
-                            plugin.getDataProvider().add(PlayerStatistic.BLOCKS_MINED, p.getPlayer(), arena.getExtension(), 1);
+                            ((BaseArenaEngine<?>) arena.getEngine()).getTracker(p.getPlayer())
+                                    .replaceExtensionStat(arena.getExtension().getKey(),
+                                            GameStatType.BLOCKS_MINED, v -> v + 1);
                         }
                     }
                 }
@@ -176,7 +179,7 @@ public class ArenaListener implements Listener {
 
     public static class BlockBreakListener implements Listener {
 
-        private SpleefX plugin;
+        private final SpleefX plugin;
 
         public BlockBreakListener(SpleefX plugin) {
             this.plugin = plugin;
@@ -194,7 +197,9 @@ public class ArenaListener implements Listener {
                     if (arena.getExtension().isGiveDroppedItems())
                         p.getPlayer().getInventory().addItem(oldDrops.toArray(new ItemStack[0]));
                 }
-                plugin.getDataProvider().add(PlayerStatistic.BLOCKS_MINED, p.getPlayer(), arena.getExtension(), 1);
+                ((BaseArenaEngine<?>) arena.getEngine()).getTracker(p.getPlayer())
+                        .replaceExtensionStat(arena.getExtension().getKey(),
+                                GameStatType.BLOCKS_MINED, v -> v + 1);
             }
         }
     }

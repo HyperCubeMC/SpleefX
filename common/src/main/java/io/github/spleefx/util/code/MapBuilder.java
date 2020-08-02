@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  */
 public class MapBuilder<K, V> {
 
-    private Map<K, V> map;
+    private final Map<K, V> map;
 
     private MapBuilder(Map<K, V> map) {
         this.map = map;

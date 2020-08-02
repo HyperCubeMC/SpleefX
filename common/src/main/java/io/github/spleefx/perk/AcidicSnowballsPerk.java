@@ -55,10 +55,10 @@ public class AcidicSnowballsPerk extends GamePerk implements Listener {
     private ItemHolder projectileItem;
 
     @Expose
-    private Set<Material> nonDestroyableBlocks = new HashSet<>();
+    private final Set<Material> nonDestroyableBlocks = new HashSet<>();
 
     @Expose
-    private Set<Action> clickTypes = new HashSet<>();
+    private final Set<Action> clickTypes = new HashSet<>();
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {

@@ -18,21 +18,22 @@ package io.github.spleefx.command.parent.sub;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.CommandException;
 import io.github.spleefx.command.sub.PluginSubcommand;
-import io.github.spleefx.data.GameStats;
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.data.PlayerRepository;
 import io.github.spleefx.economy.booster.BoosterFactory;
 import io.github.spleefx.util.game.Chat;
-import io.github.spleefx.util.plugin.PluginSettings;
 import net.milkbowl.vault.economy.plugins.Economy_SpleefX;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -68,26 +69,17 @@ public class CoinsSubcommand extends PluginSubcommand {
      */
     @Override
     public boolean handle(Command command, CommandSender sender, String[] args) {
-        if (GameStats.VAULT_EXISTS.get() && ((boolean) PluginSettings.ECO_USE_VAULT.get()) && !((boolean) PluginSettings.ECO_HOOK_INTO_VAULT.get()) && !(SpleefX.getPlugin().getVaultHandler().getEconomy() instanceof Economy_SpleefX))
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault") && SpleefXConfig.ECO_USE_VAULT.get() && !SpleefXConfig.ECO_HOOK_INTO_VAULT.get() && !(SpleefX.getPlugin().getVaultHandler().getEconomy() instanceof Economy_SpleefX))
             throw new CommandException("&cVault hook in config is set to true, and the economy is not SpleefX's, hence this command has been disabled. To edit a player's balance, use your standard Vault-based economy plugin.");
+
         OfflinePlayer target = args.length >= 2 ? Bukkit.getOfflinePlayer(args[1]) : null;
         if (target == null)
-            throw new CommandException("&cInvalid player: &e" + target.getName());
+            throw new CommandException("&cInvalid usage. Try &e/spleefx " + getUsage(command) + "&c.");
         int value = args.length >= 3 ? get(args[2]) : 0;
         switch (args.length) {
-            case 1:
-                if (sender.hasPermission(BalanceSubcommand.OTHERS)) {
-                    OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                    Chat.plugin(sender, "&e" + p.getName() + "&a's money: &e$" + SpleefX.getPlugin().getDataProvider().getStatistics(p).getCoinsFormatted(p));
-                } else {
-                    if (!(sender instanceof Player))
-                        throw new CommandException("&cYou must be a player to use this command!");
-                    Chat.plugin(sender, "&eYour money: &a$" + SpleefX.getPlugin().getDataProvider().getStatistics(((Player) sender)).getCoinsFormatted(((Player) sender)));
-                }
-                break;
             case 2:
                 if (args[0].equalsIgnoreCase("reset")) {
-                    SpleefX.getPlugin().getDataProvider().getStatistics(target).onCoins(v -> 0);
+                    PlayerRepository.REPOSITORY.apply(target.getUniqueId(), (profile, builder) -> builder.setCoins(0));
                     run(sender, target, v -> 0, "&e%p%&a's coins have been set to &e0&a.");
                 } else {
                     Chat.plugin(sender, "&cInvalid command usage. Try &e" + getUsage(command) + "&c.");
@@ -125,8 +117,12 @@ public class CoinsSubcommand extends PluginSubcommand {
     }
 
     private void run(CommandSender sender, OfflinePlayer player, IntFunction<Integer> task, String feedback) {
-        int i = SpleefX.getPlugin().getDataProvider().getStatistics(player).onCoins(task);
-        Chat.plugin(sender, feedback.replace("%p%", player.getName()).replace("%v%", Integer.toString(i)));
+        AtomicInteger i = new AtomicInteger();
+        PlayerRepository.REPOSITORY.apply(player.getUniqueId(), (profile, builder) -> {
+            i.set(profile.getCoins());
+            builder.setCoins(task);
+        });
+        Chat.plugin(sender, feedback.replace("%p%", Objects.requireNonNull(player.getName(), "player.getName()")).replace("%v%", Integer.toString(i.get())));
     }
 
     /**

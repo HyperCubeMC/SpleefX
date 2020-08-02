@@ -39,12 +39,12 @@ public class Button {
     /**
      * The button slot
      */
-    private int slot;
+    private final int slot;
 
     /**
      * The click task
      */
-    private List<Consumer<InventoryClickEvent>> onClick = new ArrayList<>();
+    private final List<Consumer<InventoryClickEvent>> onClick = new ArrayList<>();
 
     public Button(int slot, ItemStack item) {
         this.slot = slot;

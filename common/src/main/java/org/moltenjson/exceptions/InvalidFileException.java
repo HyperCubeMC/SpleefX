@@ -35,7 +35,7 @@ public class InvalidFileException extends RuntimeException {
     /**
      * Represents the file which cannot be parsed.
      */
-    private File file;
+    private final File file;
 
     /**
      * Constructs a new runtime exception with the specified detail message.

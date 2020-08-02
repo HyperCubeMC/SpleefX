@@ -23,6 +23,7 @@ import io.github.spleefx.sign.SignManager;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.util.message.message.Message;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -135,18 +136,19 @@ public interface ArenaEngine {
 
     /**
      * Regenerates the arena
+     * @param newStage
      */
-    void regenerate();
+    void regenerate(@Nullable ArenaStage newStage);
 
     /**
-     * Saves the player data before they enter the arena, such as the inventory and location
+     * Saves the player data_old before they enter the arena, such as the inventory and location
      *
      * @param player Player to save for
      */
     void save(ArenaPlayer player);
 
     /**
-     * Loads the saved data into the player
+     * Loads the saved data_old into the player
      *
      * @param player Player to load for
      */

@@ -29,12 +29,14 @@ import org.bukkit.Material;
 public class ArenaFloor {
 
     @Expose
-    private Location top, bottom;
+    private final Location top;
+    @Expose
+    private final Location bottom;
 
     @Expose
-    private Material material;
+    private final Material material;
 
     @Expose
-    private int removeAfter;
+    private final int removeAfter;
 
 }

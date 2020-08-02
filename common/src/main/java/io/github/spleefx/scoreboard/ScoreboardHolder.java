@@ -16,6 +16,7 @@
 package io.github.spleefx.scoreboard;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.BaseArenaEngine;
@@ -24,6 +25,7 @@ import io.github.spleefx.scoreboard.sidebar.SidebarBoard;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.util.PlaceholderUtil;
 import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,16 +39,18 @@ import java.util.function.Supplier;
 import static io.github.spleefx.SpleefX.getPlugin;
 
 @Getter
+@ToString
 public class ScoreboardHolder {
 
     @Expose
-    private boolean enabled = true;
+    private final boolean enabled = true;
 
     @Expose
-    private String title = "";
+    @SerializedName("title")
+    private final String title = "";
 
     @Expose
-    private Map<Integer, String> text = new LinkedHashMap<>();
+    private final Map<Integer, String> text = new LinkedHashMap<>();
 
     public void createScoreboard(ArenaPlayer p) {
         if (!isEnabled()) return;

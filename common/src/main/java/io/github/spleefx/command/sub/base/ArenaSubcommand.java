@@ -16,6 +16,7 @@
 package io.github.spleefx.command.sub.base;
 
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.api.ArenaType;
@@ -73,11 +74,11 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
 
     private static final List<String> SETTINGS = Arrays.asList("bet", "deathLevel", "disable", "displayName", "enable", "gameTime", "maxPlayerCount", "membersPerTeam", "minimum", "teams", "toggle");
 
-    private ModeType type;
+    private final ModeType type;
 
-    private ArenaFactory<T> arenaFactory;
+    private final ArenaFactory<T> arenaFactory;
 
-    private Permission permission;
+    private final Permission permission;
 
     public ArenaSubcommand(ModeType type, ArenaFactory<T> arenaFactory) {
         super("arena", null, "Control arenas", (Command c) -> "/" + (c.getName()) + " arena <create | remove | teams | spawnpoint | displayname | settings> <arena> [args...]");
@@ -223,7 +224,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             return true;
                         }
                         Chat.prefix(sender, arena, "&eRegenerating...");
-                        arena.getEngine().regenerate();
+                        arena.getEngine().regenerate(null);
                         Chat.prefix(sender, arena, "&aArena &e" + arena.getKey() + " &ahas been regenerated.");
                     }
                     return true;
@@ -541,7 +542,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
     public interface ArenaFactory<R extends GameArena> {
 
         /**
-         * Creates a new arena from the specified data
+         * Creates a new arena from the specified data_old
          *
          * @param key               Arena key
          * @param displayName       Arena display name

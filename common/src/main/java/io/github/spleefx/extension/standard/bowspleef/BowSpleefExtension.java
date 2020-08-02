@@ -33,7 +33,7 @@ public class BowSpleefExtension extends GameExtension {
     private boolean removeTNTWhenPrimed;
 
     @Expose
-    private TripleArrowsAbility.Settings tripleArrows = new Settings();
+    private final TripleArrowsAbility.Settings tripleArrows = new Settings();
 
     public boolean getBounceArrows() {
         return bounceArrows;

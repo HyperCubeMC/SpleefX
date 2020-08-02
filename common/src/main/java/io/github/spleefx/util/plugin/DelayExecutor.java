@@ -28,7 +28,7 @@ public class DelayExecutor<R extends Enum<R>> {
     /**
      * The plugin instance
      */
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     /**
      * The delay task
@@ -50,7 +50,7 @@ public class DelayExecutor<R extends Enum<R>> {
      *
      * @param player  Player to add delay for
      * @param context Context for the delay
-     * @param data    Delay data
+     * @param data    Delay data_old
      */
     public void setDelay(OfflinePlayer player, R context, DelayData data) {
         if (data.timeLeft == 0) return;
@@ -96,7 +96,7 @@ public class DelayExecutor<R extends Enum<R>> {
      *
      * @param player  Player to retrieve for
      * @param context The context
-     * @return The delay data, or {@code null} if not found.
+     * @return The delay data_old, or {@code null} if not found.
      */
     public DelayData getDelayData(OfflinePlayer player, R context) {
         return getDelayMap(player.getUniqueId()).get(context);
@@ -168,7 +168,7 @@ public class DelayExecutor<R extends Enum<R>> {
     }
 
     /**
-     * Represents data for delays
+     * Represents data_old for delays
      */
     public static class DelayData {
 
@@ -183,12 +183,12 @@ public class DelayExecutor<R extends Enum<R>> {
         private Consumer<OfflinePlayer> onFinish;
 
         /**
-         * Other data stored by the delay
+         * Other data_old stored by the delay
          */
-        private Map<Object, Object> data = new HashMap<>();
+        private final Map<Object, Object> data = new HashMap<>();
 
         /**
-         * Creates a new delay data
+         * Creates a new delay data_old
          *
          * @param timeLeft Time left for the delay
          */
@@ -197,7 +197,7 @@ public class DelayExecutor<R extends Enum<R>> {
         }
 
         /**
-         * Creates a new delay data
+         * Creates a new delay data_old
          *
          * @param timeLeft Time left for the delay
          */
@@ -224,10 +224,10 @@ public class DelayExecutor<R extends Enum<R>> {
         }
 
         /**
-         * Puts the specified data in the delay data map
+         * Puts the specified data_old in the delay data_old map
          *
-         * @param key   Key of the data
-         * @param value Value of the data
+         * @param key   Key of the data_old
+         * @param value Value of the data_old
          * @return This object instance
          */
         public DelayData data(Object key, Object value) {

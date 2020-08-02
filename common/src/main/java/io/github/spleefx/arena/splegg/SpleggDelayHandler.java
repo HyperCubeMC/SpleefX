@@ -31,7 +31,7 @@ public class SpleggDelayHandler {
 
     private BukkitTask delayTask;
 
-    private Map<UUID, AtomicDouble> delays = new HashMap<>();
+    private final Map<UUID, AtomicDouble> delays = new HashMap<>();
 
     public void start() {
         if (!started) {

@@ -45,7 +45,7 @@ public class SignListener implements Listener {
 
     private static final String FOOTER = Chat.colorize("&4Fetching arena...");
 
-    private SpleefX plugin;
+    private final SpleefX plugin;
 
     public SignListener(SpleefX plugin) {
         this.plugin = plugin;

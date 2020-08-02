@@ -15,9 +15,10 @@
  */
 package io.github.spleefx.command.parent.sub;
 
-import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.CommandException;
 import io.github.spleefx.command.sub.PluginSubcommand;
+import io.github.spleefx.data.PlayerRepository;
+import io.github.spleefx.util.PlaceholderUtil;
 import io.github.spleefx.util.game.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -53,14 +54,15 @@ public class BalanceSubcommand extends PluginSubcommand {
         if (!(sender instanceof Player)) throw new CommandException("&cYou must be a player to use this command!");
         switch (args.length) {
             case 0:
-                Chat.plugin(sender, "&eYour money: &a$" + SpleefX.getPlugin().getDataProvider().getStatistics(((Player) sender)).getCoinsFormatted(((Player) sender)));
+                Chat.plugin(sender, "&eYour money: &a$" + PlaceholderUtil.NUMBER_FORMAT.format(PlayerRepository.REPOSITORY.lookup((Player) sender)
+                        .getCoins()));
                 break;
             case 1:
                 if (sender.hasPermission(BalanceSubcommand.OTHERS)) {
                     OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                    Chat.plugin(sender, "&e" + p.getName() + "&a's money: &e$" + SpleefX.getPlugin().getDataProvider().getStatistics(p).getCoinsFormatted(((Player) sender)));
+                    Chat.plugin(sender, "&e" + p.getName() + "&a's money: &e$" + PlaceholderUtil.NUMBER_FORMAT.format(PlayerRepository.REPOSITORY.lookup(p).getCoins()));
                 } else {
-                    Chat.plugin(sender, "&eYour money: &a$" + SpleefX.getPlugin().getDataProvider().getStatistics(((Player) sender)).getCoinsFormatted(((Player) sender)));
+                    Chat.plugin(sender, "&eYour money: &a$" + PlaceholderUtil.NUMBER_FORMAT.format(PlayerRepository.REPOSITORY.lookup(((Player) sender)).getCoins()));
                 }
                 break;
         }

@@ -84,7 +84,7 @@ public enum MessageCategory {
     /**
      * The GUI title for this category
      */
-    private String title;
+    private final String title;
 
     /**
      * Map of all categories by their titles

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.spleefx.data;
+package io.github.spleefx.data.menu;
 
 import org.moltenjson.configuration.select.SelectKey;
 import org.moltenjson.configuration.select.SelectionHolder;

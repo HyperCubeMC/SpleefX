@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class MessageManager {
 
-    private List<Message> messages = new ArrayList<>();
-    private File messagesFile;
+    private final List<Message> messages = new ArrayList<>();
+    private final File messagesFile;
     private CommentedConfiguration config;
 
     public MessageManager(SpleefX plugin) {

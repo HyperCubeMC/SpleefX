@@ -6,6 +6,7 @@ api-version: "1.13"
 loadbefore:
   - EpicRename
   - GUIShop
+  - WarpsX
   - ShopGUIPlus
 softdepend:
   - Vault

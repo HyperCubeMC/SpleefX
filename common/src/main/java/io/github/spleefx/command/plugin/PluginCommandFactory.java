@@ -32,12 +32,12 @@ public class PluginCommandFactory {
     /**
      * Constructor of {@link PluginCommand}
      */
-    private static Constructor<PluginCommand> constructor;
+    private static final Constructor<PluginCommand> constructor;
 
     /**
      * Field to retrieve a {@link SimpleCommandMap} from the {@link org.bukkit.plugin.PluginManager}
      */
-    private static Field commandMapField;
+    private static final Field commandMapField;
 
     /**
      * Creates a new instance of a plugin command

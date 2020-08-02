@@ -18,6 +18,7 @@ package io.github.spleefx.economy.booster;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.data.PlayerRepository;
 import io.github.spleefx.extension.ItemHolder;
 import io.github.spleefx.util.plugin.Duration;
 import org.bukkit.OfflinePlayer;
@@ -28,7 +29,11 @@ import org.moltenjson.configuration.select.SelectKey;
 import org.moltenjson.configuration.select.SelectionHolder;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BoosterFactory {
 
@@ -54,34 +59,34 @@ public class BoosterFactory {
      * The booster key
      */
     @Expose
-    private String key;
+    private final String key;
 
     /**
      * The booster's display name
      */
     @Expose
-    private String displayName;
+    private final String displayName;
 
     /**
      * Whether is the booster enabled or not
      */
     @Expose
-    private boolean enabled;
+    private final boolean enabled;
 
     /**
      * The booster multiplier
      */
     @Expose
-    private double multiplier;
+    private final double multiplier;
 
     /**
      * The booster's duration
      */
     @Expose
-    private Duration duration;
+    private final Duration duration;
 
     @Expose
-    private Map<BoosterState, ItemHolder> items;
+    private final Map<BoosterState, ItemHolder> items;
 
     public BoosterFactory(String key, String displayName, double multiplier, Duration duration, Map<BoosterState, ItemHolder> items) {
         this.key = key;
@@ -120,7 +125,7 @@ public class BoosterFactory {
      * @return
      */
     public static int boost(OfflinePlayer player, int original) {
-        List<BoosterInstance> boosters = new ArrayList<>(SpleefX.getPlugin().getDataProvider().getStatistics(player).getActiveBoosters());
+        List<BoosterInstance> boosters = PlayerRepository.REPOSITORY.lookup(player).getActiveBoosters();
         if (boosters.size() == 0) return original;
         if (boosters.size() == 1) return original + boosters.get(0).applyMultiplier(original);
         boosters.sort(Comparator.comparingDouble(BoosterInstance::getMultiplier));
@@ -144,7 +149,7 @@ public class BoosterFactory {
 
     public BoosterInstance give(OfflinePlayer player) {
         BoosterInstance booster = new BoosterInstance(player.getUniqueId(), this, getMultiplier(), getDuration());
-        SpleefX.getPlugin().getDataProvider().addBooster(player, booster);
+        PlayerRepository.REPOSITORY.lookup(player).asBuilder().addBooster(booster);
         return booster;
     }
 
@@ -170,7 +175,7 @@ public class BoosterFactory {
         @EventHandler(ignoreCancelled = true)
         public void onPlayerQuit(PlayerQuitEvent event) {
             if (!CONSUME_WHILE_OFFLINE.get())
-                SpleefX.getPlugin().getDataProvider().getStatistics(event.getPlayer()).getActiveBoosters().forEach(BoosterInstance::pause);
+                PlayerRepository.REPOSITORY.lookup(event.getPlayer()).getActiveBoosters().forEach(BoosterInstance::pause);
         }
     }
 

@@ -51,22 +51,22 @@ public class ConfigurationPack<I> implements Refreshable<ConfigurationPack<I>> {
     /**
      * Represents the directory in which the files are in
      */
-    private File directory;
+    private final File directory;
 
     /**
      * Represents the GSON profile which does all the serializing and deserializing.
      */
-    private Gson gson;
+    private final Gson gson;
 
     /**
      * The main instance in which all fields are accessed from
      */
-    private I instance;
+    private final I instance;
 
     /**
      * The map which maps all fields with their files
      */
-    private Map<Field, JsonFile> fieldMap = new HashMap<>();
+    private final Map<Field, JsonFile> fieldMap = new HashMap<>();
 
     /**
      * Creates a new configuration pack

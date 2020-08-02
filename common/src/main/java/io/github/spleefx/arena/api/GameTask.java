@@ -16,7 +16,7 @@ public abstract class GameTask implements Runnable {
     /**
      * The task's phase
      */
-    private Phase phase;
+    private final Phase phase;
 
     /**
      * Creates a new task

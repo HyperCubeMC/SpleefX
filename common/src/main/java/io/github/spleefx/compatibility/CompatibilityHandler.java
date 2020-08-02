@@ -49,9 +49,9 @@ public class CompatibilityHandler {
     /**
      * Whether does WorldEdit exist or not
      */
-    private static boolean hasWorldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit") != null;
+    private static final boolean hasWorldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit") != null;
 
-    private static boolean hasProtocolLib = Bukkit.getPluginManager().getPlugin("ProtocolLib") != null;
+    private static final boolean hasProtocolLib = Bukkit.getPluginManager().getPlugin("ProtocolLib") != null;
 
     /**
      * The color factory for materials
@@ -71,7 +71,7 @@ public class CompatibilityHandler {
     /**
      * Creates a new compatibility handler
      */
-    public CompatibilityHandler() {
+    public static void init() {
         if (Protocol.getCurrentProtocol() < 8) {
             disable = true;
             return;

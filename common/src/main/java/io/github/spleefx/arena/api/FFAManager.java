@@ -38,18 +38,18 @@ public class FFAManager {
      * Map for spawnpoints
      */
     @Expose
-    private Map<Integer, Location> spawnpoints = new HashMap<>();
+    private final Map<Integer, Location> spawnpoints = new HashMap<>();
 
     /**
      * Map for lobbies
      */
     @Expose
-    private Map<Integer, Location> lobbies = new HashMap<>();
+    private final Map<Integer, Location> lobbies = new HashMap<>();
 
     /**
      * Represents all the players
      */
-    private Map<ArenaPlayer, Integer> players = new HashMap<>();
+    private final Map<ArenaPlayer, Integer> players = new HashMap<>();
 
     /**
      * Registers a spawnpoint

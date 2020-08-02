@@ -29,13 +29,13 @@ public class ActionBar {
      * Whether should this be displayed or not
      */
     @Expose
-    private boolean enabled;
+    private final boolean enabled;
 
     /**
      * The action bar text
      */
     @Expose
-    private String text;
+    private final String text;
 
     public ActionBar(boolean enabled, String text) {
         this.enabled = enabled;

@@ -27,7 +27,7 @@ public class SignManager {
     /**
      * Arena to update for
      */
-    private GameArena arena;
+    private final GameArena arena;
 
     public SignManager(GameArena arena) {
         this.arena = arena;
@@ -45,7 +45,7 @@ public class SignManager {
                     format(arena.getExtension().getSigns().get(3))
             );
         } catch (NullPointerException e) {
-          SpleefX.logger().warning("No sign definition in arena " + arena.getKey());
+            SpleefX.logger().warning("No sign definition in arena " + arena.getKey());
         }
     }
 

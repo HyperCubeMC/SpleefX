@@ -15,9 +15,9 @@
  */
 package io.github.spleefx.arena;
 
-import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.api.GameArena;
-import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.PlayerProfile;
+import io.github.spleefx.data.PlayerRepository;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class ArenaPlayer {
     /**
      * The Bukkit player representative
      */
-    private Player player;
+    private final Player player;
 
     /**
      * The player's state
@@ -83,8 +83,8 @@ public class ArenaPlayer {
         return state;
     }
 
-    public GameStats getStats() {
-        return SpleefX.getPlugin().getDataProvider().getStatistics(player);
+    public PlayerProfile getStats() {
+        return PlayerRepository.REPOSITORY.lookup(player);
     }
 
     public void setSpectating(boolean spectating) {

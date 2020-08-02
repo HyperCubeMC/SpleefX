@@ -20,11 +20,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaPlayer;
-import io.github.spleefx.data.GameStats;
+import io.github.spleefx.data.PlayerProfile;
+import io.github.spleefx.data.PlayerRepository;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.util.message.message.Message;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -32,10 +34,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Represents a game perk
  */
+@ToString
 @JsonAdapter(GamePerkAdapter.class)
 public class GamePerk {
 
@@ -56,7 +60,7 @@ public class GamePerk {
 
     @Expose
     @JsonAdapter(ListAdapter.class)
-    private List<GameExtension> allowedExtensions = new ArrayList<>();
+    private final List<GameExtension> allowedExtensions = new ArrayList<>();
 
     @Expose
     @Getter
@@ -68,27 +72,33 @@ public class GamePerk {
 
     public boolean consumeFrom(ArenaPlayer player) {
         if (purchaseSettings.getGamesUsableFor() > 0) return true; // No consuming
-        return player.getStats().getPerks().merge(this, purchaseSettings.getGamesUsableFor() - 1, (i, a) -> i - 1) < 0;
+        AtomicBoolean b = new AtomicBoolean();
+        PlayerRepository.REPOSITORY.apply(player.getPlayer().getUniqueId(), (profile, builder) -> b.set(builder.perks().merge(this, purchaseSettings.getGamesUsableFor() - 1, (i, a) -> i - 1) < 0));
+        return b.get();
     }
 
+    @SuppressWarnings("ConstantConditions")
     public boolean canUse(GameExtension extension) {
-        return allowedExtensions == null || allowedExtensions.contains(extension);
+        return allowedExtensions != null && allowedExtensions.contains(extension);
     }
 
     public boolean purchase(ArenaPlayer player) {
         int price = getPurchaseSettings().getPrice();
-        GameStats stats = player.getStats();
-        if (stats.getCoins(player.getPlayer()) >= price) {
-            if (getPurchaseSettings().getGamesUsableFor() < 0)
-                Message.PERK_ALREADY_PURCHASED.reply(player.getPlayer(), this);
-            else {
-                Message.ITEM_PURCHASED.reply(player.getPlayer(), this);
-                stats.getPerks().merge(this, getPurchaseSettings().getGamesUsableFor(), Integer::sum);
-                stats.takeCoins(player.getPlayer(), price);
+        AtomicBoolean b = new AtomicBoolean(false);
+        PlayerProfile stats = player.getStats();
+        PlayerRepository.REPOSITORY.apply(player.getPlayer().getUniqueId(), (profile, builder) -> {
+            if (stats.getCoins() >= price) {
+                if (getPurchaseSettings().getGamesUsableFor() < 0)
+                    Message.PERK_ALREADY_PURCHASED.reply(player.getPlayer(), this);
+                else {
+                    Message.ITEM_PURCHASED.reply(player.getPlayer(), this);
+                    builder.perks().merge(this, getPurchaseSettings().getGamesUsableFor(), Integer::sum);
+                    builder.subtractCoins(price);
+                }
+                b.set(true);
             }
-            return true;
-        }
-        return false;
+        });
+        return b.get();
     }
 
     /**
@@ -108,16 +118,6 @@ public class GamePerk {
     }
 
     public void load() {
-    }
-
-    @Override public String toString() {
-        return "GamePerk{" +
-                "key='" + key + '\'' +
-                ", displayName='" + displayName + '\'' +
-                ", allowedExtensions=" + allowedExtensions +
-                ", perkInternalId='" + perkInternalId + '\'' +
-                ", purchaseSettings=" + purchaseSettings +
-                '}';
     }
 
     @SuppressWarnings("unchecked")

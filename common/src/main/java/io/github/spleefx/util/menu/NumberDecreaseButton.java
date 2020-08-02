@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
  */
 public class NumberDecreaseButton extends Button {
 
-    private Binder<Integer> value;
+    private final Binder<Integer> value;
 
     /**
      * Creates a new number-decreasing button

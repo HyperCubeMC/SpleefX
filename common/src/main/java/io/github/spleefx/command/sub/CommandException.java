@@ -21,8 +21,8 @@ import org.bukkit.command.CommandSender;
 
 public class CommandException extends RuntimeException {
 
-    private String message;
-    private GameExtension extension;
+    private final String message;
+    private final GameExtension extension;
 
     public CommandException(String message) {
         this(message, null);

@@ -44,7 +44,7 @@ public class ListArenasCommand extends PluginSubcommand {
             "&elistarenas &7- &dList all arenas of this mode"
     );
 
-    private Function<Command, List<GameArena>> arenas;
+    private final Function<Command, List<GameArena>> arenas;
 
     public ListArenasCommand(Function<Command, List<GameArena>> arenas) {
         super(

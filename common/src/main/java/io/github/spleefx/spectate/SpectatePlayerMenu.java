@@ -63,15 +63,13 @@ public class SpectatePlayerMenu extends GameMenu {
     }
 
     @Override public void display(HumanEntity entity) {
-        CompletableFuture.runAsync(() -> {
-            super.display(entity);
-        });
+        super.display(entity);
     }
 
     public static class MenuData {
 
         @Expose
-        private String title = "&2Spectate players";
+        private final String title = "&2Spectate players";
 
         @Expose public PlayerHeadInfo playerHeadInfo = new PlayerHeadInfo();
 
@@ -83,7 +81,7 @@ public class SpectatePlayerMenu extends GameMenu {
     public static class PlayerHeadInfo {
 
         @Expose
-        private String displayName = "&2{player}";
+        private final String displayName = "&2{player}";
 
         @Expose
         private List<String> lore;

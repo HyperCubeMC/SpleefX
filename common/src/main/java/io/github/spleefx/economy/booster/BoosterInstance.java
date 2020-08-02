@@ -18,6 +18,7 @@ package io.github.spleefx.economy.booster;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.data.PlayerRepository;
 import io.github.spleefx.economy.booster.BoosterFactory.FactoryStringAdapter;
 import io.github.spleefx.util.message.message.Message;
 import io.github.spleefx.util.plugin.Duration;
@@ -40,12 +41,12 @@ public class BoosterInstance {
      */
     @Expose
     @JsonAdapter(FactoryStringAdapter.class)
-    private BoosterFactory type;
+    private final BoosterFactory type;
 
     /**
      * The booster owner
      */
-    private UUID owner;
+    private final UUID owner;
 
     /**
      * Whether is the booster enabled or not
@@ -57,7 +58,7 @@ public class BoosterInstance {
      * The booster multiplier
      */
     @Expose
-    private double multiplier;
+    private final double multiplier;
 
     /**
      * The booster's duration
@@ -104,9 +105,7 @@ public class BoosterInstance {
     public void pause() {
         SpleefX.getPlugin().getBoosterConsumer().pauseBooster(this);
         state = BoosterState.PAUSED;
-        OfflinePlayer pl = Bukkit.getOfflinePlayer(owner);
-        SpleefX.getPlugin().getDataProvider().getStatistics(pl).getActiveBoosters().remove(this);
-        SpleefX.getActiveBoosterLoader().getActiveBoosters().remove(pl, this);
+        SpleefX.getActiveBoosterLoader().getActiveBoosters().remove(Bukkit.getOfflinePlayer(owner), this);
     }
 
     public int applyMultiplier(int value) {
@@ -125,7 +124,7 @@ public class BoosterInstance {
             state = BoosterState.ACTIVE;
             SpleefX.getPlugin().getBoosterConsumer().consumeBooster(player, this);
         } else {
-            if (SpleefX.getPlugin().getDataProvider().getStatistics(player).getActiveBoosters().size() >= ALLOW_MULTIPLE.get()) {
+            if (PlayerRepository.REPOSITORY.lookup(player).getActiveBoosters().size() >= ALLOW_MULTIPLE.get()) {
                 if (player.isOnline()) {
                     Message.CANNOT_ACTIVATE_MORE.reply(player.getPlayer(), this);
                     return false;

@@ -2,6 +2,9 @@ package io.github.spleefx.util;
 
 import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.arena.api.GameArena;
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.data.GameStatType;
+import io.github.spleefx.data.PlayerProfile;
 import io.github.spleefx.economy.booster.BoosterFactory;
 import io.github.spleefx.economy.booster.BoosterInstance;
 import io.github.spleefx.extension.GameExtension;
@@ -9,7 +12,6 @@ import io.github.spleefx.extension.standard.splegg.SpleggUpgrade;
 import io.github.spleefx.perk.GamePerk;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.util.game.Chat;
-import io.github.spleefx.util.plugin.PluginSettings;
 import lombok.AllArgsConstructor;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang.text.StrBuilder;
@@ -128,8 +130,8 @@ public class PlaceholderUtil {
         p(b, "arena_displayname", Chat.colorize(arena.getDisplayName()));
         p(b, "arena_playercount", arena.getEngine().getPlayerTeams().size());
         p(b, "countdown", formatTime(((BaseArenaEngine<?>) arena.getEngine()).countdown));
-        String c = ((BaseArenaEngine<?>) arena.getEngine()).countdown + "";
-        p(b, "countdown_chat", ((Map<String, String>) PluginSettings.TITLE_ON_COUNTDOWN_NUMBERS.get()).getOrDefault(c, c));
+        int countdown = ((BaseArenaEngine<?>) arena.getEngine()).countdown;
+        p(b, "countdown_chat", SpleefXConfig.TITLE_ON_COUNTDOWN_NUMBERS.get().getOrDefault(countdown, countdown + ""));
         p(b, "arena_time_left", formatTime(((BaseArenaEngine<?>) arena.getEngine()).timeLeft));
         p(b, "arena_minimum", arena.getMinimum());
         p(b, "arena_maximum", arena.getMaximum());
@@ -169,6 +171,13 @@ public class PlaceholderUtil {
         p(b, "colored_number", number.value);
     };
 
+    public static final PlaceholderFiller<PlayerProfile> PLAYER_PROFILE = (profile, b) -> {
+        Map<GameStatType, Integer> stats = profile.getGameStats();
+        for (GameStatType type : GameStatType.values) {
+            p(b, type.name().toLowerCase(), NUMBER_FORMAT.format(stats.get(type)));
+        }
+    };
+
     @FunctionalInterface
     public interface PlaceholderFiller<T> {
 
@@ -196,6 +205,7 @@ public class PlaceholderUtil {
             if (o instanceof Location) LOCATION.apply((Location) o, builder);
             if (o instanceof GamePerk) PERK.apply((GamePerk) o, builder);
             if (o instanceof BoosterInstance) BOOSTER.apply((BoosterInstance) o, builder);
+            if (o instanceof PlayerProfile) PLAYER_PROFILE.apply((PlayerProfile) o, builder);
         }
         if (PAPI) {
             String created = PlaceholderAPI.setPlaceholders(null, builder.toString());
@@ -219,7 +229,7 @@ public class PlaceholderUtil {
 
     public static class CommandEntry {
 
-        @Nullable private String command;
+        @Nullable private final String command;
         @Nullable private String arena;
         @Nullable private String player;
 
@@ -242,14 +252,14 @@ public class PlaceholderUtil {
     @AllArgsConstructor
     public static class BetEntry {
 
-        private int bet;
-        @Nullable private String portion;
+        private final int bet;
+        @Nullable private final String portion;
     }
 
     @AllArgsConstructor
     public static class ColoredNumberEntry {
 
-        private String value;
+        private final String value;
     }
 
 }

@@ -238,7 +238,7 @@ public class SpleggExtensionConverter implements Runnable {
             "  }", ArenaData.GSON);
     //</editor-fold>
 
-    private File extensionsDirectory;
+    private final File extensionsDirectory;
 
     public SpleggExtensionConverter(File extensionsDirectory) {
         this.extensionsDirectory = extensionsDirectory;

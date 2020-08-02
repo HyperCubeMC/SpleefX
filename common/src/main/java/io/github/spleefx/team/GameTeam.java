@@ -30,12 +30,13 @@ public class GameTeam {
     /**
      * Represents the color of the team
      */
-    private TeamColor color;
+    private final TeamColor color;
 
     /**
      * Lists for tracking team players
      */
-    private List<Player> members, alive;
+    private final List<Player> members;
+    private final List<Player> alive;
 
     public GameTeam(TeamColor color, List<Player> members) {
         this.color = color;

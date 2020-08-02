@@ -45,7 +45,7 @@ import java.util.*;
  */
 public class LegacyExtensionConverter implements Runnable {
 
-    private File extensionsDirectory;
+    private final File extensionsDirectory;
 
     //<editor-fold desc="Upgrades JSON" defaultstate="collapsed">
     private static final JsonObject UPGRADES = JsonUtils.getObjectFromString("{\"woodenShovel\": {\n" +

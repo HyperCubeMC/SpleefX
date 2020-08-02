@@ -50,8 +50,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * A backing class for providing arena data. This serves no special compatibility purpose other than separating
- * common arena settings from type-special arena data.
+ * A backing class for providing arena data_old. This serves no special compatibility purpose other than separating
+ * common arena settings from type-special arena data_old.
  */
 @Getter
 @Setter

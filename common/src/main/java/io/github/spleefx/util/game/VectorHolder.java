@@ -25,28 +25,28 @@ import org.bukkit.util.Vector;
 public class VectorHolder {
 
     @Expose
-    private double x;
+    private final double x;
 
     @Expose
-    private double y;
+    private final double y;
 
     @Expose
-    private double z;
+    private final double z;
 
     @Expose
-    private boolean usePlayerOriginalVector = false;
+    private final boolean usePlayerOriginalVector = false;
 
     @Expose
-    private double multiply = 1;
+    private final double multiply = 1;
 
     @Expose
-    private double divide = 1;
+    private final double divide = 1;
 
     @Expose
-    private double addition = 0;
+    private final double addition = 0;
 
     @Expose
-    private double subtract = 0;
+    private final double subtract = 0;
 
     public VectorHolder(double x, double y, double z) {
         this.x = x;

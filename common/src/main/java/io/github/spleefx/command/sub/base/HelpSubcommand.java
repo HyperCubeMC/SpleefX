@@ -39,7 +39,7 @@ public class HelpSubcommand extends PluginSubcommand {
             "?"
     );
 
-    private CommandManager commandManager;
+    private final CommandManager commandManager;
 
     public HelpSubcommand(CommandManager commandManager) {
         super("help",

@@ -30,9 +30,11 @@ import org.bukkit.World;
 @ToString
 public class BlockLocation {
 
-    private String world;
+    private final String world;
 
-    private int x, y, z;
+    private final int x;
+    private final int y;
+    private final int z;
 
     public BlockLocation(String world, int x, int y, int z) {
         this.world = world;

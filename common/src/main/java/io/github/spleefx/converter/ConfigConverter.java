@@ -52,7 +52,7 @@ public class ConfigConverter implements Runnable {
             "\n" +
             "  # Whether should the plugin allow leaderboards.\n" +
             "  #\n" +
-            "  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data.\n" +
+            "  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data_old.\n" +
             "  #\n" +
             "  # After enabling, you must restart the server in order for it to take effect. Reload will not work!\n" +
             "  Enabled: false\n" +
@@ -77,7 +77,7 @@ public class ConfigConverter implements Runnable {
             "  # {score} - The player's score in this stat\n" +
             "  Format: \"&d#{pos} &e{player} &7- &b{score}\"";
 
-    private File config;
+    private final File config;
 
     public ConfigConverter(File config) {
         this.config = config;

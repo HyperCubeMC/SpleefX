@@ -18,7 +18,21 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.0'
     compileOnly 'net.goldentreeservers:WorldGuardExtraFlags:4.1.2-SNAPSHOT'
     compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.5.0"
-    compileOnly 'me.lucko:helper:5.6.2'
+
+    testCompile group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
+
+    compileOnly group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.7'
+
+    compileOnly group: 'com.google.guava', name: 'guava', version: '29.0-jre'
+
+    compileOnly group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.8.5'
+    compileOnly group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
+
+    testCompile group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
+
+    compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
+    testCompile group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
+    testCompile group: 'commons-lang', name: 'commons-lang', version: '2.6'
 
 }
 
@@ -30,4 +44,15 @@ processResources {
         expand 'pluginVersion': version
         include 'plugin.yml'
     }
+}
+
+shadowJar {
+    relocate 'me.lucko.commodore', relocation('commodore')
+    relocate 'okhttp3', relocation('okhttp3')
+    relocate 'okio', relocation('okio')
+    relocate 'com.zaxxer.hikari', relocation('hikari')
+}
+
+private static String relocation(String name) {
+    return "io.github.spleefx.lib." + name
 }

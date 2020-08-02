@@ -47,7 +47,7 @@ public class DoubleJumpHandler implements Listener {
     /**
      * The delay handler
      */
-    private DelayExecutor<GameAbility> delayExecutor;
+    private final DelayExecutor<GameAbility> delayExecutor;
 
     /**
      * Creates a new handler
@@ -130,24 +130,24 @@ public class DoubleJumpHandler implements Listener {
     }
 
     /**
-     * A POJO for holding double jump data
+     * A POJO for holding double jump data_old
      */
     public static class DataHolder {
 
         @Expose
-        private boolean enabled = true;
+        private final boolean enabled = true;
 
         @Expose
-        private int defaultAmount = 5;
+        private final int defaultAmount = 5;
 
         @Expose
-        private int cooldownBetween = 2;
+        private final int cooldownBetween = 2;
 
         @Expose
-        private Sound playSoundOnJump = CompatibilityHandler.either(() -> Sound.valueOf("ENTITY_WITHER_SHOOT"), () -> Sound.valueOf("WITHER_SHOOT"));
+        private final Sound playSoundOnJump = CompatibilityHandler.either(() -> Sound.valueOf("ENTITY_WITHER_SHOOT"), () -> Sound.valueOf("WITHER_SHOOT"));
 
         @Expose
-        private DoubleJumpItems doubleJumpItems = new DoubleJumpItems(
+        private final DoubleJumpItems doubleJumpItems = new DoubleJumpItems(
                 true, 2,
                 new ItemHolder()
                         .setType("feather")
@@ -162,7 +162,7 @@ public class DoubleJumpHandler implements Listener {
         );
 
         @Expose
-        private VectorHolder launchVelocity = new VectorHolder(0, 1, 0);
+        private final VectorHolder launchVelocity = new VectorHolder(0, 1, 0);
 
         public boolean isEnabled() {
             return enabled;
@@ -192,16 +192,16 @@ public class DoubleJumpHandler implements Listener {
     public static class DoubleJumpItems {
 
         @Expose
-        private boolean enabled;
+        private final boolean enabled;
 
         @Expose
-        private int slot;
+        private final int slot;
 
         @Expose
-        private ItemHolder onAvailable;
+        private final ItemHolder onAvailable;
 
         @Expose
-        private ItemHolder onUnavailable;
+        private final ItemHolder onUnavailable;
 
         public DoubleJumpItems(boolean enabled, int slot, ItemHolder onAvailable, ItemHolder onUnavailable) {
             this.enabled = enabled;

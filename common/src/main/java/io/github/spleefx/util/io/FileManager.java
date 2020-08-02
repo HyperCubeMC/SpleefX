@@ -15,6 +15,7 @@
  */
 package io.github.spleefx.util.io;
 
+import lombok.SneakyThrows;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -35,7 +36,7 @@ public class FileManager<P extends JavaPlugin> {
     /**
      * Main class instance
      */
-    private P plugin;
+    private final P plugin;
 
     public FileManager(P plugin) {
         this.plugin = plugin;
@@ -51,6 +52,13 @@ public class FileManager<P extends JavaPlugin> {
         File file = new File(plugin.getDataFolder(), fileName);
         if (!file.exists())
             plugin.saveResource(fileName, false);
+        return file;
+    }
+
+    @SneakyThrows
+    public File emptyFile(String fileName) {
+        File file = new File(plugin.getDataFolder(), fileName);
+        file.createNewFile();
         return file;
     }
 

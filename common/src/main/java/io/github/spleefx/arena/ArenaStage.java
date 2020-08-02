@@ -55,13 +55,13 @@ public enum ArenaStage {
     /**
      * The text representing the state
      */
-    private Message key;
+    private final Message key;
 
     /**
      * Whether is the arena playable in this arena state or not
      */
-    private boolean playable;
-    private boolean endable;
+    private final boolean playable;
+    private final boolean endable;
 
     /**
      * Initiates a new arena stage

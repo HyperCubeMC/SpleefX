@@ -25,9 +25,9 @@ public class PlayerSpectateAnotherEvent extends Event {
 
     public static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private Player spectator;
-    private Player target;
-    private GameArena arena;
+    private final Player spectator;
+    private final Player target;
+    private final GameArena arena;
 
     /**
      * Invoked when a player spectates another player in an arena

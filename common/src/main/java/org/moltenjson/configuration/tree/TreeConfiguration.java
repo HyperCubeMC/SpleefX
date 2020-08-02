@@ -36,15 +36,15 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * A tree configuration is a special type of configuration, designed specifically for handling data.
- * It serves the purpose of simplifying handling data which is distributed on files rather than a single
- * file. For example, if user data was stored in a directory with each user getting their own JSON file,
- * then this configuration can handle this data efficiently.
+ * A tree configuration is a special type of configuration, designed specifically for handling data_old.
+ * It serves the purpose of simplifying handling data_old which is distributed on files rather than a single
+ * file. For example, if user data_old was stored in a directory with each user getting their own JSON file,
+ * then this configuration can handle this data_old efficiently.
  * <p>
  * Do note that, the files <i>need</i> to follow a specific template; i.e have a single object that can
  * be serialized and deserialized by {@link Gson} rather than having to control
  * raw maps, lists, primitive types, etc. This allows the configuration to be able to handle all the
- * data efficiently.
+ * data_old efficiently.
  * <p>
  * Primitive types classes and wrapper classes (like {@link Double}), and generally any
  * class that cannot be serialized or deserialized whatsoever by {@link Gson} should <i>not</i> be used.
@@ -71,14 +71,14 @@ import java.util.*;
 public class TreeConfiguration<N, E> {
 
     /**
-     * Map which contains all file data. The name key is the name derived from the
+     * Map which contains all file data_old. The name key is the name derived from the
      * naming strategy, and the value is the file template specified in the
      * creation of the configuration in object generics.
      */
     private Map<N, E> data;
 
     /**
-     * The parent directory which contains all the data files
+     * The parent directory which contains all the data_old files
      */
     private final File directory;
 
@@ -114,7 +114,7 @@ public class TreeConfiguration<N, E> {
     private final boolean ignoreInvalidFiles;
 
     /**
-     * Whether to load or save data on request only.
+     * Whether to load or save data_old on request only.
      */
     private final boolean lazy;
 
@@ -124,12 +124,12 @@ public class TreeConfiguration<N, E> {
     private final TreeFileFilter<N, E> fileFilter;
 
     /**
-     * A simple boolean to track whether the data has been loaded or not.
+     * A simple boolean to track whether the data_old has been loaded or not.
      */
     private boolean dataLoaded = false;
 
     /**
-     * All data files
+     * All data_old files
      */
     private Map<String, File> files;
 
@@ -141,16 +141,16 @@ public class TreeConfiguration<N, E> {
     /**
      * Used locally. To construct, use {@link TreeConfigurationBuilder}.
      *
-     * @param data                 An initial map data value to set
-     * @param directory            Directory which contains all the data files
-     * @param gson                 The GSON profile used for handling JSON data
+     * @param data                 An initial map data_old value to set
+     * @param directory            Directory which contains all the data_old files
+     * @param gson                 The GSON profile used for handling JSON data_old
      * @param searchSubdirectories Whether or not to search sub-directories
      * @param exclusionPrefixes    Prefixes that exclude files from being loaded and updated
      * @param restrictedExtensions File extensions to exclude
      * @param namingStrategy       The naming strategy used to fetch file names and convert them into usable names
      * @param ignoreInvalidFiles   Whether or not to ignore files whom names cannot be fetched from the naming strategy,
      *                             or cannot be parsed (malformed JSON)
-     * @param lazy                 Whether to load and save data only when requested
+     * @param lazy                 Whether to load and save data_old only when requested
      */
     TreeConfiguration(Map<N, E> data, File directory, Gson gson, boolean searchSubdirectories, ImmutableList<String> exclusionPrefixes, ImmutableList<String> restrictedExtensions, TreeNamingStrategy<N> namingStrategy, boolean ignoreInvalidFiles, boolean lazy) {
         this.data = data;
@@ -185,7 +185,7 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Returns the cached data files
+     * Returns the cached data_old files
      *
      * @return Data file
      */
@@ -194,7 +194,7 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Loads all the files data into memory and caches it into {@link #data}. Invoking this method
+     * Loads all the files data_old into memory and caches it into {@link #data}. Invoking this method
      * would update the cache.
      * <p>
      * With the provided {@link TreeNamingStrategy}, the file name would be converted to the specified
@@ -203,9 +203,9 @@ public class TreeConfiguration<N, E> {
      * <p>
      * Invoking this method updates the value {@link #dataLoaded} to be {@code true}.
      *
-     * @param templateType The type of data to deserialize as. This should be exactly the same
+     * @param templateType The type of data_old to deserialize as. This should be exactly the same
      *                     as the one specified in generics declaration.
-     * @return The loaded data
+     * @return The loaded data_old
      * @see #lazyLoad(Object, Type, String)
      * @see #getData()
      */
@@ -228,12 +228,12 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Lazily loads the required data into memory and caches it into the {@link #data} map. Unlike {@link #load(Type)},
-     * this method only loads and caches the required data when requested, hence it is useful in cases where the data to
+     * Lazily loads the required data_old into memory and caches it into the {@link #data} map. Unlike {@link #load(Type)},
+     * this method only loads and caches the required data_old when requested, hence it is useful in cases where the data_old to
      * control is relatively large and loading all of it is redundant.
      *
      * @param name     Name to look up and retrieve from
-     * @param template The type of data to serialize. This should be exactly the same
+     * @param template The type of data_old to serialize. This should be exactly the same
      *                 as the one specified in generics declaration.
      * @return The value associated with the name, or {@code null} if the specified name had no file associated with it.
      * @see #load(Type)
@@ -250,12 +250,12 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Lazily loads the required data into memory and caches it into the {@link #data} map. Unlike {@link #load(Type)},
-     * this method only loads and caches the required data when requested, hence it is useful in cases where the data to
+     * Lazily loads the required data_old into memory and caches it into the {@link #data} map. Unlike {@link #load(Type)},
+     * this method only loads and caches the required data_old when requested, hence it is useful in cases where the data_old to
      * control is relatively large and loading all of it is redundant.
      *
      * @param name     Name to look up and retrieve from
-     * @param template The type of data to serialize. This should be exactly the same
+     * @param template The type of data_old to serialize. This should be exactly the same
      *                 as the one specified in generics declaration.
      * @return The value associated with the name, or {@code null} if the specified name had no file associated with it.
      * @see #load(Type)
@@ -272,9 +272,9 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Returns all the file data, mapped according to the specified {@link TreeNamingStrategy}.
+     * Returns all the file data_old, mapped according to the specified {@link TreeNamingStrategy}.
      *
-     * @return The total file data
+     * @return The total file data_old
      * @see TreeConfiguration#load(Type)
      */
     public Map<N, E> getData() {
@@ -282,20 +282,20 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Returns whether the data has been loaded yet or not.
+     * Returns whether the data_old has been loaded yet or not.
      *
-     * @return Whether the data was loaded or not
+     * @return Whether the data_old was loaded or not
      */
     public boolean isDataLoaded() {
         return dataLoaded;
     }
 
     /**
-     * Returns whether the specified name has any data loaded. If {@link #load(Type)} was not
+     * Returns whether the specified name has any data_old loaded. If {@link #load(Type)} was not
      * invoked, this method will always return {@code false} regardless of the name.
      *
      * @param name Name to look up
-     * @return {@code true} if the specified name has any data, or {@code false} if not (or if data
+     * @return {@code true} if the specified name has any data_old, or {@code false} if not (or if data_old
      * was not loaded.)
      * @see #get(Object)
      */
@@ -304,7 +304,7 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Returns the associated data with the specified name.
+     * Returns the associated data_old with the specified name.
      * <p>
      * Note: It is recommended to execute a null check when retrieving this value. Another alternative
      * is checking with {@link #hasData(Object)} and {@link #isDataLoaded()}.
@@ -318,7 +318,7 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Returns the associated data with the specified name entry. If there
+     * Returns the associated data_old with the specified name entry. If there
      * is no mapping for the specified entry, the specified fallback is returned.
      *
      * @param name     Name to look up
@@ -355,11 +355,11 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Maps the file into the data map, and creates a file with the specified name
+     * Maps the file into the data_old map, and creates a file with the specified name
      * using the naming strategy. This will also write the specified content into the file
      * and update it immediately.
      * <p>
-     * If the data already exists, it will be overwritten and replaced by the specified value.
+     * If the data_old already exists, it will be overwritten and replaced by the specified value.
      *
      * @param name          Name to map with
      * @param value         Value of the file
@@ -367,7 +367,7 @@ public class TreeConfiguration<N, E> {
      *                      the {@link #restrictedExtensions}.
      * @return The specified value of the name. This can be used as a convenient way to store
      * the value.
-     * @throws IOException Any I/O exceptions in handling data
+     * @throws IOException Any I/O exceptions in handling data_old
      * @see #createIfAbsent(Object, Object, String)
      * @see #delete(Object)
      */
@@ -383,11 +383,11 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Maps the file into the data map, and creates a file with the specified name
+     * Maps the file into the data_old map, and creates a file with the specified name
      * using the naming strategy. This will also write the specified content into the file
      * and update it immediately.
      * <p>
-     * If the data already exists, this method will have no effect
+     * If the data_old already exists, this method will have no effect
      *
      * @param name          Name to map with
      * @param value         Value of the file
@@ -395,7 +395,7 @@ public class TreeConfiguration<N, E> {
      *                      the {@link #restrictedExtensions}.
      * @return The specified value of the name. This can be used as a convenient way to store
      * the value.
-     * @throws IOException Any I/O exceptions in handling data
+     * @throws IOException Any I/O exceptions in handling data_old
      * @see #create(Object, Object, String)
      */
     public E createIfAbsent(N name, E value, String fileExtension) throws IOException {
@@ -407,7 +407,7 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Removes the specified entry from the data, and returns an optional of the file associated with
+     * Removes the specified entry from the data_old, and returns an optional of the file associated with
      * that entry.
      *
      * @param name Name of the entry
@@ -420,7 +420,7 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Deletes the specified name from the cached data map, and deletes the file
+     * Deletes the specified name from the cached data_old map, and deletes the file
      * associated with the entry.
      *
      * @param name Name of the entry to be deleted
@@ -437,8 +437,8 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Removes the specified name from the data cache map and from the loaded files, but the storage file
-     * remains. This can be useful when excluding a specific file with keeping the data of it as well.
+     * Removes the specified name from the data_old cache map and from the loaded files, but the storage file
+     * remains. This can be useful when excluding a specific file with keeping the data_old of it as well.
      *
      * @param name Name of the entry to be removed
      * @return An optional of the file which belongs to the specified name
@@ -451,17 +451,17 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Saves the current data map and updates the cached one. This will write the data to each file according
-     * to the naming strategy, and overwrite its old content with the new one specified in the current data map.
+     * Saves the current data_old map and updates the cached one. This will write the data_old to each file according
+     * to the naming strategy, and overwrite its old content with the new one specified in the current data_old map.
      * <p>
-     * This method should be used after the data was loaded, modified, and has to be saved.
+     * This method should be used after the data_old was loaded, modified, and has to be saved.
      * <p>
-     * If data was cached in another map, and was modified in the same cached map, it will be
+     * If data_old was cached in another map, and was modified in the same cached map, it will be
      * more appropriate to use {@link #saveNewMap(Map)}. This method should be used when there is no
      * external cache and all operations were done through the self-cache inside the configuration, such as invoking
      * invoking {@link #create(Object, Object, String)} or {@link #delete(Object)}.
      *
-     * @return The new data to save
+     * @return The new data_old to save
      * @throws IOException           Any exceptions in I/O writing
      * @throws IllegalStateException If the configuration is {@link #lazy}
      * @see #saveNewMap(Map)
@@ -473,10 +473,10 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Saves the lazily-loaded data from {@link #lazyLoad(Object, Type, String)}, by writing all the
+     * Saves the lazily-loaded data_old from {@link #lazyLoad(Object, Type, String)}, by writing all the
      * cached content into its corresponding files
      *
-     * @return The newly saved data map, derived from {@link #data} which caches from {@link #lazyLoad(Object, Type, String)}.
+     * @return The newly saved data_old map, derived from {@link #data} which caches from {@link #lazyLoad(Object, Type, String)}.
      * @throws IOException Any exceptions in I/O writing
      * @see #save()
      * @see #saveNewMap(Map)
@@ -498,18 +498,18 @@ public class TreeConfiguration<N, E> {
     }
 
     /**
-     * Saves the specified data map, and updates the cached one. This method will write the map content
+     * Saves the specified data_old map, and updates the cached one. This method will write the map content
      * to each file according to the naming strategy, and overwrite its old content with the new one specified in the map.
      * <p>
-     * This method should be used after the data was loaded, modified and needs to be saved (e.g application shutdown).
+     * This method should be used after the data_old was loaded, modified and needs to be saved (e.g application shutdown).
      * <p>
      * It's extremely recommended that the passed {@code Map} is derived from {@link #getData()}. This will ensure
      * that all files are included in getting updated, and any file that is not in the map will throw
      * a {@link NullPointerException}. Any passed map should be derived from {@link #getData()}, and channelTo at least
      * all the keys the current {@link #data} has.
      *
-     * @param data New data to save
-     * @return The inputted map data
+     * @param data New data_old to save
+     * @return The inputted map data_old
      * @throws IOException Any exceptions in I/O writing
      * @see #save()
      * @see #lazySave()

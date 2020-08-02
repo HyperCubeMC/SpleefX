@@ -59,16 +59,16 @@ public class GameExtension {
     private String chatPrefix; // DONE
 
     @Expose
-    private Map<Integer, Map<SenderType, List<String>>> runCommandsForFFAWinners = Collections.emptyMap();
+    private final Map<Integer, Map<SenderType, List<String>>> runCommandsForFFAWinners = Collections.emptyMap();
 
     @Expose
-    private Map<Integer, Map<SenderType, List<String>>> runCommandsForTeamWinners = Collections.emptyMap();
+    private final Map<Integer, Map<SenderType, List<String>>> runCommandsForTeamWinners = Collections.emptyMap();
 
     @Expose
-    private boolean preventItemDropping = true;
+    private final boolean preventItemDropping = true;
 
     @Expose
-    private boolean giveDroppedItems = true;
+    private final boolean giveDroppedItems = true;
 
     @Expose
     private List<PotionEffect> givePotionEffects; // DONE
@@ -78,46 +78,46 @@ public class GameExtension {
     private DoubleJumpHandler.DataHolder doubleJumpSettings;
 
     @Expose
-    private Map<Integer, ItemHolder> itemsToAdd = Collections.emptyMap(); // DONE
+    private final Map<Integer, ItemHolder> itemsToAdd = Collections.emptyMap(); // DONE
 
     @Expose
-    private Map<ArmorSlots, ItemHolder> armorToAdd = Collections.emptyMap(); // DONE
+    private final Map<ArmorSlots, ItemHolder> armorToAdd = Collections.emptyMap(); // DONE
 
     @Expose
-    private Map<GameEvent, ExtensionTitle> gameTitles = new LinkedHashMap<>(); // DONE
+    private final Map<GameEvent, ExtensionTitle> gameTitles = new LinkedHashMap<>(); // DONE
 
     @Expose
-    private List<String> signs = Collections.emptyList(); // DONE
+    private final List<String> signs = Collections.emptyList(); // DONE
 
     @Expose
-    private GameMode waitingMode = GameMode.ADVENTURE; // DONE
+    private final GameMode waitingMode = GameMode.ADVENTURE; // DONE
 
     @Expose
-    private GameMode ingameMode = GameMode.ADVENTURE; // DONE
+    private final GameMode ingameMode = GameMode.ADVENTURE; // DONE
 
     @Expose
-    private List<DamageCause> cancelledDamageInWaiting = Collections.emptyList(); // DONE
+    private final List<DamageCause> cancelledDamageInWaiting = Collections.emptyList(); // DONE
 
     @Expose
-    private List<DamageCause> cancelledDamageInGame = Collections.emptyList(); // DONE
+    private final List<DamageCause> cancelledDamageInGame = Collections.emptyList(); // DONE
 
     @Expose
-    private List<String> extensionCommands = Collections.emptyList(); // DONE
+    private final List<String> extensionCommands = Collections.emptyList(); // DONE
 
     @Expose
-    private List<String> allowedCommands = Collections.emptyList(); // DONE
+    private final List<String> allowedCommands = Collections.emptyList(); // DONE
 
     @Expose
-    private Map<ScoreboardType, ScoreboardHolder> scoreboard = Collections.emptyMap(); // DONE
+    private final Map<ScoreboardType, ScoreboardHolder> scoreboard = Collections.emptyMap(); // DONE
 
     @Expose
     private QuitItem quitItem; // DONE
 
     @Expose
-    private List<String> runCommandsWhenGameFills = new ArrayList<>(); // DONE
+    private final List<String> runCommandsWhenGameFills = new ArrayList<>(); // DONE
 
     @Expose
-    private List<String> runCommandsWhenGameStarts = new ArrayList<>(); // DONE
+    private final List<String> runCommandsWhenGameStarts = new ArrayList<>(); // DONE
 
     public boolean isEnabled() {
         return enabled;
@@ -130,7 +130,7 @@ public class GameExtension {
     public void refresh(ExtensionType type) {
         GameExtension copy = ExtensionsManager.getExtension(key, type, getClass());
         List<Field> fields = getAllFields(getClass());
-
+        System.out.println("Copy: " + copy + ", here: " + this);
         for (Field f : fields)
             try {
                 if (Modifier.isStatic(f.getModifiers()) || !f.isAnnotationPresent(Expose.class)) continue;

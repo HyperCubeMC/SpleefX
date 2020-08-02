@@ -41,7 +41,7 @@ public class SelectionHolder<T> {
     /**
      * Whether should this holder allow null values or not
      */
-    private boolean allowNullValues;
+    private final boolean allowNullValues;
 
     /**
      * Initiates a new selection holder from the given value, and sets whether the given value may

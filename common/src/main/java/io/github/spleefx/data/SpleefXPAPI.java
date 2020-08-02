@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.spleefx.data.papi;
+package io.github.spleefx.data;
 
 import io.github.spleefx.SpleefX;
-import io.github.spleefx.data.GameStats;
-import io.github.spleefx.data.LeaderboardTopper;
-import io.github.spleefx.data.PlayerStatistic;
+import io.github.spleefx.config.SpleefXConfig;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.util.game.Chat;
-import io.github.spleefx.util.plugin.PluginSettings;
 import lombok.AllArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -47,7 +44,7 @@ public class SpleefXPAPI extends PlaceholderExpansion {
     /**
      * The SpleefX plugin
      */
-    private SpleefX plugin;
+    private final SpleefX plugin;
 
     @Override public String getIdentifier() {
         return plugin.getDescription().getName().toLowerCase();
@@ -85,9 +82,9 @@ public class SpleefXPAPI extends PlaceholderExpansion {
             int pos = Integer.parseInt(split[split.length - 1]);
             GameExtension extension = ExtensionsManager.getByKey(requested[1]);
             String request = requested[2];
-            PlayerStatistic stat = PlayerStatistic.from(requested[0].substring(0, requested[0].lastIndexOf("_")));
+            GameStatType stat = GameStatType.fromName(requested[0].substring(0, requested[0].lastIndexOf("_")));
             LeaderboardTopper topper;
-            List<LeaderboardTopper> toppers = plugin.getDataProvider().getTopPlayers(stat, extension);
+            List<LeaderboardTopper> toppers = PlayerRepository.REPOSITORY.getTopPlayers(stat, extension);
             try {
                 topper = toppers.get(pos - 1);
             } catch (IndexOutOfBoundsException e) {
@@ -95,7 +92,7 @@ public class SpleefXPAPI extends PlaceholderExpansion {
             }
             CompletableFuture<OfflinePlayer> playerFuture = topper.getPlayer();
             if (!playerFuture.isDone())
-                return "Player not cached yet";
+                return "Player not resolved yet";
             OfflinePlayer lbPlayer = playerFuture.join();
             switch (request) {
                 case "name":
@@ -107,49 +104,29 @@ public class SpleefXPAPI extends PlaceholderExpansion {
                 case "number":
                 case "score":
                 case "statistic":
-                    return format(topper.getCount());
+                    return format(topper.getScore());
                 case "format": {
-                    String format = PluginSettings.LEADERBOARDS_FORMAT.get();
+                    String format = SpleefXConfig.LEADERBOARDS_FORMAT.get();
                     return Chat.colorize(format)
                             .replace("{player}", Objects.requireNonNull(lbPlayer.getName(), "Player name is null!"))
                             .replace("{pos}", format(pos))
-                            .replace("{score}", format(topper.getCount()));
+                            .replace("{score}", format(topper.getScore()));
                 }
                 default:
                     return "Invalid request: " + request;
             }
         }
         if (player == null) return format(0);
-        GameStats stats = plugin.getDataProvider().getStatistics(player);
-        switch (identifier.toLowerCase()) {
-            case "games_played":
-                return format(stats.get(PlayerStatistic.GAMES_PLAYED, null));
-            case "wins":
-                return format(stats.get(PlayerStatistic.WINS, null));
-            case "losses":
-                return format(stats.get(PlayerStatistic.LOSSES, null));
-            case "draws":
-                return format(stats.get(PlayerStatistic.DRAWS, null));
-            case "blocks_mined":
-                return format(stats.get(PlayerStatistic.BLOCKS_MINED, null));
-            default:
-                String[] split = identifier.split("_");
-                String key = split[split.length - 1];
-                GameExtension mode = ExtensionsManager.getByKey(key);
-                switch (identifier.substring(0, identifier.indexOf(split[split.length - 1]) - 1).toLowerCase()) {
-                    case "games_played":
-                        return format(stats.get(PlayerStatistic.GAMES_PLAYED, mode));
-                    case "wins":
-                        return format(stats.get(PlayerStatistic.WINS, mode));
-                    case "losses":
-                        return format(stats.get(PlayerStatistic.LOSSES, mode));
-                    case "draws":
-                        return format(stats.get(PlayerStatistic.DRAWS, mode));
-                    case "blocks_mined":
-                        return format(stats.get(PlayerStatistic.BLOCKS_MINED, mode));
-                    default:
-                        return format(0);
-                }
+        PlayerProfile stats = PlayerRepository.REPOSITORY.lookup(player);
+        GameStatType statType = GameStatType.fromName(identifier);
+        if (statType != null) {
+            return format(stats.getGameStats().get(statType));
+        } else {
+            String[] split = identifier.split("_");
+            String key = split[split.length - 1];
+            GameExtension mode = ExtensionsManager.getByKey(key);
+            statType = GameStatType.fromName(identifier.substring(0, identifier.indexOf(split[split.length - 1]) - 1).toLowerCase());
+            return statType == null ? format(0) : format(stats.getExtensionStatistics().get(mode.getKey()).get(statType));
         }
     }
 

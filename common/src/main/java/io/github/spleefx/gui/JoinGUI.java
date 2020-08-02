@@ -37,8 +37,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static io.github.spleefx.data.GameStats.FORMAT;
-
 public class JoinGUI extends GameMenu {
 
     /**

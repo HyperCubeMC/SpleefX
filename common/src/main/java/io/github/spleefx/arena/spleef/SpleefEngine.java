@@ -21,9 +21,9 @@ import io.github.spleefx.arena.api.BaseArenaEngine;
 import io.github.spleefx.arena.api.GameTask;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.material.MaterialCompatibility;
+import io.github.spleefx.config.SpleefXConfig;
 import io.github.spleefx.util.Percentage;
 import io.github.spleefx.util.game.InventoryUtils;
-import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,7 +33,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.github.spleefx.arena.spleef.SpleefArena.EXTENSION;
 import static java.util.Comparator.comparingInt;
@@ -64,7 +63,7 @@ public class SpleefEngine extends BaseArenaEngine<SpleefArena> {
     public void loop() {
         super.loop();
         meltingTask = Bukkit.getScheduler().runTaskTimer(SpleefX.getPlugin(), task = new MeltingTask(this),
-                ((Integer) PluginSettings.ARENA_MELTING_INTERVAL.get()).longValue(), ((Integer) PluginSettings.ARENA_MELTING_INTERVAL.get()).longValue());
+                SpleefXConfig.ARENA_MELTING_INTERVAL.get().longValue(), SpleefXConfig.ARENA_MELTING_INTERVAL.get().longValue());
     }
 
     /**
@@ -76,24 +75,24 @@ public class SpleefEngine extends BaseArenaEngine<SpleefArena> {
          * Compares locations to check if they are equal
          */
         private static final Comparator<Location> LOCATION_COMPARATOR =
-                comparingInt((Location location) -> PluginSettings.ARENA_MELTING_IGNORE_X.get() ? 0 : location.getBlockX())
-                        .thenComparingInt(location -> PluginSettings.ARENA_MELTING_IGNORE_Y.get() ? 0 : location.getBlockY())
-                        .thenComparingInt(location -> PluginSettings.ARENA_MELTING_IGNORE_Z.get() ? 0 : location.getBlockZ());
+                comparingInt((Location location) -> SpleefXConfig.ARENA_MELTING_IGNORE_X.get() ? 0 : location.getBlockX())
+                        .thenComparingInt(location -> SpleefXConfig.ARENA_MELTING_IGNORE_Y.get() ? 0 : location.getBlockY())
+                        .thenComparingInt(location -> SpleefXConfig.ARENA_MELTING_IGNORE_Z.get() ? 0 : location.getBlockZ());
 
         /**
          * All locations of players
          */
-        private Map<UUID, Location> locations = new HashMap<>();
+        private final Map<UUID, Location> locations = new HashMap<>();
 
         /**
          * Represents the engine
          */
-        private SpleefEngine engine;
+        private final SpleefEngine engine;
 
         /**
          * A list of all meltable materials
          */
-        private List<Material> meltableBlocks;
+        private final List<Material> meltableBlocks;
 
         /**
          * Creates a melting task for the specified engine
@@ -103,21 +102,20 @@ public class SpleefEngine extends BaseArenaEngine<SpleefArena> {
         public MeltingTask(SpleefEngine engine) {
             super(Phase.AFTER);
             this.engine = engine;
-            List<String> l = PluginSettings.ARENA_MELTING_BLOCKS.get();
-            meltableBlocks = l.stream().map(Material::matchMaterial).collect(Collectors.toList());
+            meltableBlocks = new ArrayList<>(SpleefXConfig.ARENA_MELTABLE_BLOCKS.get());
             meltableBlocks.removeIf(Objects::isNull);
         }
 
         @Override
         public void run() {
-            if (engine.arena.isMelt() && ((int) PluginSettings.ARENA_MELTING_RADIUS.get()) != 0) {
+            if (engine.arena.isMelt() && SpleefXConfig.ARENA_MELTING_RADIUS.get() != 0) {
                 for (ArenaPlayer a : engine.getPlayerTeams().keySet()) {
                     Player player = a.getPlayer();
                     Location prev = locations.put(player.getUniqueId(), player.getLocation());
                     if (prev == null) continue;
                     if (LOCATION_COMPARATOR.compare(prev, player.getLocation()) != 0)
                         continue; // Player is in a different location
-                    Block b = pickBlock(getLowestBlock(player.getLocation()).getLocation(), PluginSettings.ARENA_MELTING_RADIUS.get());
+                    Block b = pickBlock(getLowestBlock(player.getLocation()).getLocation(), SpleefXConfig.ARENA_MELTING_RADIUS.get());
                     if (b == null) continue; // No meltable block found
                     b.setType(Material.AIR);
                     if (EXTENSION.getSnowballSettings().removeSnowballsGraduallyOnMelting()) {
@@ -173,7 +171,7 @@ public class SpleefEngine extends BaseArenaEngine<SpleefArena> {
         /**
          * The task to clear
          */
-        private SpleefEngine engine;
+        private final SpleefEngine engine;
 
         /**
          * Creates a new task

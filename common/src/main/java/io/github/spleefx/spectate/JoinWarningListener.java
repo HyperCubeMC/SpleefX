@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class JoinWarningListener implements Listener {
 
-    private Set<UUID> warned = Collections.synchronizedSet(new HashSet<>());
+    private final Set<UUID> warned = Collections.synchronizedSet(new HashSet<>());
 
     private static final ChatComponent WARNING = new ChatComponent().setText(("&b&lNote: &7Spectating is still in &e&lBETA&7. While it should work fine, it is recommended that you try it on a local server in case of any unreported bugs. Should any bugs arise, report them over on").replace(" ", " &7"), true);
 

@@ -28,13 +28,13 @@ public class Duration {
      * Represents the unit
      */
     @Expose
-    private TimeUnit unit;
+    private final TimeUnit unit;
 
     /**
      * Represents the duration value
      */
     @Expose
-    private long duration;
+    private final long duration;
 
     private Duration(TimeUnit unit, long duration) {
         this.unit = unit;

@@ -24,7 +24,7 @@ import org.bukkit.event.Event;
  */
 public abstract class ArenaEvent extends Event {
 
-    private GameArena arena;
+    private final GameArena arena;
 
     public ArenaEvent(GameArena arena) {
         this.arena = arena;

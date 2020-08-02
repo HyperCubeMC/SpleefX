@@ -33,7 +33,7 @@ public abstract class PluginSubcommand {
     /**
      * Represents the command name
      */
-    private String name;
+    private final String name;
 
     /**
      * The command permission
@@ -43,7 +43,7 @@ public abstract class PluginSubcommand {
     /**
      * The command description
      */
-    private String description;
+    private final String description;
 
     /**
      * The command aliases
@@ -58,7 +58,7 @@ public abstract class PluginSubcommand {
     /**
      * The command usage
      */
-    private Function<Command, String> usage;
+    private final Function<Command, String> usage;
 
     public PluginSubcommand(String name, Function<Command, Permission> permission, String description, Function<Command, String> usage) {
         this.name = name;

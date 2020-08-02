@@ -15,8 +15,8 @@
  */
 package io.github.spleefx.command.parent.sub;
 
-import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.PluginSubcommand;
+import io.github.spleefx.data.PlayerRepository;
 import io.github.spleefx.economy.booster.BoosterFactory;
 import io.github.spleefx.economy.booster.BoosterMenu;
 import io.github.spleefx.util.game.Chat;
@@ -63,7 +63,7 @@ public class BoosterSubcommand extends PluginSubcommand {
                 return false;
             }
             Player p = (Player) sender;
-            new BoosterMenu(new ArrayList<>(SpleefX.getPlugin().getDataProvider().getStatistics(p).getBoosters().values())).display(p);
+            new BoosterMenu(new ArrayList<>(PlayerRepository.REPOSITORY.lookup(p).getBoosters().values())).display(p);
             return true;
         }
         if (args.length < 3) {
@@ -78,7 +78,7 @@ public class BoosterSubcommand extends PluginSubcommand {
                 return true;
             }
             factory.give(target);
-            if (target.isOnline())
+            if (target.getPlayer() != null)
                 Chat.plugin(target.getPlayer(), "&aYou have been given a booster of type &e" + factory.getDisplayName() + "&a.");
         }
         return false;

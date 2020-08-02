@@ -20,8 +20,12 @@ import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.arena.ArenaPlayer.ArenaPlayerState;
 import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.GameTask.Phase;
-import io.github.spleefx.data.GameStats;
-import io.github.spleefx.data.PlayerStatistic;
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.data.GameStatType;
+import io.github.spleefx.data.PlayerProfile;
+import io.github.spleefx.data.PlayerRepository;
+import io.github.spleefx.data.TempStatsTracker;
+import io.github.spleefx.extension.ExtensionTitle;
 import io.github.spleefx.extension.GameEvent;
 import io.github.spleefx.extension.GameExtension.ScoreboardType;
 import io.github.spleefx.extension.GameExtension.SenderType;
@@ -42,7 +46,6 @@ import io.github.spleefx.util.game.BukkitTaskUtils;
 import io.github.spleefx.util.game.Metas;
 import io.github.spleefx.util.game.PlayerContext;
 import io.github.spleefx.util.message.message.Message;
-import io.github.spleefx.util.plugin.PluginSettings;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -67,9 +70,8 @@ import java.util.stream.Collectors;
 
 import static io.github.spleefx.SpleefX.getPlugin;
 import static io.github.spleefx.SpleefX.getSpectatorSettings;
-import static io.github.spleefx.compatibility.CompatibilityHandler.getProtocol;
-import static io.github.spleefx.data.GameStats.FORMAT;
-import static io.github.spleefx.util.plugin.PluginSettings.*;
+import static io.github.spleefx.config.SpleefXConfig.*;
+import static io.github.spleefx.util.PlaceholderUtil.NUMBER_FORMAT;
 
 public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngine {
 
@@ -82,7 +84,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     /**
      * Represents all tasks that are ran when the game is over
      */
-    private List<GameTask> endTasks = new ArrayList<>();
+    private final List<GameTask> endTasks = new ArrayList<>();
 
     /**
      * A predicate for validating whether an arena is fully setup or not.
@@ -96,14 +98,16 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             return !FFAManager.IS_READY.test(arena);
     };
 
-    private List<ArenaPlayer> spectators = new ArrayList<>();
+    private final Map<UUID, TempStatsTracker> statsTrackerMap = new HashMap<>();
+
+    private final List<ArenaPlayer> spectators = new ArrayList<>();
 
     public final Map<UUID, ItemStack> playerHeads = new ConcurrentHashMap<>();
 
-    private List<ArenaPlayer> dead = new ArrayList<>();
-    private List<GameTeam> deadTeams = new ArrayList<>();
-    private Set<UUID> broadcasted = new HashSet<>();
-    private Map<Player, Integer> betsMap = new HashMap<>();
+    private final List<ArenaPlayer> dead = new ArrayList<>();
+    private final List<GameTeam> deadTeams = new ArrayList<>();
+    private final Set<UUID> broadcasted = new HashSet<>();
+    private final Map<Player, Integer> betsMap = new HashMap<>();
 
     /**
      * The arena that is subject to processing
@@ -113,7 +117,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     /**
      * A list of all players in the arena
      */
-    private Map<ArenaPlayer, GameTeam> playerTeams = new HashMap<>();
+    private final Map<ArenaPlayer, GameTeam> playerTeams = new HashMap<>();
 
     /**
      * The currently displayed scoreboard
@@ -123,12 +127,12 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     /**
      * Represents all alive players
      */
-    private List<Player> alive = new CopyOnWriteArrayList<>();
+    private final List<Player> alive = new CopyOnWriteArrayList<>();
 
     /**
      * Time left to start
      */
-    public int countdown = PluginSettings.COUNTDOWN_ON_ENOUGH_PLAYERS.get();
+    public int countdown = SpleefXConfig.COUNTDOWN_ON_ENOUGH_PLAYERS.get();
 
     /**
      * The task that controls the cooldown
@@ -154,7 +158,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     /**
      * The arena sign manager
      */
-    private SignManager signManager;
+    private final SignManager signManager;
 
     /**
      * Creates an engine for the specified arena
@@ -234,9 +238,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             Message.ARENA_FULL.reply(player, arena, player, arena.getExtension());
             return false;
         }
-        GameStats stats = null;
+        PlayerProfile stats = null;
         if (arena.shouldTakeBets()) {
-            if ((stats = SpleefX.getPlugin().getDataProvider().getStatistics(player)).getCoins(player) < arena.getBet()) {
+            if ((Objects.requireNonNull(stats = PlayerRepository.REPOSITORY.lookup(player))).getCoins() < arena.getBet()) {
                 Message.NOT_ENOUGH_TO_BET.reply(player, arena, player, arena.getExtension(), new BetEntry(arena.getBet(), null));
                 return false;
             }
@@ -261,6 +265,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         team.getMembers().add(player);
         playerTeams.put(p, team);
         prepare(p, team);
+        broadcasted.add(player.getUniqueId());
         if (arena.getArenaType() == ArenaType.TEAMS) {
             for (Player pl : toBroadcast()) {
                 Message.PLAYER_JOINED_T.reply(pl, arena, team.getColor(), player, arena.getExtension());
@@ -279,10 +284,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (arena.shouldTakeBets()) {
             betsMap.put(player, arena.getBet());
             assert stats != null;
-            stats.takeCoins(player, arena.getBet());
+            getTracker(player).subtractCoins(arena.getBet());
+//            stats.takeCoins(player, arena.getBet());
             Message.BET_TAKEN.reply(player, arena, player, arena.getExtension(), new BetEntry(arena.getBet(), null));
         }
-        broadcasted.add(player.getUniqueId());
         return true;
     }
 
@@ -316,15 +321,17 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             getPlugin().getSpectatingHandler().disableSpectationMode(p.getPlayer());
             spectators.remove(p);
         } else if (getArenaStage() == ArenaStage.COUNTDOWN || getArenaStage() == ArenaStage.WAITING) {
+            statsTrackerMap.remove(p.getPlayer().getUniqueId());
             broadcasted.remove(p.getPlayer().getUniqueId());
-            if (arena.shouldTakeBets())
-                SpleefX.getPlugin().getDataProvider().getStatistics(player).giveCoins(player, betsMap.remove(player));
+            if (arena.shouldTakeBets()) {
+                PlayerRepository.REPOSITORY.apply(p.getPlayer().getUniqueId(), (playerProfile, builder) -> builder.addCoins(betsMap.remove(player)));
+            }
         }
         load(p, false);
         if (getArenaStage() != ArenaStage.ACTIVE) {
             if (playerTeams.size() < arena.getMinimum() && !BukkitTaskUtils.isCancelled(countdownTask)) {
                 countdownTask.cancel();
-                countdown = PluginSettings.COUNTDOWN_ON_ENOUGH_PLAYERS.get();
+                countdown = SpleefXConfig.COUNTDOWN_ON_ENOUGH_PLAYERS.get();
                 setArenaStage(ArenaStage.WAITING);
                 currentScoreboard = ScoreboardType.WAITING_IN_LOBBY;
                 broadcast(Message.NOT_ENOUGH_PLAYERS);
@@ -347,7 +354,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         Player p = player.getPlayer();
         playerHeads.remove(player.getPlayer().getUniqueId());
         dead.add(ArenaPlayer.adapt(p));
-        getPlugin().getDataProvider().add(PlayerStatistic.LOSSES, p, arena.getExtension(), 1);
+
+        getTracker(p).replaceExtensionStat(arena.getExtension().getKey(), GameStatType.LOSSES, i -> i + 1);
+//        getPlugin().getDataProvider().add(PlayerStatistic.LOSSES, p, arena.getExtension(), 1);
 
         if (getArenaStage() == ArenaStage.ACTIVE && !disconnect) {
             if (alive.size() > 2) {
@@ -388,7 +397,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     @Override
     public void win(ArenaPlayer p, GameTeam team) {
         Player player = p.getPlayer();
-        getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
+
+        getTracker(player).replaceExtensionStat(arena.getExtension().getKey(), GameStatType.WINS, i -> i + 1);
+        //getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
         List<Player> all = broadcasted.stream().map(Bukkit::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
         if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
             for (Player e : all) {
@@ -417,7 +428,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         toBroadcast().forEach(p -> {
             load(ArenaPlayer.adapt(p), true);
             arena.getExtension().getGameTitles().get(GameEvent.DRAW).display(p.getPlayer());
-            getPlugin().getDataProvider().add(PlayerStatistic.DRAWS, p.getPlayer(), arena.getExtension(), 1);
+
+            getTracker(p).replaceExtensionStat(arena.getExtension().getKey(), GameStatType.DRAWS, i -> i + 1);
+            //getPlugin().getDataProvider().add(PlayerStatistic.DRAWS, p.getPlayer(), arena.getExtension(), 1);
         });
         end(false);
     }
@@ -472,7 +485,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         player.getInventory().clear();
         arena.getExtension().getItemsToAdd().forEach((slot, item) -> player.getInventory().setItem(slot, item.factory().create()));
         arena.getExtension().getArmorToAdd().forEach((slot, item) -> slot.set(player, item.factory().create()));
-        getPlugin().getDataProvider().add(PlayerStatistic.GAMES_PLAYED, player, arena.getExtension(), 1);
+
+        //getPlugin().getDataProvider().add(PlayerStatistic.GAMES_PLAYED, player, arena.getExtension(), 1);
+        getTracker(player).replaceExtensionStat(arena.getExtension().getKey(), GameStatType.GAMES_PLAYED, i -> i + 1);
+
         DataHolder doubleJumpSettings = arena.getExtension().getDoubleJumpSettings();
         if (!doubleJumpSettings.isEnabled()) return;
         if (doubleJumpSettings.getDefaultAmount() > 0) {
@@ -507,9 +523,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         if (ARENA_REGENERATE_BEFORE_COUNTDOWN.get())
             getPlugin().getArenaManager().regenerateArena(arena.getKey());
 
-        playerTeams.forEach((p, team) -> Message.GAME_STARTING.reply(p.getPlayer(), arena, team.getColor(), p.getPlayer(), countdown, arena.getExtension()));
+        Map<Integer, String> numbersToDisplay = TITLE_ON_COUNTDOWN_NUMBERS.get();
+        playerTeams.forEach((p, team) -> Message.GAME_STARTING.reply(p.getPlayer(), arena, team.getColor(), p.getPlayer(), new ColoredNumberEntry(numbersToDisplay.getOrDefault(countdown + "", "&e" + countdown)), countdown, arena.getExtension()));
         arena.getExtension().getRunCommandsWhenGameFills().forEach(c -> SenderType.CONSOLE.run(null, c, arena));
-        Map<String, String> numbersToDisplay = TITLE_ON_COUNTDOWN_NUMBERS.get();
         countdownTask = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
             countdown--;
             currentScoreboard = isFull() ? ScoreboardType.COUNTDOWN_AND_FULL : ScoreboardType.COUNTDOWN_AND_WAITING;
@@ -518,12 +534,14 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                     p.getPlayer().setLevel(countdown);
                     p.getPlayer().setExp((float) countdown / ((Number) COUNTDOWN_ON_ENOUGH_PLAYERS.get()).intValue());
                 }
-                String title = numbersToDisplay.get(Integer.toString(countdown));
-                if (title != null)
-                    if (TITLE_ON_COUNTDOWN_ENABLED.get()) {
-                        getProtocol().displayTitle(p.getPlayer(), title, TITLE_ON_COUNTDOWN_SUBTITLE.get(), TITLE_ON_COUNTDOWN_FADE_IN.get(), TITLE_ON_COUNTDOWN_DISPLAY.get(), TITLE_ON_COUNTDOWN_FADE_OUT.get());
+                String title = numbersToDisplay.get(countdown);
+                if (title != null) {
+                    ExtensionTitle exTitle = new ExtensionTitle(TITLE_ON_COUNTDOWN.get());
+                    exTitle.setTitle(title);
+                    exTitle.display(p.getPlayer());
+                    if (exTitle.enabled)
                         Message.GAME_COUNTDOWN.reply(p.getPlayer(), arena, value.getColor(), p.getPlayer(), new ColoredNumberEntry(title), countdown, arena.getExtension());
-                    }
+                }
                 List<Integer> when = PLAY_SOUND_ON_EACH_BROADCAST_WHEN.get();
                 if (when.contains(countdown))
                     p.getPlayer().playSound(p.getPlayer().getLocation(), (Sound) PLAY_SOUND_ON_EACH_BROADCAST_SOUND.get(), 1, 1);
@@ -531,7 +549,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
 
             if (countdown == 0) {
                 countdownTask.cancel();
-                countdown = PluginSettings.COUNTDOWN_ON_ENOUGH_PLAYERS.get();
+                countdown = SpleefXConfig.COUNTDOWN_ON_ENOUGH_PLAYERS.get();
                 start();
             }
         }, 20, 20);
@@ -549,7 +567,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             }
         }).thenAcceptAsync((v) -> new SpectatePlayerMenu(arena, true));
         // apparently the first initializing will be slow, so we do it async when it's not
-        // needed so other calls would go faster);
+        // needed so other calls would go faster
         setArenaStage(ArenaStage.ACTIVE);
         SpleefX.BSTATS_EXTENSIONS.merge(arena.getExtension().getKey(), 1, (o, a) -> o++);
         currentScoreboard = ScoreboardType.GAME_ACTIVE;
@@ -570,11 +588,11 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     @Override
     public void loop() {
         if (getArenaStage() != ArenaStage.ACTIVE) return;
-        Map<String, String> numbers = TIME_OUT_WARN.get();
+        Map<Integer, String> numbers = TIME_OUT_WARN.get();
         try {
             timerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
                 timeLeft--;
-                String m = numbers.get(Integer.toString(timeLeft));
+                String m = numbers.get(timeLeft);
                 playerTeams.forEach((p, team) -> {
                     if (DISPLAY_COUNTDOWN_ON_EXP_BAR.get()) {
                         p.getPlayer().setLevel(timeLeft);
@@ -646,10 +664,13 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                         ArenaPlayer winner = dead.get(index - 1);
                         if (winner != null) {
                             int sum = betsMap.values().stream().mapToInt(integer -> integer).sum();
-                            commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(winner.getPlayer(), c.replace("{portion}", FORMAT.format(sum)), arena)));
+                            commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(winner.getPlayer(), c.replace("{portion}", NUMBER_FORMAT.format(sum)), arena)));
                             if (arena.shouldTakeBets()) {
-                                getPlugin().getDataProvider().getStatistics(winner.getPlayer()).giveCoins(winner.getPlayer(), sum);
-                                Message.WON_GAME_BET.reply(winner.getPlayer(), arena, winner.getPlayer(), arena.getExtension(), new BetEntry(arena.getBet(), FORMAT.format(sum)));
+                                PlayerProfile profile = PlayerRepository.REPOSITORY.lookup(winner);
+                                Objects.requireNonNull(profile, "profile");
+                                getTracker(winner.getPlayer()).addCoins(sum);
+//                                getPlugin().getDataProvider().getStatistics(winner.getPlayer()).giveCoins(winner.getPlayer(), sum);
+                                Message.WON_GAME_BET.reply(winner.getPlayer(), arena, winner.getPlayer(), arena.getExtension(), new BetEntry(arena.getBet(), NUMBER_FORMAT.format(sum)));
                             }
                         }
                     } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
@@ -662,10 +683,14 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                         if (winningTeam != null) {
                             int portion = betsMap.values().stream().mapToInt(integer -> integer).sum() / arena.getMembersPerTeam();
                             winningTeam.getMembers().forEach(p -> {
-                                commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(p, c.replace("{portion}", FORMAT.format(portion)), arena)));
+                                commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(p, c.replace("{portion}", NUMBER_FORMAT.format(portion)), arena)));
                                 if (arena.shouldTakeBets()) {
-                                    getPlugin().getDataProvider().getStatistics(p.getPlayer()).giveCoins(p.getPlayer(), portion);
-                                    Message.WON_GAME_BET.reply(p.getPlayer(), arena, p.getPlayer(), -1, arena.getExtension(), "{portion}", FORMAT.format(portion));
+
+                                    PlayerProfile profile = PlayerRepository.REPOSITORY.lookup(p);
+                                    PlayerProfile.Builder stats = profile.asBuilder();
+                                    stats.addCoins(portion);
+
+                                    Message.WON_GAME_BET.reply(p.getPlayer(), arena, p.getPlayer(), -1, arena.getExtension(), "{portion}", NUMBER_FORMAT.format(portion));
                                 }
                             });
                         }
@@ -673,6 +698,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                     }
                 });
         }
+        statsTrackerMap.values().forEach(tracker -> tracker.applyChanges(arena));
+        statsTrackerMap.clear();
         playerTeams.clear();
         betsMap.clear();
         alive.clear();
@@ -690,7 +717,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         spectators.clear();
         endTasks.stream().filter(task -> task.getPhase() == Phase.AFTER).forEach(GameTask::run);
         broadcasted.clear();
-        regenerate();
+        regenerate(ArenaStage.WAITING);
         setArenaStage(ArenaStage.WAITING);
     }
 
@@ -702,7 +729,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         playerTeams.keySet().forEach(p -> {
             load(p, false);
             if (arena.shouldTakeBets())
-                getPlugin().getDataProvider().getStatistics(p.getPlayer()).giveCoins(p.getPlayer(), betsMap.remove(p.getPlayer()));
+                p.getStats().asBuilder().addCoins(betsMap.remove(p.getPlayer()));
             Message.SERVER_STOPPED.reply(p.getPlayer(), arena, p.getPlayer(), arena.getExtension());
         });
 
@@ -712,10 +739,12 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
 
     /**
      * Regenerates the arena
+     *
+     * @param newStage Stage to set the arena on once regenerating is over.
      */
     @SneakyThrows @Override
-    public void regenerate() {
-        ArenaStage oldStage = getArenaStage();
+    public void regenerate(@Nullable ArenaStage newStage) {
+        ArenaStage oldStage = newStage == null ? getArenaStage() : newStage;
         setArenaStage(ArenaStage.REGENERATING);
         getPlugin().getArenaManager().regenerateArena(arena.getKey()).thenAccept((v) -> {
             setArenaStage(oldStage);
@@ -725,17 +754,17 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     }
 
     /**
-     * Saves the player data before they enter the arena, such as the inventory and location
+     * Saves the player data_old before they enter the arena, such as the inventory and location
      *
      * @param player Player to save for
      */
     @Override
     public void save(ArenaPlayer player) {
-        Metas.set(player.getPlayer(), "spleefx.data", new FixedMetadataValue(getPlugin(), new PlayerContext(player.getPlayer())));
+        Metas.set(player.getPlayer(), "spleefx.data_old", new FixedMetadataValue(getPlugin(), new PlayerContext(player.getPlayer())));
     }
 
     /**
-     * Loads the saved data into the player
+     * Loads the saved data_old into the player
      *
      * @param p Player to load for
      */
@@ -744,10 +773,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         Runnable load = () -> {
             Player player = p.getPlayer();
 
-            PlayerContext context = Metas.get(player, "spleefx.data");
+            PlayerContext context = Metas.get(player, "spleefx.data_old");
             if (context != null)
                 context.load(player, arena);
-            player.removeMetadata("spleefx.data", getPlugin());
+            player.removeMetadata("spleefx.data_old", getPlugin());
 
             ArenaPlayer.adapt(player).setCurrentArena(null).setState(ArenaPlayerState.NOT_INGAME);
             if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
@@ -848,6 +877,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      */
     public void registerEndTask(GameTask task) {
         endTasks.add(task);
+    }
+
+    public TempStatsTracker getTracker(Player player) {
+        return statsTrackerMap.computeIfAbsent(player.getUniqueId(), TempStatsTracker::new);
     }
 
     /**

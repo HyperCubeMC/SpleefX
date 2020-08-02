@@ -45,7 +45,7 @@ public class SpleggEngine extends BaseArenaEngine<SpleggArena> {
         if (EXTENSION.isUpgradeSystemEnabled()) {
             Optional<SpleggUpgrade> defUpgrade = EXTENSION.getUpgrades().values().stream().filter(SpleggUpgrade::isDefault).findAny();
             if (!defUpgrade.isPresent()) return;
-            SpleggUpgrade u = EXTENSION.getUpgrades().get((String) player.getStats().getCustomDataMap().computeIfAbsent("selectedSpleggUpgrade", (k) -> defUpgrade.get().getKey()));
+            SpleggUpgrade u = EXTENSION.getUpgrades().get(player.getStats().getSelectedSpleggUpgrade());
             player.getPlayer().getInventory().setItem(u.getGameItem().getSlot(), u.getGameItem().createItem(player.getPlayer(), u));
         } else
             player.getPlayer().getInventory().setItem(EXTENSION.getProjectileItemSlot(), EXTENSION.getProjectileItem().factory().create());

@@ -17,6 +17,7 @@ package io.github.spleefx.command.sub.base;
 
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.command.sub.PluginSubcommand;
+import io.github.spleefx.data.menu.StatisticsConfig;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.util.game.Chat;
@@ -102,8 +103,8 @@ public class StatsCommand extends PluginSubcommand {
                                 Chat.sendUnprefixed(sender, Message.UNKNOWN_PLAYER.create(e).replace("{player}", args[0]));
                                 return true;
                             }
-                            Inventory inventory = SpleefX.getPlugin().getDataProvider().createGUI(player, e);
-                            s.openInventory(inventory);
+                            Inventory menu = StatisticsConfig.MENU.get().asInventory(player, e);
+                            s.openInventory(menu);
                             Metas.set(s, "spleefx.viewing_stats", VIEWING);
                         } else {
                             Message.NO_PERMISSION_STATISTICS.reply(sender, e);
@@ -122,8 +123,8 @@ public class StatsCommand extends PluginSubcommand {
                                 Chat.prefix(sender, e, Message.UNKNOWN_PLAYER.create().replace("{player}", args[0]));
                                 return true;
                             }
-                            Inventory inventory = SpleefX.getPlugin().getDataProvider().createGUI(player, null);
-                            s.openInventory(inventory);
+                            Inventory menu = StatisticsConfig.MENU.get().asInventory(player, e);
+                            s.openInventory(menu);
                             Metas.set(s, "spleefx.viewing_stats", VIEWING);
                         } else {
                             Chat.prefix(sender, e, Message.NO_PERMISSION_STATISTICS.create());
@@ -151,8 +152,8 @@ public class StatsCommand extends PluginSubcommand {
     }
 
     private static void viewSelf(Player player, GameExtension mode) {
-        Inventory inventory = SpleefX.getPlugin().getDataProvider().createGUI(player, mode);
-        player.openInventory(inventory);
+        Inventory menu = StatisticsConfig.MENU.get().asInventory(player, mode);
+        player.openInventory(menu);
         Metas.set(player, "spleefx.viewing_stats", VIEWING);
     }
 

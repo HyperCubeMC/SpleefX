@@ -23,13 +23,13 @@ import com.google.gson.annotations.Expose;
 public class PerkPurchaseSettings {
 
     @Expose
-    private int price;
+    private final int price;
 
     @Expose
-    private int ingameAmount;
+    private final int ingameAmount;
 
     @Expose
-    private int gamesUsableFor;
+    private final int gamesUsableFor;
 
     public PerkPurchaseSettings(int price, int ingameAmount, int gamesUsableFor) {
         this.price = price;
