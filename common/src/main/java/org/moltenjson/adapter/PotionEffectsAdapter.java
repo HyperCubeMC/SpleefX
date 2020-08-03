@@ -63,7 +63,7 @@ public class PotionEffectsAdapter implements JsonSerializer<List<PotionEffect>>,
      * the same type passing {@code json} since that will cause an infinite loop (Gson will call your
      * call-back method again).
      *
-     * @param json    The Json data_old being deserialized
+     * @param json    The Json data being deserialized
      * @param typeOfT The type of the Object to deserialize to
      * @param context
      * @return a deserialized object of the specified type typeOfT which is a subclass of {@code T}

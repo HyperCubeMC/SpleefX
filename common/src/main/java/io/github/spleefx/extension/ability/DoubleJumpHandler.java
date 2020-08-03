@@ -130,7 +130,7 @@ public class DoubleJumpHandler implements Listener {
     }
 
     /**
-     * A POJO for holding double jump data_old
+     * A POJO for holding double jump data
      */
     public static class DataHolder {
 

@@ -81,7 +81,7 @@ public abstract class SchematicManager {
     }
 
     /**
-     * Writes the specified clipboard data_old to the schematic
+     * Writes the specified clipboard data to the schematic
      *
      * @param clipboard Clipboard to write
      */

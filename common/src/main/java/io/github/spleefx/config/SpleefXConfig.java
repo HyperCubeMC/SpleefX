@@ -116,6 +116,26 @@ public interface SpleefXConfig {
     ConfigOption<String> ALL_MODES_NAME = stringKey("PlayerGameStatistics.AllModesName", "All Modes");
 
     /**
+     * The database address
+     */
+    ConfigOption<String> DB_HOST = stringKey("PlayerGameStatistics.Database.Host");
+
+    /**
+     * The database name
+     */
+    ConfigOption<String> DB_NAME = stringKey("PlayerGameStatistics.Database.DatabaseName");
+
+    /**
+     * The database username
+     */
+    ConfigOption<String> DB_USER = stringKey("PlayerGameStatistics.Database.Username");
+
+    /**
+     * The database password
+     */
+    ConfigOption<String> DB_PASSWORD = stringKey("PlayerGameStatistics.Database.Password");
+
+    /**
      * Whether should SpleefX register its Vault hooks or not
      */
     ConfigOption<Boolean> ECO_HOOK_INTO_VAULT = notReloadable(booleanKey("Economy.HookIntoVault", true));

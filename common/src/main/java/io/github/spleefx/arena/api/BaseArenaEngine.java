@@ -754,17 +754,17 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     }
 
     /**
-     * Saves the player data_old before they enter the arena, such as the inventory and location
+     * Saves the player data before they enter the arena, such as the inventory and location
      *
      * @param player Player to save for
      */
     @Override
     public void save(ArenaPlayer player) {
-        Metas.set(player.getPlayer(), "spleefx.data_old", new FixedMetadataValue(getPlugin(), new PlayerContext(player.getPlayer())));
+        Metas.set(player.getPlayer(), "spleefx.data", new FixedMetadataValue(getPlugin(), new PlayerContext(player.getPlayer())));
     }
 
     /**
-     * Loads the saved data_old into the player
+     * Loads the saved data into the player
      *
      * @param p Player to load for
      */
@@ -773,10 +773,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         Runnable load = () -> {
             Player player = p.getPlayer();
 
-            PlayerContext context = Metas.get(player, "spleefx.data_old");
+            PlayerContext context = Metas.get(player, "spleefx.data");
             if (context != null)
                 context.load(player, arena);
-            player.removeMetadata("spleefx.data_old", getPlugin());
+            player.removeMetadata("spleefx.data", getPlugin());
 
             ArenaPlayer.adapt(player).setCurrentArena(null).setState(ArenaPlayerState.NOT_INGAME);
             if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {

@@ -84,7 +84,7 @@ public class CommandSpleefX implements TabExecutor {
 
     static {
         CommandManager.SPLEEFX.registerCommand(
-                new ExtensionSubcommand(),
+                ExtensionSubcommand.SUBCOMMAND,
                 new BoosterSubcommand(),
                 new PerksSubcommand(),
                 new HelpSubcommand(CommandManager.SPLEEFX),

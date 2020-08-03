@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import static io.github.spleefx.data.TempStatsTracker.EMPTY;
 import static java.util.Collections.reverseOrder;
 import static java.util.Objects.requireNonNull;
 
@@ -117,27 +118,32 @@ public class PlayerRepositoryImpl implements PlayerRepository {
         CompletableFuture<Map<GameStatType, Map<String, Set<LeaderboardTopper>>>> topByExtFuture = new CompletableFuture<>();
 
         SpleefX.POOL.submit(() -> {
-            Map<GameStatType, Map<String, Set<LeaderboardTopper>>> topByExt = new HashMap<>();
-            Map<GameStatType, Set<LeaderboardTopper>> top = new HashMap<>();
+            try {
+                Map<GameStatType, Map<String, Set<LeaderboardTopper>>> topByExt = new HashMap<>();
 
-            for (GameStatType stat : GameStatType.values) {
-                List<Entry<UUID, PlayerProfile>> profiles = new ArrayList<>(cache.asMap().entrySet());
-                profiles.sort(reverseOrder(Comparator.comparingInt(e -> e.getValue().getGameStats().get(stat))));
-                Set<LeaderboardTopper> toppers = profiles.stream().map(player -> LeaderboardTopper.of(player.getKey(),
-                        player.getValue().getGameStats().get(stat))).collect(Collectors.toCollection(LinkedHashSet::new));
-                top.put(stat, toppers);
+                Map<GameStatType, Set<LeaderboardTopper>> top = new HashMap<>();
 
-                Map<String, Set<LeaderboardTopper>> tops = new HashMap<>();
-                for (GameExtension extension : ExtensionsManager.EXTENSIONS.values()) {
-                    List<LeaderboardTopper> topEx = cache.asMap().entrySet().stream()
-                            .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().getExtensionStatistics().get(extension.getKey()).get(stat))))
-                            .map(e -> LeaderboardTopper.of(e.getKey(), e.getValue().getExtensionStatistics().get(extension.getKey()).get(stat)))
-                            .collect(Collectors.toList());
-                    tops.put(extension.getKey(), new LinkedHashSet<>(topEx));
+                for (GameStatType stat : GameStatType.values) {
+                    List<Entry<UUID, PlayerProfile>> profiles = new ArrayList<>(cache.asMap().entrySet());
+                    profiles.sort(reverseOrder(Comparator.comparingInt(e -> e.getValue().getGameStats().get(stat))));
+                    Set<LeaderboardTopper> toppers = profiles.stream().map(player -> LeaderboardTopper.of(player.getKey(),
+                            player.getValue().getGameStats().get(stat))).collect(Collectors.toCollection(LinkedHashSet::new));
+                    top.put(stat, toppers);
+
+                    Map<String, Set<LeaderboardTopper>> tops = new HashMap<>();
+                    for (GameExtension extension : ExtensionsManager.EXTENSIONS.values()) {
+                        List<LeaderboardTopper> topEx = cache.asMap().entrySet().stream()
+                                .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().getExtensionStatistics().getOrDefault(extension.getKey(), EMPTY).get(stat))))
+                                .map(e -> LeaderboardTopper.of(e.getKey(), e.getValue().getExtensionStatistics().getOrDefault(extension.getKey(), EMPTY).get(stat)))
+                                .collect(Collectors.toList());
+                        tops.put(extension.getKey(), new LinkedHashSet<>(topEx));
+                    }
+                    topByExt.put(stat, tops);
+                    topByExtFuture.complete(topByExt);
+                    topFuture.complete(top);
                 }
-                topByExt.put(stat, tops);
-                topByExtFuture.complete(topByExt);
-                topFuture.complete(top);
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
         });
 

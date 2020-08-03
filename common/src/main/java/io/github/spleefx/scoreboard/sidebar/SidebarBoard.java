@@ -20,9 +20,9 @@ public class SidebarBoard {
     private final List<String> identifiers = new ArrayList<>();
     private Scoreboard scoreboard;
     private Objective objective;
-    private final UUID uuid;
+    private UUID uuid;
 
-    private final ScoreboardTicker scoreboardTicker;
+    private ScoreboardTicker scoreboardTicker;
 
     public SidebarBoard(Player player, ScoreboardTicker scoreboardTicker) {
         this.scoreboardTicker = scoreboardTicker;
@@ -44,6 +44,8 @@ public class SidebarBoard {
         String name = getScoreboardTicker().getProvider().getTitle(player);
         objective.setDisplayName(name);
         player.setScoreboard(scoreboard);
+        // Update scoreboard
+
     }
 
     public ScoreboardEntry getEntryAtPosition(int pos) {

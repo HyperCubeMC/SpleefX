@@ -46,6 +46,8 @@ public class ExtensionSubcommand extends PluginSubcommand {
 
     private static final ComponentJSON WARNING = new ComponentJSON();
 
+    public static final ExtensionSubcommand SUBCOMMAND = new ExtensionSubcommand();
+
     private static final Permission PERMISSION = new Permission("spleefx.admin.extensions");
     private static final List<String> ALIASES = Collections.singletonList("ext");
     private static final List<String> HELP = Arrays.asList(
@@ -55,7 +57,7 @@ public class ExtensionSubcommand extends PluginSubcommand {
             "&eextension &cdisable &a<extension> &7- &dDisable an extension and all its arenas"
     );
 
-    public ExtensionSubcommand() {
+    private ExtensionSubcommand() {
         super("extension", (c) -> PERMISSION, "Manage extensions", (c) -> "/spleefx extension <load | reload | enable | disable> <extension key> [extension type]");
         super.aliases = ALIASES;
         super.helpMenu = HELP;

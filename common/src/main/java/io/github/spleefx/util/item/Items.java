@@ -128,7 +128,7 @@ public class Items {
 
     public static final ItemStack DELETE = ItemFactory.create(Material.TNT)
             .setName("&cDelete arena")
-            .setLore("&aDelete the arena and all its data_old")
+            .setLore("&aDelete the arena and all its data")
             .create();
 
     /* Boolean-controlling items */

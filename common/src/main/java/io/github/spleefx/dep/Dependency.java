@@ -83,6 +83,13 @@ public enum Dependency {
             Relocation.of(DependencyManager.OKHTTP3_STRING, DependencyManager.OKHTTP3_STRING),
             Relocation.of(DependencyManager.OKIO_STRING, DependencyManager.OKIO_STRING)
     ),
+    COMMODORE(
+            "me{}lucko",
+            "commodore",
+            "1.7",
+            "ncwmvNFfvyZf1Pa0v4fWyMR0Jxe1v1ZgXOiI255IX5Q=",
+            Relocation.of("commodore", "me{}lucko{}commodore")
+    ),
 
     GSON(
             "com.google.code.gson",

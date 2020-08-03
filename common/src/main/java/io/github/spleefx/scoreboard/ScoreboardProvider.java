@@ -29,7 +29,6 @@ public class ScoreboardProvider {
         try {
             return Chat.colorize(getScoreboardHolder(ArenaPlayer.adapt(player)).getTitle());
         } catch (NullPointerException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -38,7 +37,6 @@ public class ScoreboardProvider {
         ArenaPlayer p = ArenaPlayer.adapt(player);
         BaseArenaEngine<?> engine = (BaseArenaEngine<?>) p.getCurrentArena().getEngine();
         ScoreboardHolder holder = getScoreboardHolder(p);
-        System.out.println(engine.getCurrentScoreboard() + ": " + holder);
         if (holder == null)
             throw new RuntimeException("Cannot find a scoreboard section for extension " + p.getCurrentArena().getExtension().getKey() + ". Please add a section to remove this error.");
         return holder.getText()

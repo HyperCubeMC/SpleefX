@@ -19,7 +19,7 @@ package org.moltenjson.configuration.tree.strategy;
  * A simple string to file name strategy. Accessible from {@link TreeNamingStrategy#STRING_STRATEGY}.
  * <p>
  * This strategy works by returning the same given file name. This can be useful when the file
- * names do not represent a specific type of data_old, but a simple string instead.
+ * names do not represent a specific type of data, but a simple string instead.
  *
  * @see TreeNamingStrategy
  * @see UUIDNamingStrategy

@@ -267,7 +267,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration>, Refre
     }
 
     /**
-     * Returns whether the specified key exists in the configuration data_old or not.
+     * Returns whether the specified key exists in the configuration data or not.
      *
      * @param key Key to check for
      * @return {@code true} if the member exists, {@code false} if otherwise.

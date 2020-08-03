@@ -542,7 +542,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
     public interface ArenaFactory<R extends GameArena> {
 
         /**
-         * Creates a new arena from the specified data_old
+         * Creates a new arena from the specified data
          *
          * @param key               Arena key
          * @param displayName       Arena display name

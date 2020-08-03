@@ -58,7 +58,7 @@ public interface OfflinePlayerFactory {
     ExecutorService THREAD_POOL = new ForkJoinPool();
 
     /**
-     * Gson to deserialize response data_old
+     * Gson to deserialize response data
      */
     Gson GSON = new GsonBuilder()
             .registerTypeAdapter(UUID.class, new UUIDTypeAdapter())

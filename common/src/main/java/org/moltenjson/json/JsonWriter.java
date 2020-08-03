@@ -30,7 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Writes data_old and content to the JSON file.
+ * Writes data and content to the JSON file.
  * <p>
  * All writing operations make <i>immediate IO calls</i>. This is mainly intended for <i>internal</i>
  * usage and for <i>one-time operations for writing or caching</i>. If your program tends to make a lot

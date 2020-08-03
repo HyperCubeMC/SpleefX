@@ -121,14 +121,14 @@ public final class CommentedConfiguration extends YamlConfiguration {
     }
 
     /**
-     * Load all data_old related to the config file - keys, values and comments.
+     * Load all data related to the config file - keys, values and comments.
      *
      * @param contents The contents of the file.
      * @throws InvalidConfigurationException if the contents are invalid.
      */
     @Override
     public void loadFromString(@NotNull String contents) throws InvalidConfigurationException {
-        //Load data_old of the base yaml (keys and values).
+        //Load data of the base yaml (keys and values).
         super.loadFromString(contents);
 
         //Parse the contents into lines.
@@ -166,15 +166,15 @@ public final class CommentedConfiguration extends YamlConfiguration {
     }
 
     /**
-     * Parsing all the data_old (keys, values and comments) into a valid string, that will be written into a file later.
+     * Parsing all the data (keys, values and comments) into a valid string, that will be written into a file later.
      *
-     * @return A string that contains all the data_old, ready to be written into a file.
+     * @return A string that contains all the data, ready to be written into a file.
      */
     @NotNull @Override
     public String saveToString() {
         //First, we set headers to null - as we will handle all comments, including headers, in this method.
         options().header(null);
-        //Get the string of the data_old (keys and values) and parse it into an array of lines.
+        //Get the string of the data (keys and values) and parse it into an array of lines.
         List<String> lines = new ArrayList<>(Arrays.asList(super.saveToString().split("\n")));
 
         //Variables that are used to track progress.
@@ -212,7 +212,7 @@ public final class CommentedConfiguration extends YamlConfiguration {
     /**
      * Sync a specific configuration section with another one, recursively.
      *
-     * @param commentedConfig The config that contains the data_old we need to sync with.
+     * @param commentedConfig The config that contains the data we need to sync with.
      * @param section         The current section that we sync.
      * @param ignoredSections A list of ignored sections that won't be synced (unless not found in the file).
      * @return Returns true if there were any changes, otherwise false.
@@ -232,9 +232,9 @@ public final class CommentedConfiguration extends YamlConfiguration {
                 boolean isIgnored = ignoredSections.stream().anyMatch(path::contains);
                 //Checking if the config contains the section.
                 boolean containsSection = contains(path);
-                //If the config doesn't contain the section, or it's not ignored - we will sync data_old.
+                //If the config doesn't contain the section, or it's not ignored - we will sync data.
                 if (!containsSection || !isIgnored) {
-                    //Syncing data_old and updating the changed variable.
+                    //Syncing data and updating the changed variable.
                     changed = syncConfigurationSection(commentedConfig, section.getConfigurationSection(key), ignoredSections) || changed;
                 }
             }
@@ -272,7 +272,7 @@ public final class CommentedConfiguration extends YamlConfiguration {
      * Load a config from a file.
      *
      * @param file The file to load the config from.
-     * @return A new instance of CommentedConfiguration contains all the data_old (keys, values and comments).
+     * @return A new instance of CommentedConfiguration contains all the data (keys, values and comments).
      */
     public static CommentedConfiguration loadConfiguration(@NotNull File file) {
         try {
@@ -288,7 +288,7 @@ public final class CommentedConfiguration extends YamlConfiguration {
      * Load a config from an input-stream, which is used for resources that are obtained using JavaPlugin#getResource.
      *
      * @param inputStream The input-stream to load the config from.
-     * @return A new instance of CommentedConfiguration contains all the data_old (keys, values and comments).
+     * @return A new instance of CommentedConfiguration contains all the data (keys, values and comments).
      */
     public static CommentedConfiguration loadConfiguration(InputStream inputStream) {
         return loadConfiguration(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -298,7 +298,7 @@ public final class CommentedConfiguration extends YamlConfiguration {
      * Load a config from a reader (used for files and streams together).
      *
      * @param reader The reader to load the config from.
-     * @return A new instance of CommentedConfiguration contains all the data_old (keys, values and comments).
+     * @return A new instance of CommentedConfiguration contains all the data (keys, values and comments).
      */
     public static CommentedConfiguration loadConfiguration(@NotNull Reader reader) {
         //Creating a blank instance of the config.

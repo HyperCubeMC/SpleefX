@@ -3,14 +3,16 @@ package io.github.spleefx.data.database.sql;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.zaxxer.hikari.HikariConfig;
+import io.github.spleefx.SpleefX;
+import io.github.spleefx.config.SpleefXConfig;
 import io.github.spleefx.data.PlayerCacheManager;
 import io.github.spleefx.data.PlayerProfile;
 import io.github.spleefx.data.impl.HikariConnector;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,18 +26,20 @@ public class SQLBasedManager extends HikariConnector implements PlayerCacheManag
     public static final SQLBasedManager MYSQL = new SQLBasedManager("mysql", "com.mysql.cj.jdbc.Driver");
     public static final SQLBasedManager POSTGRESQL = new SQLBasedManager("postgresql", "org.postgresql.Driver");
     public static final SQLBasedManager H2 = new SQLBasedManager("h2", "org.h2.Driver") {
-        @Override protected String createJdbcURL(FileConfiguration pluginConfig) {
-            return "jdbc:h2:D:\\Java\\SpleefX-Rewrite\\common\\src\\test\\resources;DATABASE_TO_UPPER=false";
+        @Override protected String createJdbcURL() {
+            File file = new File(SpleefX.getPlugin().getDataFolder() + File.separator + "player-data",
+                    SpleefXConfig.DB_NAME.get());
+            return "jdbc:h2:" + file.getAbsolutePath() + ";DATABASE_TO_UPPER=false";
         }
 
-        @Override protected void setCredentials(HikariConfig config, FileConfiguration pluginConfig) {
+        @Override protected void setCredentials(HikariConfig config) {
         }
     };
 /*
     public static final SQLBasedManager SQLITE = new SQLBasedManager("sqlite") {
         private String path;
 
-        @Override protected void preConnect(FileConfiguration pluginConfig) {
+        @Override protected void preConnect() {
             String name = "player-data" + File.separator + pluginConfig.getString("SQLite.FileName", "player-data.db");
             path = SpleefX.getPlugin().getFileManager().emptyFile(name).getAbsolutePath();
         }
@@ -44,11 +48,11 @@ public class SQLBasedManager extends HikariConnector implements PlayerCacheManag
             return false;
         }
 
-        @Override protected void setCredentials(HikariConfig config, FileConfiguration pluginConfig) {
+        @Override protected void setCredentials(HikariConfig config, ) {
             // sqlite has no credentials. default implementation sets them, so we don't want that.
         }
 
-        @Override protected String createJdbcURL(FileConfiguration pluginConfig) {
+        @Override protected String createJdbcURL() {
             return "jdbc:sqlite:" + path;
         }
     };

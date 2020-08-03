@@ -44,8 +44,7 @@ public class StatsMenu {
     public Inventory asInventory(OfflinePlayer player, GameExtension mode) {
         PlayerProfile stats = PlayerRepository.REPOSITORY.lookup(player);
         Inventory i = Bukkit.createInventory(null, rows * 9, PlaceholderUtil.all(Chat.colorize(title.replace("{extension}", mode != null ? mode.getDisplayName() :
-                        SpleefXConfig.ALL_MODES_NAME.get())),
-                player, mode));
+                SpleefXConfig.ALL_MODES_NAME.get())), player, mode));
         for (Entry<Integer, ItemHolder> entry : items.entrySet()) {
             int slot = entry.getKey();
             ItemFactory item = entry.getValue().factory();

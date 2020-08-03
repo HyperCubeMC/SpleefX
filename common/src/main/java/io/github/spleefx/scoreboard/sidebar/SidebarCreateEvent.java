@@ -12,7 +12,7 @@ public class SidebarCreateEvent extends Event implements Cancellable {
 
     @Getter public static HandlerList handlerList = new HandlerList();
 
-    private final Player player;
+    private Player player;
     private boolean cancelled = false;
 
     public SidebarCreateEvent(Player player) {

@@ -24,19 +24,19 @@ import java.util.function.IntFunction;
 public interface PlayerProfile extends SQLSerializable {
 
     /**
-     * Returns the player's coins
-     *
-     * @return The coins
-     */
-    int getCoins();
-
-    /**
      * Returns the UUID of this player
      *
      * @return The player's UUID
      */
     @NotNull
     UUID getUUID();
+
+    /**
+     * Returns the player's coins
+     *
+     * @return The coins
+     */
+    int getCoins();
 
     /**
      * Returns per-stat game statistics

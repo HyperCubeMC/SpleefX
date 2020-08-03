@@ -62,7 +62,7 @@ public class ArenaManager {
     }
 
     /**
-     * Deletes an arena and all its data_old
+     * Deletes an arena and all its data
      *
      * @param key Key of the arena to remove
      * @return The previous arena

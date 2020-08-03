@@ -6,13 +6,13 @@ import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.config.SpleefXConfig;
 import io.github.spleefx.data.GameStatType;
 import io.github.spleefx.data.database.sql.StatementKey;
 import io.github.spleefx.economy.booster.BoosterInstance;
 import io.github.spleefx.extension.standard.splegg.SpleggUpgrade;
 import io.github.spleefx.perk.GamePerk;
 import io.github.spleefx.perk.GamePerk.MapAdapter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -89,32 +89,28 @@ public abstract class HikariConnector {
     protected void setProperties(HikariConfig config) {
     }
 
-    protected void preConnect(FileConfiguration pluginConfig) {
+    protected void preConnect() {
     }
 
-    protected String createJdbcURL(FileConfiguration pluginConfig) {
-        String host = pluginConfig.getString("Database.Host");
-        String databaseName = pluginConfig.getString("Database.Name");
-        int port = pluginConfig.getInt("Database.Port");
-        return String.format("jdbc:" + jdbcName + "://%s:%s/%s", host, port, databaseName);
+    protected String createJdbcURL() {
+        return String.format("jdbc:" + jdbcName + "://%s/%s", SpleefXConfig.DB_HOST.get(), SpleefXConfig.DB_NAME.get());
     }
 
-    protected void setCredentials(HikariConfig config, FileConfiguration pluginConfig) {
-        config.setUsername(pluginConfig.getString("Database.Username"));
-        config.setPassword(pluginConfig.getString("Database.Password"));
+    protected void setCredentials(HikariConfig config) {
+        config.setUsername(SpleefXConfig.DB_USER.get());
+        config.setPassword(SpleefXConfig.DB_PASSWORD.get());
     }
 
     /**
      * Connects to the database and sets the {@link Connection} instance.
      */
     public void connect() {
-        FileConfiguration pluginConfig = SpleefX.getPlugin().getConfig();
-        preConnect(pluginConfig);
+        preConnect();
 
         HikariConfig config = new HikariConfig();
 
-        config.setJdbcUrl(createJdbcURL(pluginConfig));
-        setCredentials(config, pluginConfig);
+        config.setJdbcUrl(createJdbcURL());
+        setCredentials(config);
 
         config.setPoolName("SpleefX-Pool");
         config.setConnectionTestQuery("SELECT 1");

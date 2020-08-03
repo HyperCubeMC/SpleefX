@@ -139,32 +139,33 @@ PlayerGameStatistics:
   AllModesName: "&1All Modes"
 
   # The storage type. Each type is cached accordingly and only requested when needed. Can be either:
-  # 1- FLAT_FILE (default) - Player data_old is saved in JSON files (recommended for servers with 500-700 players)
-  # 2- SQLITE - Player data_old is saved in a SQLite file (recommended for VERY large servers (1000+ players))
   #
-  # Fill the appropriate settings for the selected option. When one is selected, the settings of the other ones are ignored.
+  # 1. H2 (Default) - Store in a H2 (SQL) database as a flat file.
+  # 2. MYSQL - Storing in a remote MySQL database
+  # 3. POSTGRESQL - Storing in a remote PostgreSQL database
+  #
+  # Fill the appropriate settings for the selected option. When one is selected, the settings of the other
+  # ones are ignored.
   #
   # IMPORTANT NOTE: CHANGING THE TYPE WILL NOT IMPORT THE DATA FROM THE OLD STORAGE TO THE NEW ONE. USE THE APPROPRIATE
   # TOOLS TO CONVERT.
-  StorageType: "FLAT_FILE"
+  StorageMethod: "H2"
 
-  # The data_old directory in which the files should be in. This directory will automatically be created if
-  # it does not exist already.
-  Directory: "player-data_old"
+  # The database credentials for remote SQL
+  Database:
 
-  # How players should be stored and referenced in files. Can be either:
-  # 1- UUID (default, recommended) - Store players by their UUID. Recommended for premium servers (could work with cracked, idk)
-  # 2- NAME - Store players by their username.
-  #
-  # IMPORTANT NOTE: CHANGING THE TYPE WILL NOT CHANGE THE OLD STORAGE TO USE THE NEW ONE, AND PLAYERS
-  # WILL HAVE NEW RECORDS. USE THE APPROPRIATE TOOLS TO CONVERT.
-  StorePlayersBy: "UUID"
+    # The host to be used for the database. Uses the standard DB engine port by default. If you have a
+    # non-default port, specify it here using 'host:port'.
+    Host: localhost
 
-  # SQLite settings
-  SQLite:
+    # The name of the database to connect to
+    DatabaseName: minecraft
 
-    # The SQLite file in which all players are stored in
-    FileName: "player-data_old.db"
+    # The user to connect with
+    Username: root
+
+    # The password of the user
+    Password: ''
 
 # Game countdown settings
 Countdown:
@@ -243,18 +244,11 @@ Economy:
 # Note that this section requires PlaceholderAPI
 Leaderboards:
 
-  # Whether should the plugin allow leaderboards.
-  #
-  # This is not perfectly safe, and may cause the plugin to take some time loading the plugin data_old.
-  #
-  # After enabling, you must restart the server in order for it to take effect. Reload will not work!
-  Enabled: false
-
   # The format, in which PlaceholderAPI will replace the placeholder with.
   #
   # This is used in the <i>format</i> PAPI request (see below).
   #
-  # An example PAPI expression: %spleefx_wins_1:<request>%
+  # An example PAPI expression: %spleefx_wins_1:<mode or 'global'>:<request>%
   #
   # There are 3 requests through PAPI:
   # ==
@@ -269,10 +263,3 @@ Leaderboards:
   # {player} - The player name
   # {score} - The player's score in this stat
   Format: "&d#{pos} &e{player} &7- &b{score}"
-
-# Database:
-#   Name: dbname
-#   Host: 127.0.0.1
-#   Username: passis551
-#   Password: 555
-#   Port: 3306

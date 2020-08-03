@@ -50,7 +50,7 @@ public class FileWatcher {
     }
 
     public static void pollDirectory(Path directory) {
-        if (true) return;
+        //if (true) return;
         try {
             registerAll(directory);
             WATCHER_SERVICE.scheduleAtFixedRate(() -> {
@@ -64,7 +64,13 @@ public class FileWatcher {
                         }
                         if (watcher.eventTrigger.getAndIncrement() % 2 == 0) {
                             SpleefX.logger().info("Detected changes in file " + watcher + ". Reloading.");
-                            Bukkit.getScheduler().runTask(SpleefX.getPlugin(), () -> watcher.task.accept(modified));
+                            Bukkit.getScheduler().runTask(SpleefX.getPlugin(), () -> {
+                                try {
+                                    watcher.task.accept(modified);
+                                } catch (Throwable e) {
+                                    e.printStackTrace();
+                                }
+                            });
                         }
                     }
                     watchKey.reset();

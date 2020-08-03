@@ -59,16 +59,16 @@ public class GameExtension {
     private String chatPrefix; // DONE
 
     @Expose
-    private final Map<Integer, Map<SenderType, List<String>>> runCommandsForFFAWinners = Collections.emptyMap();
+    private Map<Integer, Map<SenderType, List<String>>> runCommandsForFFAWinners = Collections.emptyMap();
 
     @Expose
-    private final Map<Integer, Map<SenderType, List<String>>> runCommandsForTeamWinners = Collections.emptyMap();
+    private Map<Integer, Map<SenderType, List<String>>> runCommandsForTeamWinners = Collections.emptyMap();
 
     @Expose
-    private final boolean preventItemDropping = true;
+    private boolean preventItemDropping = true;
 
     @Expose
-    private final boolean giveDroppedItems = true;
+    private boolean giveDroppedItems = true;
 
     @Expose
     private List<PotionEffect> givePotionEffects; // DONE
@@ -78,50 +78,46 @@ public class GameExtension {
     private DoubleJumpHandler.DataHolder doubleJumpSettings;
 
     @Expose
-    private final Map<Integer, ItemHolder> itemsToAdd = Collections.emptyMap(); // DONE
+    private Map<Integer, ItemHolder> itemsToAdd = Collections.emptyMap(); // DONE
 
     @Expose
-    private final Map<ArmorSlots, ItemHolder> armorToAdd = Collections.emptyMap(); // DONE
+    private Map<ArmorSlots, ItemHolder> armorToAdd = Collections.emptyMap(); // DONE
 
     @Expose
-    private final Map<GameEvent, ExtensionTitle> gameTitles = new LinkedHashMap<>(); // DONE
+    private Map<GameEvent, ExtensionTitle> gameTitles = new LinkedHashMap<>(); // DONE
 
     @Expose
-    private final List<String> signs = Collections.emptyList(); // DONE
+    private List<String> signs = Collections.emptyList(); // DONE
 
     @Expose
-    private final GameMode waitingMode = GameMode.ADVENTURE; // DONE
+    private GameMode waitingMode = GameMode.ADVENTURE; // DONE
 
     @Expose
-    private final GameMode ingameMode = GameMode.ADVENTURE; // DONE
+    private GameMode ingameMode = GameMode.ADVENTURE; // DONE
 
     @Expose
-    private final List<DamageCause> cancelledDamageInWaiting = Collections.emptyList(); // DONE
+    private List<DamageCause> cancelledDamageInWaiting = Collections.emptyList(); // DONE
 
     @Expose
-    private final List<DamageCause> cancelledDamageInGame = Collections.emptyList(); // DONE
+    private List<DamageCause> cancelledDamageInGame = Collections.emptyList(); // DONE
 
     @Expose
-    private final List<String> extensionCommands = Collections.emptyList(); // DONE
+    private List<String> extensionCommands = Collections.emptyList(); // DONE
 
     @Expose
-    private final List<String> allowedCommands = Collections.emptyList(); // DONE
+    private List<String> allowedCommands = Collections.emptyList(); // DONE
 
     @Expose
-    private final Map<ScoreboardType, ScoreboardHolder> scoreboard = Collections.emptyMap(); // DONE
+    private Map<ScoreboardType, ScoreboardHolder> scoreboard = Collections.emptyMap(); // DONE
 
     @Expose
     private QuitItem quitItem; // DONE
 
     @Expose
-    private final List<String> runCommandsWhenGameFills = new ArrayList<>(); // DONE
+    private List<String> runCommandsWhenGameFills = new ArrayList<>(); // DONE
 
     @Expose
-    private final List<String> runCommandsWhenGameStarts = new ArrayList<>(); // DONE
-
-    public boolean isEnabled() {
-        return enabled;
-    }
+    private List<String> runCommandsWhenGameStarts = new ArrayList<>(); // DONE
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -130,7 +126,6 @@ public class GameExtension {
     public void refresh(ExtensionType type) {
         GameExtension copy = ExtensionsManager.getExtension(key, type, getClass());
         List<Field> fields = getAllFields(getClass());
-        System.out.println("Copy: " + copy + ", here: " + this);
         for (Field f : fields)
             try {
                 if (Modifier.isStatic(f.getModifiers()) || !f.isAnnotationPresent(Expose.class)) continue;
@@ -155,7 +150,7 @@ public class GameExtension {
         STANDARD,
         CUSTOM;
 
-        private static final Map<String, ExtensionType> TYPES = new HashMap<>();
+        private static Map<String, ExtensionType> TYPES = new HashMap<>();
 
         public static ExtensionType from(String value) {
             return TYPES.get(value.toUpperCase());

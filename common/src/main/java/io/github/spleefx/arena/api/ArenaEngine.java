@@ -141,14 +141,14 @@ public interface ArenaEngine {
     void regenerate(@Nullable ArenaStage newStage);
 
     /**
-     * Saves the player data_old before they enter the arena, such as the inventory and location
+     * Saves the player data before they enter the arena, such as the inventory and location
      *
      * @param player Player to save for
      */
     void save(ArenaPlayer player);
 
     /**
-     * Loads the saved data_old into the player
+     * Loads the saved data into the player
      *
      * @param player Player to load for
      */

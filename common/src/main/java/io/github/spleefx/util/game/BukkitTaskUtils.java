@@ -21,7 +21,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.lang.reflect.Field;
 
 /**
- * A class for accessing CraftBukkit data_old from {@link BukkitTask}
+ * A class for accessing CraftBukkit data from {@link BukkitTask}
  */
 public class BukkitTaskUtils {
 

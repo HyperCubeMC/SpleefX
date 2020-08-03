@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ScoreboardThread extends Thread {
 
-    private final ScoreboardTicker ticker;
+    private ScoreboardTicker ticker;
 
     ScoreboardThread(ScoreboardTicker ticker) {
         this.ticker = ticker;
@@ -40,17 +40,16 @@ public class ScoreboardThread extends Thread {
             if (board == null) continue;
 
             Objective objective = board.getObjective();
-            String c = ticker.getProvider().getTitle(player);
-            System.out.println("Title: '" + c + "'");
-            if (c == null) {
+            String title = ticker.getProvider().getTitle(player);
+            if (title == null) {
                 ticker.getBoards().remove(player.getUniqueId());
                 player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
                 return;
             }
-            List<String> newLines = ticker.getProvider().getLines(player);
-            if (!objective.getDisplayName().equals(c)) {
-                objective.setDisplayName(c);
+            if (!objective.getDisplayName().equals(title)) {
+                objective.setDisplayName(title);
             }
+            List<String> newLines = ticker.getProvider().getLines(player);
             if (newLines == null || newLines.isEmpty()) {
                 board.getEntries().forEach(ScoreboardEntry::remove);
                 board.getEntries().clear();

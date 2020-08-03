@@ -32,7 +32,6 @@ import io.github.spleefx.economy.booster.BoosterConsumer;
 import io.github.spleefx.economy.booster.BoosterFactory;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.extension.GameExtension.ExtensionType;
 import io.github.spleefx.extension.ability.DoubleJumpHandler;
 import io.github.spleefx.extension.ability.GameAbility;
 import io.github.spleefx.extension.ability.TripleArrowsAbility;
@@ -49,7 +48,6 @@ import io.github.spleefx.scoreboard.ScoreboardListener;
 import io.github.spleefx.scoreboard.sidebar.ScoreboardTicker;
 import io.github.spleefx.spectate.*;
 import io.github.spleefx.spectate.SpectatingListener.PickupListener;
-import io.github.spleefx.util.FileWatcher;
 import io.github.spleefx.util.io.CopyStore;
 import io.github.spleefx.util.io.FileManager;
 import io.github.spleefx.util.menu.GameMenu;
@@ -93,7 +91,6 @@ import static io.github.spleefx.dep.Dependency.*;
 import static io.github.spleefx.extension.ExtensionsManager.EXTENSIONS_FOLDER;
 import static io.github.spleefx.perk.GamePerk.PERKS;
 import static io.github.spleefx.perk.GamePerk.PERKS_FOLDER;
-import static io.github.spleefx.util.FileWatcher.registerWatcher;
 import static java.io.File.separator;
 import static org.moltenjson.configuration.tree.strategy.TreeNamingStrategy.STRING_STRATEGY;
 
@@ -137,18 +134,13 @@ public final class SpleefX extends JavaPlugin implements Listener {
     private final Logger pluginLogger;
 
     private final SelectableConfiguration statsFile = SelectableConfiguration.of(JsonFile.of(
-            registerWatcher(fileManager.createFile("gui" + separator + "statistics-gui.json"))
-                    .onChange(path -> getStatsFile().refresh())
-                    .getFile()), false, AdapterBuilder.GSON);
+            fileManager.createFile("gui" + separator + "statistics-gui.json")), false, AdapterBuilder.GSON);
 
     private final SelectableConfiguration boostersFile = SelectableConfiguration.of(JsonFile.of(
-            registerWatcher(fileManager.createFile("boosters" + separator + "boosters.json"))
-                    .onChange(path -> getBoostersFile().refresh()).getFile()), false, AdapterBuilder.GSON);
+            fileManager.createFile("boosters" + separator + "boosters.json")), false, AdapterBuilder.GSON);
 
     private final SelectableConfiguration joinGuiFile = SelectableConfiguration.of(JsonFile.of(
-            registerWatcher(fileManager.createFile("gui" + separator + "join-gui.json"))
-                    .onChange((p) -> getJoinGuiFile().refresh())
-                    .getFile()), false, AdapterBuilder.GSON);
+            fileManager.createFile("gui" + separator + "join-gui.json")), false, AdapterBuilder.GSON);
 
     private final SpectatingHandler spectatingHandler = new SpectatingHandler();
     private final ConfigurationPack<SpleefX> configurationPack = new ConfigurationPack<>(this, getDataFolder(), ArenaData.GSON);
@@ -350,7 +342,7 @@ TODO
             dataProvider.createRequiredFiles(fileManager);
 
             if (storageType == StorageType.UNITED_FILE) {
-                SpleefX.logger().warning("I noticed you're using UNITED_FILE as a storage type. This is no longer supported as it cannot work with all the new data_old it has to store. Player data_old has been converted to use FLAT_FILE instead.");
+                SpleefX.logger().warning("I noticed you're using UNITED_FILE as a storage type. This is no longer supported as it cannot work with all the new data it has to store. Player data has been converted to use FLAT_FILE instead.");
             }
 
 */
@@ -398,8 +390,8 @@ TODO
                 return m;
             }));
             //scheduler = new SpleefXScheduler(this);
-                new ProtocolLibSpectatorAdapter(this);
-            FileWatcher.pollDirectory(getDataFolder().toPath());
+            new ProtocolLibSpectatorAdapter(this);
+            //    FileWatcher.pollDirectory(getDataFolder().toPath());
             PlayerRepository.REPOSITORY.cacheAll();
         } catch (Exception e) {
             try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
@@ -421,12 +413,14 @@ TODO
 
     @Override
     public void onDisable() {
+/*
         try {
             FileWatcher.getService().close();
             FileWatcher.getPool().shutdownNow();
         } catch (IOException e) {
             e.printStackTrace();
         }
+*/
         if (CompatibilityHandler.shouldDisable() || CompatibilityHandler.missingWorldEdit() || CompatibilityHandler.missingProtocolLib())
             return;
         PlayerRepository.REPOSITORY.save();
@@ -480,11 +474,7 @@ TODO
         pluginLogger = getLogger();
         if (!CompatibilityHandler.shouldDisable()) {
             File ext = new File(getDataFolder(), "extensions");
-            registerWatcher(fileManager.createFile("config.yml"))
-                    .onChange(path -> {
-                        SpleefX.getPlugin().reloadConfig();
-                        SpleefXConfig.load(false);
-                    });
+            fileManager.createFile("config.yml");
             new ConfigConverter(new File(getDataFolder(), "config.yml")).run();
             new LegacyExtensionConverter(ext).run();
             //new SpleefExtensionConverter(ext).run();
@@ -496,20 +486,14 @@ TODO
             fileManager.createDirectory("extensions" + separator + "custom");
             fileManager.createDirectory("extensions" + separator + "standard");
 
-            registerWatcher(fileManager.createFile("extensions" + separator + "standard" + separator + "spleef.json"))
-                    .onChange(path -> ExtensionsManager.getByKey("spleef").refresh(ExtensionType.STANDARD));
+            fileManager.createFile("extensions" + separator + "standard" + separator + "spleef.json");
 
-            registerWatcher(fileManager.createFile("extensions" + separator + "standard" + separator + "bow_spleef.json"))
-                    .onChange(path -> ExtensionsManager.getByKey("bow_spleef").refresh(ExtensionType.STANDARD));
+            fileManager.createFile("extensions" + separator + "standard" + separator + "bow_spleef.json");
 
-            registerWatcher(fileManager.createFile("extensions" + separator + "standard" + separator + "splegg.json"))
-                    .onChange(path -> ExtensionsManager.getByKey("splegg").refresh(ExtensionType.STANDARD));
-
-            registerWatcher(fileManager.createFile("spectator-settings.json"))
-                    .onChange(path -> SpleefX.getPlugin().getConfigurationPack().refresh());
-
+            fileManager.createFile("extensions" + separator + "standard" + separator + "splegg.json");
+            fileManager.createFile("spectator-settings.json");
             fileManager.createFile("extensions" + separator + "custom" + separator + "-example-mode.json");
-            registerWatcher(fileManager.createFile("perks" + separator + "-perks-shop.json"));
+            fileManager.createFile("perks" + separator + "-perks-shop.json");
             fileManager.createFile("perks" + separator + "acidic_snowballs.json");
 
         }
