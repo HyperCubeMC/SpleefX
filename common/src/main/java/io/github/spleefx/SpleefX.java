@@ -353,19 +353,8 @@ public final class SpleefX extends JavaPlugin implements Listener {
                 }
             }));
 
-            /*
-TODO
-            dataProvider = storageType.create();
-            dataProvider.createRequiredFiles(fileManager);
-
-            if (storageType == StorageType.UNITED_FILE) {
-                SpleefX.logger().warning("I noticed you're using UNITED_FILE as a storage type. This is no longer supported as it cannot work with all the new data it has to store. Player data has been converted to use FLAT_FILE instead.");
-            }
-
-*/
             if (SpleefXConfig.VAULT_EXISTS)
                 vaultHandler = new VaultHandler(this);
-
 
             Bukkit.getScheduler().runTaskTimer(this, () -> GameArena.ARENAS.get().values().forEach(arena -> arena.getEngine().getSignManager().update()),
                     SpleefXConfig.SIGN_UPDATE_INTERVAL.get().longValue(), SpleefXConfig.SIGN_UPDATE_INTERVAL.get().longValue());
