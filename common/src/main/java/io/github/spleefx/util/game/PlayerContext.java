@@ -125,7 +125,11 @@ public class PlayerContext {
         player.setLevel(xp);
         player.setExp(exp);
         player.teleport(arena.getFinishingLocation() == null ? location : arena.getFinishingLocation());
-        player.setHealth(health >= 24 ? 24 : health < 0 ? 1 : health);
+        try {
+            player.setHealth(health >= 24 ? 24 : health < 0 ? 1 : health);
+        } catch (Exception e) {
+            player.setHealth(20);
+        }
         player.setFoodLevel(hunger);
         player.setGameMode(gameMode);
         player.setFireTicks(fireTicks);

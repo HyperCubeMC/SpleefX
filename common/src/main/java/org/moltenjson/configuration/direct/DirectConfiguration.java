@@ -315,7 +315,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration>, Refre
      */
     @Override
     public final DirectConfiguration setFile(JsonFile file) {
-        checkLocked("Cannot invoke #setFile() on a locked DirectConfiguration!");
+        checkLocked();
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
         return this;

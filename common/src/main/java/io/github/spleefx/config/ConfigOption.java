@@ -17,7 +17,7 @@ import java.util.stream.Collector;
 public class ConfigOption<V> {
 
     @Nullable
-    private final String path;
+    public final String path;
 
     @Nullable
     private final V def;

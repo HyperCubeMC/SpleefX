@@ -46,7 +46,6 @@ public class DependencyRegistry {
 
     public Set<Dependency> resolveStorageDependencies(StorageType type) {
         Set<Dependency> dependencies = new LinkedHashSet<>(STORAGE_DEPENDENCIES.get(type));
-
         // don't load slf4j if it's already present
         if ((dependencies.contains(Dependency.SLF4J_API) || dependencies.contains(Dependency.SLF4J_SIMPLE)) && slf4jPresent()) {
             dependencies.remove(Dependency.SLF4J_API);

@@ -138,6 +138,17 @@ PlayerGameStatistics:
   # Default value: "&1All Modes"
   AllModesName: "&1All Modes"
 
+  # The maximum cache size before the backend cache starts evicting entries.
+  #
+  # Unless explicitly told, or you know very well what you are doing, I'd say keep this
+  # untouched.
+  #
+  # The reasons why you may want to modify this is that you have more than 1,000 unique player
+  # logins, and leaderboards aren't displaying certain players despite being on the top.
+  #
+  # Default value: 1000
+  MaximumCacheSize: 1000
+
   # The storage type. Each type is cached accordingly and only requested when needed. Can be either:
   #
   # 1. H2 (Default) - Store in a H2 (SQL) database as a flat file.
@@ -244,6 +255,10 @@ Economy:
 # Note that this section requires PlaceholderAPI
 Leaderboards:
 
+  # Whether are leaderboards enabled or not. When disabled, the plugin will not load
+  # all the player data from the database.
+  Enabled: true
+
   # The format, in which PlaceholderAPI will replace the placeholder with.
   #
   # This is used in the <i>format</i> PAPI request (see below).
@@ -263,3 +278,19 @@ Leaderboards:
   # {player} - The player name
   # {score} - The player's score in this stat
   Format: "&d#{pos} &e{player} &7- &b{score}"
+
+# Experimental / WIP features
+Experimental:
+
+  # Whether should SpleefX attempt to create the following tooltips and client-side validation on commands:
+  # https://i.imgur.com/ZfPS3Es.png (the "<arena> <teamOrIndex>" part).
+  #
+  # These were introduced along with the new commands system in
+  # Minecraft 1.13+ (AKA Brigadier).
+  #
+  # Enabling this feature will add tooltips and client-side validation for
+  # special parameters types (e.g a parameter which only takes a number), however it risks the following:
+  # - Missing certain completions
+  # - Allowing non-operators to have semi-tab completions for admin-only commands (they still cannot execute them)
+  # - Removing some completions and marking them as invalid
+  HookIntoBrigadier: false

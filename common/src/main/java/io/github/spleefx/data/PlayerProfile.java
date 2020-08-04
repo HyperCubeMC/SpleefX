@@ -3,14 +3,12 @@ package io.github.spleefx.data;
 import io.github.spleefx.data.database.sql.SQLSerializable;
 import io.github.spleefx.data.impl.PlayerProfileImpl.BuilderImpl;
 import io.github.spleefx.economy.booster.BoosterInstance;
+import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.extension.standard.splegg.SpleggUpgrade;
 import io.github.spleefx.perk.GamePerk;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.IntFunction;
 
 /**
@@ -31,6 +29,8 @@ public interface PlayerProfile extends SQLSerializable {
     @NotNull
     UUID getUUID();
 
+    boolean modified();
+
     /**
      * Returns the player's coins
      *
@@ -50,9 +50,25 @@ public interface PlayerProfile extends SQLSerializable {
      * Returns per-extension statistics
      *
      * @return Per-game mode stats
+     * @see #getExtensionStatistics(String)
+     * @see #getExtensionStatistics(GameExtension)
      */
     @NotNull
     Map<String, Map<GameStatType, Integer>> getExtensionStatistics();
+
+    /**
+     * Returns per-extension statistics
+     *
+     * @param extension Extension to get for
+     * @return Per-game mode stats
+     */
+    @NotNull
+    Map<GameStatType, Integer> getExtensionStatistics(@NotNull String extension);
+
+    default Map<GameStatType, Integer> getExtensionStatistics(@NotNull GameExtension extension) {
+        Objects.requireNonNull(extension, "extension is null");
+        return getExtensionStatistics(extension.getKey());
+    }
 
     /**
      * Returns the player's coins boosters
@@ -85,7 +101,7 @@ public interface PlayerProfile extends SQLSerializable {
      * @see #upgradeKeys()
      */
     @NotNull
-    List<SpleggUpgrade> getPurchasedSpleggUpgrades();
+    Set<SpleggUpgrade> getPurchasedSpleggUpgrades();
 
     /**
      * Returns all {@link #getPurchasedSpleggUpgrades()} as a list of strings
@@ -93,7 +109,7 @@ public interface PlayerProfile extends SQLSerializable {
      * @return ^
      */
     @NotNull
-    List<String> upgradeKeys();
+    Set<String> upgradeKeys();
 
     /**
      * Returns a list of all active boosters. Note that these boosters are mutable.
@@ -278,7 +294,24 @@ public interface PlayerProfile extends SQLSerializable {
          * @return This builder instance
          */
         @NotNull
-        Builder setPurchasedSpleggUpgrades(@NotNull List<SpleggUpgrade> upgrades);
+        Builder setPurchasedSpleggUpgrades(@NotNull Set<SpleggUpgrade> upgrades);
+
+        /**
+         * Pushes this profile to the data stack, hence applying all changes inside it
+         *
+         * @return This builder instance
+         */
+        @NotNull
+        Builder push();
+
+        /**
+         * Copies all data from the cloned builder into this
+         *
+         * @param copyFrom Builder to copy from
+         * @return This builder instance
+         */
+        @NotNull
+        Builder copy(@NotNull Builder copyFrom);
 
         /**
          * Creates the player data

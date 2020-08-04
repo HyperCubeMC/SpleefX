@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension.ExtensionType;
+import lombok.Getter;
 import org.moltenjson.configuration.direct.DirectConfiguration;
 import org.moltenjson.configuration.select.SelectableConfiguration;
 import org.moltenjson.configuration.tree.strategy.TreeNamingStrategy;
@@ -80,6 +81,7 @@ public class TreeConfiguration<N, E> {
     /**
      * The parent directory which contains all the data files
      */
+    @Getter
     private final File directory;
 
     /**

@@ -10,6 +10,7 @@ import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.arena.bow.BowSpleefListener;
 import io.github.spleefx.arena.spleef.SpleefListener;
 import io.github.spleefx.arena.splegg.SpleggListener;
+import io.github.spleefx.command.SpleefXBrigadier;
 import io.github.spleefx.command.parent.*;
 import io.github.spleefx.command.plugin.PluginCommandBuilder;
 import io.github.spleefx.command.sub.base.StatsCommand.MenuListener;
@@ -20,6 +21,7 @@ import io.github.spleefx.converter.ConfigConverter;
 import io.github.spleefx.converter.LegacyExtensionConverter;
 import io.github.spleefx.converter.SpectatorFileConverter;
 import io.github.spleefx.converter.SpleggExtensionConverter;
+import io.github.spleefx.data.DataImporter;
 import io.github.spleefx.data.PlayerRepository;
 import io.github.spleefx.data.PlayerRepository.QueryListener;
 import io.github.spleefx.data.SpleefXPAPI;
@@ -161,7 +163,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
     private final File arenasFolder = new File(getDataFolder(), "arenas");
     private ExtensionsManager extensionsManager;
     private MessageManager messageManager;
-
+    private boolean migrateConfig = false;
     @Getter
     private ReflectionClassLoader reflectionClassLoader = new ReflectionClassLoader(this);
 
@@ -173,12 +175,13 @@ public final class SpleefX extends JavaPlugin implements Listener {
     @Override
     public void onLoad() {
         plugin = this;
+        SpleefXConfig.load(true);
         DependencyManager dependencyManager = new DependencyManager(this);
-        EnumSet<Dependency> deps = EnumSet.of(OKIO, OKHTTP, CAFFEINE, HIKARI);
+        EnumSet<Dependency> deps = EnumSet.of(OKIO, OKHTTP, CAFFEINE, HIKARI, SLF4J_API, SLF4J_SIMPLE, COMMODORE);
         if (Protocol.PROTOCOL == 8)
             deps.add(GSON);
         dependencyManager.loadDependencies(deps);
-        dependencyManager.loadStorageDependencies(io.github.spleefx.data.StorageType.fromName(Objects.requireNonNull(getConfig().getString("StorageMethod", "H2"))));
+        dependencyManager.loadStorageDependencies(SpleefXConfig.STORAGE_METHOD.get());
     }
 
     @SneakyThrows
@@ -229,7 +232,15 @@ public final class SpleefX extends JavaPlugin implements Listener {
         }
         try {
             getLogger().info("Detected server version: " + Protocol.VERSION);
-
+            if (migrateConfig) {
+                pluginLogger.info("=============================================");
+                pluginLogger.info("IMPORTANT: Due to the many updates to the config.yml, your older");
+                pluginLogger.info("version has been renamed into 'config_old.yml', and the");
+                pluginLogger.info("new configuration has been regenerated. You may need to");
+                pluginLogger.info("migrate certain settings back which you want, as they might");
+                pluginLogger.info("have been lost.");
+                pluginLogger.info("=============================================");
+            }
             messageManager = new MessageManager(this);
             messageManager.load(false);
 
@@ -238,7 +249,6 @@ public final class SpleefX extends JavaPlugin implements Listener {
             CompatibilityHandler.init();
             arenaManager = new ArenaManager(this);
 
-            SpleefXConfig.load(true);
             //fileManager.createDirectory(SpleefXConfig.STATISTICS_DIRECTORY.get());
             arenasFolder.mkdirs();
             statsFile.register(StatisticsConfig.class).associate();
@@ -332,9 +342,16 @@ public final class SpleefX extends JavaPlugin implements Listener {
             Preconditions.checkNotNull(getCommand("sploofx")).setExecutor(new CommandSpleefX());
             CommandExecutor def = new CustomExtensionCommand();
 
-            data.forEach((key, extension) -> extension.getExtensionCommands().forEach(command -> new PluginCommandBuilder(command, SpleefX.this)
-                    .command(fromKey(key, def))
-                    .register()));
+            data.forEach((key, extension) -> extension.getExtensionCommands().forEach(command -> {
+                try {
+                    SpleefXBrigadier.register(this, new PluginCommandBuilder(command, SpleefX.this)
+                            .command(fromKey(key, def))
+                            .register()
+                            .build());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }));
 
             /*
 TODO
@@ -392,7 +409,9 @@ TODO
             //scheduler = new SpleefXScheduler(this);
             new ProtocolLibSpectatorAdapter(this);
             //    FileWatcher.pollDirectory(getDataFolder().toPath());
-            PlayerRepository.REPOSITORY.cacheAll();
+            new DataImporter().start();
+            if (SpleefXConfig.LEADERBOARDS.get())
+                PlayerRepository.REPOSITORY.cacheAll();
         } catch (Exception e) {
             try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
                 e.printStackTrace(pw);
@@ -474,6 +493,11 @@ TODO
         pluginLogger = getLogger();
         if (!CompatibilityHandler.shouldDisable()) {
             File ext = new File(getDataFolder(), "extensions");
+            if (getConfig().getString("PlayerGameStatistics.StorageMethod", null) == null) {
+                if (new File(getDataFolder(), "config.yml").renameTo(new File(getDataFolder(), "config_old.yml"))) {
+                    migrateConfig = true;
+                }
+            }
             fileManager.createFile("config.yml");
             new ConfigConverter(new File(getDataFolder(), "config.yml")).run();
             new LegacyExtensionConverter(ext).run();

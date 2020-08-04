@@ -2,14 +2,18 @@ package io.github.spleefx.data.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.data.GameStatType;
 import io.github.spleefx.data.PlayerProfile;
+import io.github.spleefx.data.PlayerRepository;
+import io.github.spleefx.data.TempStatsTracker;
 import io.github.spleefx.economy.booster.BoosterInstance;
 import io.github.spleefx.extension.standard.splegg.SpleggExtension;
 import io.github.spleefx.extension.standard.splegg.SpleggUpgrade;
 import io.github.spleefx.perk.GamePerk;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 import org.bukkit.Bukkit;
@@ -25,9 +29,10 @@ import java.util.stream.Collectors;
 
 import static io.github.spleefx.config.SpleefXConfig.ECO_USE_VAULT;
 import static io.github.spleefx.config.SpleefXConfig.VAULT_EXISTS;
-import static io.github.spleefx.data.impl.HikariConnector.GSON;
+import static io.github.spleefx.data.PlayerCacheManager.GSON;
 
 @ToString
+@EqualsAndHashCode
 public class PlayerProfileImpl implements PlayerProfile {
 
     private final UUID uuid;
@@ -37,9 +42,11 @@ public class PlayerProfileImpl implements PlayerProfile {
     private final ImmutableMap<String, Map<GameStatType, Integer>> modeStats;
     private final ImmutableMap<Integer, BoosterInstance> boosters;
     private final ImmutableMap<GamePerk, Integer> perks;
-    private final ImmutableList<SpleggUpgrade> spleggUpgrades;
-    private final List<String> spleggUpgradesKeys;
+    private final ImmutableSet<SpleggUpgrade> spleggUpgrades;
+    private final Set<String> spleggUpgradesKeys;
     private String selectedSpleggUpgrade;
+
+    protected boolean modified = false;
 
     public PlayerProfileImpl(
             UUID uuid,
@@ -48,7 +55,7 @@ public class PlayerProfileImpl implements PlayerProfile {
             ImmutableMap<String, Map<GameStatType, Integer>> modeStats,
             ImmutableMap<Integer, BoosterInstance> boosters,
             ImmutableMap<GamePerk, Integer> perks,
-            ImmutableList<SpleggUpgrade> spleggUpgrades,
+            ImmutableSet<SpleggUpgrade> spleggUpgrades,
             String selectedSpleggUpgrade) {
         this.uuid = uuid;
         offlineCopy = Bukkit.getOfflinePlayer(uuid);
@@ -60,8 +67,14 @@ public class PlayerProfileImpl implements PlayerProfile {
         this.modeStats = n(modeStats, "modeStats");
         this.boosters = n(boosters, "boosters");
         this.perks = n(perks, "perks");
-        this.spleggUpgrades = n(spleggUpgrades, "spleggUpgrades");
-        spleggUpgradesKeys = spleggUpgrades.stream().map(SpleggUpgrade::getKey).collect(Collectors.toList());
+        if (selectedSpleggUpgrade.equals("default"))
+            this.spleggUpgrades = new ImmutableSet.Builder<SpleggUpgrade>()
+                    .addAll(n(spleggUpgrades, "spleggUpgrades"))
+                    .addAll(SpleggExtension.EXTENSION.getUpgrades().values().stream().filter(SpleggUpgrade::isDefault).collect(Collectors.toList()))
+                    .build();
+        else
+            this.spleggUpgrades = n(spleggUpgrades, "spleggUpgrades");
+        spleggUpgradesKeys = spleggUpgrades.stream().map(SpleggUpgrade::getKey).collect(Collectors.toSet());
         this.selectedSpleggUpgrade = n(selectedSpleggUpgrade, "selectedSpleggUpgrade");
     }
 
@@ -73,12 +86,21 @@ public class PlayerProfileImpl implements PlayerProfile {
         return uuid;
     }
 
+    @Override public boolean modified() {
+        return modified;
+    }
+
     @Override public @NotNull Map<GameStatType, Integer> getGameStats() {
         return stats;
     }
 
     @Override public @NotNull Map<String, Map<GameStatType, Integer>> getExtensionStatistics() {
         return modeStats;
+    }
+
+    @Override
+    public @NotNull Map<GameStatType, Integer> getExtensionStatistics(@NotNull String extension) {
+        return modeStats.getOrDefault(n(extension, "extension is null!"), TempStatsTracker.EMPTY);
     }
 
     @Override public @NotNull Map<Integer, BoosterInstance> getBoosters() {
@@ -96,11 +118,11 @@ public class PlayerProfileImpl implements PlayerProfile {
         return perks;
     }
 
-    @Override public @NotNull List<SpleggUpgrade> getPurchasedSpleggUpgrades() {
+    @Override public @NotNull Set<SpleggUpgrade> getPurchasedSpleggUpgrades() {
         return spleggUpgrades;
     }
 
-    @Override public @NotNull List<String> upgradeKeys() {
+    @Override public @NotNull Set<String> upgradeKeys() {
         return spleggUpgradesKeys;
     }
 
@@ -109,6 +131,7 @@ public class PlayerProfileImpl implements PlayerProfile {
     }
 
     @Override public @NotNull Builder asBuilder() {
+        modified = true;
         return new BuilderImpl(this);
     }
 
@@ -122,7 +145,7 @@ public class PlayerProfileImpl implements PlayerProfile {
         statement.setString(index + 0, uuid.toString());
         statement.setInt(index + 1, coins);
         statement.setString(index + 2, selectedSpleggUpgrade);
-        statement.setString(index + 3, GSON.toJson(spleggUpgrades));
+        statement.setString(index + 3, GSON.toJson(upgradeKeys()));
         statement.setString(index + 4, GSON.toJson(stats));
         statement.setString(index + 5, GSON.toJson(modeStats));
         statement.setString(index + 6, GSON.toJson(boosters));
@@ -132,14 +155,15 @@ public class PlayerProfileImpl implements PlayerProfile {
 
     public static class BuilderImpl implements Builder {
 
-        protected UUID uuid;
+        protected boolean modified;
+        protected final UUID uuid;
         protected final OfflinePlayer offlineCopy;
         protected int coins = 0;
         protected Map<GameStatType, Integer> stats = new HashMap<>();
         protected Map<String, Map<GameStatType, Integer>> modeStats = new HashMap<>();
         protected Map<Integer, BoosterInstance> boosters = new HashMap<>();
         protected Map<GamePerk, Integer> perks = new HashMap<>();
-        protected List<SpleggUpgrade> spleggUpgrades = new ArrayList<>();
+        protected Set<SpleggUpgrade> spleggUpgrades = new LinkedHashSet<>();
 
         protected String spleggUpgrade;
 
@@ -155,9 +179,10 @@ public class PlayerProfileImpl implements PlayerProfile {
             modeStats = new HashMap<>(data.modeStats);
             boosters = new HashMap<>(data.boosters);
             perks = new HashMap<>(data.perks);
-            spleggUpgrades = new ArrayList<>(data.spleggUpgrades);
+            spleggUpgrades = new LinkedHashSet<>(data.spleggUpgrades);
             spleggUpgrade = data.selectedSpleggUpgrade;
             offlineCopy = Bukkit.getOfflinePlayer(uuid);
+            modified = true;
         }
 
         @Override public @NotNull Builder setCoins(int coins) {
@@ -265,21 +290,44 @@ public class PlayerProfileImpl implements PlayerProfile {
             return this;
         }
 
-        @Override public @NotNull Builder setPurchasedSpleggUpgrades(@NotNull List<SpleggUpgrade> upgrades) {
+        @Override public @NotNull Builder setPurchasedSpleggUpgrades(@NotNull Set<SpleggUpgrade> upgrades) {
             spleggUpgrades = n(upgrades, "upgrades");
             return this;
         }
 
+        @Override
+        public @NotNull Builder push() {
+            PlayerRepository.REPOSITORY.apply(uuid, (profile, builder) -> builder.copy(this));
+            return this;
+        }
+
+        @Override
+        public @NotNull Builder copy(@NotNull Builder copyFrom) {
+            n(copyFrom, "copyFrom is null!");
+            BuilderImpl data = (BuilderImpl) copyFrom;
+            modified = data.modified;
+            coins = data.coins();
+            stats = new HashMap<>(data.stats);
+            modeStats = new HashMap<>(data.modeStats);
+            boosters = new HashMap<>(data.boosters);
+            perks = new HashMap<>(data.perks);
+            spleggUpgrades = new LinkedHashSet<>(data.spleggUpgrades);
+            spleggUpgrade = data.spleggUpgrade;
+            return this;
+        }
+
         @Override public @NotNull PlayerProfile build() {
-            return new PlayerProfileImpl(
+            PlayerProfileImpl prof = new PlayerProfileImpl(
                     uuid,
                     coins,
                     ImmutableMap.copyOf(stats),
                     ImmutableMap.copyOf(modeStats),
                     ImmutableMap.copyOf(boosters),
                     ImmutableMap.copyOf(perks),
-                    ImmutableList.copyOf(spleggUpgrades),
+                    ImmutableSet.copyOf(spleggUpgrades),
                     spleggUpgrade);
+            prof.modified = modified;
+            return prof;
         }
 
     }
@@ -293,7 +341,7 @@ public class PlayerProfileImpl implements PlayerProfile {
         return value;
     }
 
-    protected static class UpgradeAdapter implements JsonSerializer<List<SpleggUpgrade>>, JsonDeserializer<List<SpleggUpgrade>> {
+    public static class UpgradeAdapter implements JsonSerializer<List<SpleggUpgrade>>, JsonDeserializer<List<SpleggUpgrade>> {
 
         @Override
         public List<SpleggUpgrade> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
@@ -307,6 +355,7 @@ public class PlayerProfileImpl implements PlayerProfile {
         @Override
         public JsonElement serialize(List<SpleggUpgrade> spleggUpgrades, Type type, JsonSerializationContext jsonSerializationContext) {
             JsonArray array = new JsonArray();
+            System.out.println("Upgrades: " + spleggUpgrades);
             for (SpleggUpgrade spleggUpgrade : spleggUpgrades) {
                 array.add(new JsonPrimitive(spleggUpgrade.getKey()));
             }

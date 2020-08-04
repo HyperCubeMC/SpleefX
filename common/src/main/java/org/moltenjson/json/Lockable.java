@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
  * @see Refreshable
  * @since SimpleJSON 2.0.2
  */
-public interface Lockable<T extends Lockable> {
+public interface Lockable<T extends Lockable<T>> {
 
     /**
      * Returns whether the current component is locked or not. This will control whether
@@ -60,11 +60,9 @@ public interface Lockable<T extends Lockable> {
 
     /**
      * Checks whether it is safe to use {@link #setFile(JsonFile)} or not.
-     *
-     * @param message Message to throw if not allowed.
      */
-    default void checkLocked(String message) {
-        Preconditions.checkState(!isLocked(), message);
+    default void checkLocked() {
+        Preconditions.checkState(!isLocked(), "Cannot invoke #setFile() on a locked " + getClass().getSimpleName() + "!");
     }
 
 }

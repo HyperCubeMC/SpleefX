@@ -44,11 +44,9 @@ public enum DependencyRepository {
      * Maven Central.
      */
     MAVEN_CENTRAL("https://repo1.maven.org/maven2/"),
-
-    /**
+    /*
      * JitPack
-     */
-    JITPACK("https://jitpack.io/");
+    JITPACK("https://jitpack.io/")*/;
 
     private final String url;
 
@@ -86,6 +84,7 @@ public enum DependencyRepository {
                 return bytes;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new DependencyDownloadException(e);
         }
     }

@@ -3,8 +3,12 @@ package io.github.spleefx.data.impl;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.github.spleefx.SpleefX;
-import io.github.spleefx.data.*;
+import io.github.spleefx.config.SpleefXConfig;
+import io.github.spleefx.data.GameStatType;
+import io.github.spleefx.data.LeaderboardTopper;
+import io.github.spleefx.data.PlayerProfile;
 import io.github.spleefx.data.PlayerProfile.Builder;
+import io.github.spleefx.data.PlayerRepository;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
 import org.bukkit.Bukkit;
@@ -18,7 +22,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import static io.github.spleefx.data.TempStatsTracker.EMPTY;
 import static java.util.Collections.reverseOrder;
 import static java.util.Objects.requireNonNull;
 
@@ -28,7 +31,7 @@ public class PlayerRepositoryImpl implements PlayerRepository {
 
     private final LoadingCache<UUID, PlayerProfile> cache = Caffeine.newBuilder()
             .expireAfterAccess(Duration.ofHours(6))
-            .maximumSize(1_000)
+            .maximumSize(SpleefXConfig.MAX_CACHE_SIZE.get())
             .executor(SpleefX.POOL)
             .writer(forwardingCacheManager)
             .build(forwardingCacheManager);
@@ -42,11 +45,11 @@ public class PlayerRepositoryImpl implements PlayerRepository {
     }
 
     @Override
-    public List<LeaderboardTopper> getTopPlayers(@NotNull GameStatType stat, @Nullable GameExtension extension) {
+    public @NotNull List<LeaderboardTopper> getTopPlayers(@NotNull GameStatType stat, @Nullable GameExtension extension) {
         requireNonNull(stat, "stat");
         if (extension == null)
-            return new ArrayList<>(top.get(stat));
-        return new ArrayList<>(topByExtension.get(stat).get(extension.getKey()));
+            return new ArrayList<>(getTop().get(stat));
+        return new ArrayList<>(getTopByExtension().get(stat).getOrDefault(extension.getKey(), Collections.emptySet()));
     }
 
     @Override
@@ -58,8 +61,12 @@ public class PlayerRepositoryImpl implements PlayerRepository {
     public @NotNull CompletableFuture<PlayerProfile> getOrQuery(@NotNull UUID uuid) {
         CompletableFuture<PlayerProfile> future = new CompletableFuture<>();
         Runnable task = () -> {
-            PlayerProfile profile = cache.get(uuid);
-            future.complete(profile);
+            try {
+                PlayerProfile profile = cache.get(uuid);
+                future.complete(profile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         };
         if (ForwardingCacheManager.delegate().async()) {
             SpleefX.POOL.submit(task);
@@ -110,7 +117,10 @@ public class PlayerRepositoryImpl implements PlayerRepository {
             ForwardingCacheManager.delegate().cacheAll(cache);
             future.complete(null);
         }
-        future.thenAccept(v -> Bukkit.getScheduler().runTaskTimer(SpleefX.getPlugin(), this::sortLeaderboards, 0, 600 * 20));
+        future.thenAccept(v -> {
+            SpleefX.logger().info("Successfully loaded data of " + cache.asMap().size() + " player(s).");
+            Bukkit.getScheduler().runTaskTimer(SpleefX.getPlugin(), this::sortLeaderboards, 0, 600 * 20);
+        });
     }
 
     private void sortLeaderboards() {
@@ -125,16 +135,16 @@ public class PlayerRepositoryImpl implements PlayerRepository {
 
                 for (GameStatType stat : GameStatType.values) {
                     List<Entry<UUID, PlayerProfile>> profiles = new ArrayList<>(cache.asMap().entrySet());
-                    profiles.sort(reverseOrder(Comparator.comparingInt(e -> e.getValue().getGameStats().get(stat))));
+                    profiles.sort(reverseOrder(Comparator.comparingInt(e -> e.getValue().getGameStats().getOrDefault(stat, 0))));
                     Set<LeaderboardTopper> toppers = profiles.stream().map(player -> LeaderboardTopper.of(player.getKey(),
-                            player.getValue().getGameStats().get(stat))).collect(Collectors.toCollection(LinkedHashSet::new));
+                            player.getValue().getGameStats().getOrDefault(stat, 0))).collect(Collectors.toCollection(LinkedHashSet::new));
                     top.put(stat, toppers);
 
                     Map<String, Set<LeaderboardTopper>> tops = new HashMap<>();
                     for (GameExtension extension : ExtensionsManager.EXTENSIONS.values()) {
                         List<LeaderboardTopper> topEx = cache.asMap().entrySet().stream()
-                                .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().getExtensionStatistics().getOrDefault(extension.getKey(), EMPTY).get(stat))))
-                                .map(e -> LeaderboardTopper.of(e.getKey(), e.getValue().getExtensionStatistics().getOrDefault(extension.getKey(), EMPTY).get(stat)))
+                                .sorted(reverseOrder(Comparator.comparingInt(e -> e.getValue().getExtensionStatistics(extension).getOrDefault(stat, 0))))
+                                .map(e -> LeaderboardTopper.of(e.getKey(), e.getValue().getExtensionStatistics(extension).getOrDefault(stat, 0)))
                                 .collect(Collectors.toList());
                         tops.put(extension.getKey(), new LinkedHashSet<>(topEx));
                     }
@@ -177,7 +187,4 @@ public class PlayerRepositoryImpl implements PlayerRepository {
         ForwardingCacheManager.delegate().writeAll(cache.asMap());
     }
 
-    static {
-        StorageType.H2.delegate();
-    }
 }

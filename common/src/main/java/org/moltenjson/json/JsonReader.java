@@ -260,7 +260,7 @@ public class JsonReader implements AutoCloseable, Lockable<JsonReader>, Refresha
      * @return This object instance
      */
     public JsonReader setFile(JsonFile file) {
-        checkLocked("Cannot invoke #setFile() on a locked JsonReader!");
+        checkLocked();
         this.file = file;
         return this;
     }

@@ -23,15 +23,18 @@ import io.github.spleefx.extension.ItemHolder;
 import io.github.spleefx.util.PlaceholderUtil;
 import io.github.spleefx.util.item.ItemFactory;
 import io.github.spleefx.util.message.message.Message;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static io.github.spleefx.util.game.Chat.colorize;
 
+@ToString
 public class SpleggUpgrade {
 
     @Expose
@@ -93,7 +96,7 @@ public class SpleggUpgrade {
     public boolean purchase(ArenaPlayer player) {
         PlayerProfile profile = player.getStats(); // these are immutable soo
         PlayerProfile.Builder stats = profile.asBuilder();
-        List<String> upgrades = profile.upgradeKeys();
+        Set<String> upgrades = profile.upgradeKeys();
 
         // add default upgrades
         SpleggExtension.EXTENSION.getUpgrades().values().stream()
@@ -105,7 +108,7 @@ public class SpleggUpgrade {
             stats.setSpleggUpgrade(getKey());
         } else {
             if (profile.getCoins() >= price) {
-                if (profile.getPurchasedSpleggUpgrades().containsAll(requiredUpgradesBefore)) {
+                if (profile.upgradeKeys().containsAll(requiredUpgradesBefore)) {
                     stats.addPurchase(this);
                     stats.setSpleggUpgrade(getKey());
                     stats.subtractCoins(price);
@@ -116,6 +119,7 @@ public class SpleggUpgrade {
             } else
                 return false;
         }
+        stats.push();
         return true;
     }
 

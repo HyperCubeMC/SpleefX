@@ -202,7 +202,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      */
     @Override
     public SelectableConfiguration setFile(JsonFile file) {
-        checkLocked("Cannot invoke #setFile() on a locked SelectableConfiguration!");
+        checkLocked();
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
         return this;

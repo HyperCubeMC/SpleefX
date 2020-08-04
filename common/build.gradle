@@ -2,6 +2,7 @@ repositories {
     maven { url 'http://maven.sk89q.com/artifactory/repo' }
     maven { url 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
+    maven { url 'https://libraries.minecraft.net/' }
 }
 
 dependencies {
@@ -22,6 +23,7 @@ dependencies {
     testCompile group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
 
     compileOnly group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.7'
+    compileOnly 'me.lucko:commodore:1.9'
 
     compileOnly group: 'com.google.guava', name: 'guava', version: '29.0-jre'
 
@@ -48,9 +50,11 @@ processResources {
 
 shadowJar {
     relocate 'me.lucko.commodore', relocation('commodore')
+    relocate 'com.github.benmanes.caffeine', relocation('caffeine')
     relocate 'okhttp3', relocation('okhttp3')
     relocate 'okio', relocation('okio')
     relocate 'com.zaxxer.hikari', relocation('hikari')
+    relocate 'com.mysql', relocation("mysql")
 }
 
 private static String relocation(String name) {

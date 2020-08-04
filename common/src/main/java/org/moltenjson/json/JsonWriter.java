@@ -308,7 +308,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter>, Refreshable<
      */
     @Override
     public JsonWriter setFile(JsonFile file) {
-        checkLocked("Cannot invoke #setFile() on a locked JsonWriter!");
+        checkLocked();
         reader.setFile(file);
         this.file = file;
         contentElement = reader.getJsonElement(Throwable::printStackTrace);

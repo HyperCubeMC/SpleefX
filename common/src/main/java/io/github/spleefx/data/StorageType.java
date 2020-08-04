@@ -11,12 +11,11 @@ import java.util.Map;
 public enum StorageType {
 
     /* Flat files */
-    FLAT_FILE("Flat_File"),
-    TOML("TOML"),
-    JSON("JSON"),
+    //JSON("JSON"),
 
     /* NoSQL */
     MONGODB("MongoDB"),
+
 
     /* SQL */
     MYSQL("MySQL"),

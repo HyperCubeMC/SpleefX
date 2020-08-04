@@ -123,9 +123,12 @@ public class PluginCommandBuilder {
 
     /**
      * Registers this command
+     *
+     * @return This builder instance
      */
-    public void register() {
+    public PluginCommandBuilder register() {
         PluginCommandFactory.register(command);
+        return this;
     }
 
     /**

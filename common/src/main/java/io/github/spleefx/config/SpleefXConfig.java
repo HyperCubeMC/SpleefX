@@ -1,6 +1,7 @@
 package io.github.spleefx.config;
 
 import io.github.spleefx.SpleefX;
+import io.github.spleefx.data.StorageType;
 import io.github.spleefx.extension.ExtensionTitle;
 import io.github.spleefx.util.plugin.Protocol;
 import org.bukkit.Bukkit;
@@ -116,6 +117,16 @@ public interface SpleefXConfig {
     ConfigOption<String> ALL_MODES_NAME = stringKey("PlayerGameStatistics.AllModesName", "All Modes");
 
     /**
+     * The max size for the cache
+     */
+    ConfigOption<Integer> MAX_CACHE_SIZE = integerKey("PlayerGameStatistics.MaximumCacheSize", 1_000);
+
+    /**
+     * The storage type
+     */
+    ConfigOption<StorageType> STORAGE_METHOD = notReloadable(enumKey("PlayerGameStatistics.StorageMethod", StorageType.H2));
+
+    /**
      * The database address
      */
     ConfigOption<String> DB_HOST = stringKey("PlayerGameStatistics.Database.Host");
@@ -123,17 +134,18 @@ public interface SpleefXConfig {
     /**
      * The database name
      */
-    ConfigOption<String> DB_NAME = stringKey("PlayerGameStatistics.Database.DatabaseName");
+    ConfigOption<String> DB_NAME = stringKey("PlayerGameStatistics.Database.DatabaseName", "minecraft");
 
     /**
      * The database username
      */
-    ConfigOption<String> DB_USER = stringKey("PlayerGameStatistics.Database.Username");
+    ConfigOption<String> DB_USER = stringKey("PlayerGameStatistics.Database.Username", "root");
 
     /**
      * The database password
      */
-    ConfigOption<String> DB_PASSWORD = stringKey("PlayerGameStatistics.Database.Password");
+    ConfigOption<String> DB_PASSWORD = stringKey("PlayerGameStatistics.Database.Password", "");
+
 
     /**
      * Whether should SpleefX register its Vault hooks or not
@@ -154,6 +166,11 @@ public interface SpleefXConfig {
      * The leaderboard format
      */
     ConfigOption<String> LEADERBOARDS_FORMAT = stringKey("Leaderboards.Format", "&d#{pos} &e{player} &7- &b{score}");
+
+    /**
+     * Whether should the plugin hook into Brigadier and display command tooltips or not
+     */
+    ConfigOption<Boolean> EXPR_HOOK_INTO_BRIGADIER = notReloadable(booleanKey("Experimental.HookIntoBrigadier", false));
 
     /**
      * Whether does vault exist or not

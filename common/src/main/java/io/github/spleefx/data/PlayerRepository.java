@@ -33,6 +33,14 @@ public interface PlayerRepository {
      */
     void insert(@NotNull UUID uuid, @NotNull PlayerProfile data);
 
+    /**
+     * Returns the top playes in the specified extension and statistic
+     *
+     * @param stat      Statistic to get in
+     * @param extension Extension to get from. Null will return from global statistics
+     * @return The topper players
+     */
+    @NotNull
     List<LeaderboardTopper> getTopPlayers(@NotNull GameStatType stat, @Nullable GameExtension extension);
 
     /**

@@ -1,54 +1,20 @@
 package io.github.spleefx.data.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.config.SpleefXConfig;
-import io.github.spleefx.data.GameStatType;
 import io.github.spleefx.data.database.sql.StatementKey;
-import io.github.spleefx.economy.booster.BoosterInstance;
-import io.github.spleefx.extension.standard.splegg.SpleggUpgrade;
-import io.github.spleefx.perk.GamePerk;
-import io.github.spleefx.perk.GamePerk.MapAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * A simple utility class to allow easy establishing of connection using HikariCP.
  */
 public abstract class HikariConnector {
-
-    protected static final Type GLOBAL_STATS_TYPE = new TypeToken<HashMap<GameStatType, Integer>>() {
-    }.getType();
-
-    protected static final Type UPGRADES_TYPE = new TypeToken<List<SpleggUpgrade>>() {
-    }.getType();
-
-    protected static final Type EXT_STATS_TYPE = new TypeToken<HashMap<String, Map<GameStatType, Integer>>>() {
-    }.getType();
-
-    protected static final Type BOOSTERS_TYPE = new TypeToken<HashMap<Integer, BoosterInstance>>() {
-    }.getType();
-
-    protected static final Type PERKS_TYPE = new TypeToken<HashMap<GamePerk, Integer>>() {
-    }.getType();
-
-    /**
-     * The GSON used for handling complex columns in tables
-     */
-    protected static final Gson GSON = new GsonBuilder()
-            .disableHtmlEscaping()
-            .registerTypeAdapter(PERKS_TYPE, new MapAdapter())
-            .registerTypeAdapter(UPGRADES_TYPE, new PlayerProfileImpl.UpgradeAdapter())
-            .create();
 
     /**
      * A cache of all schemas

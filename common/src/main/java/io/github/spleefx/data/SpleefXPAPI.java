@@ -126,7 +126,7 @@ public class SpleefXPAPI extends PlaceholderExpansion {
             String key = split[split.length - 1];
             GameExtension mode = ExtensionsManager.getByKey(key);
             statType = GameStatType.fromName(identifier.substring(0, identifier.indexOf(split[split.length - 1]) - 1).toLowerCase());
-            return statType == null ? format(0) : format(stats.getExtensionStatistics().get(mode.getKey()).get(statType));
+            return statType == null ? format(0) : format(stats.getExtensionStatistics(mode).get(statType));
         }
     }
 

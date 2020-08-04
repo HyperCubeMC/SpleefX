@@ -16,7 +16,6 @@
 package io.github.spleefx.command.sub.base;
 
 import io.github.spleefx.SpleefX;
-import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.api.ArenaType;
@@ -157,6 +156,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
             case 2:
                 switch (args[0]) {
                     case "remove":
+                    case "delete":
                         try {
                             T removed = (T) SpleefX.getPlugin().getArenaManager().removeArena(args[1]);
                             if (removed == null)

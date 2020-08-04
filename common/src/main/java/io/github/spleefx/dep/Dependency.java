@@ -25,7 +25,6 @@
 
 package io.github.spleefx.dep;
 
-import com.google.common.collect.ImmutableList;
 import io.github.spleefx.dep.relocation.Relocation;
 
 import java.security.MessageDigest;
@@ -63,7 +62,8 @@ public enum Dependency {
             "com.github.ben-manes.caffeine",
             "caffeine",
             "2.8.5",
-            "gUsVqb9Zjg+oVN1wup9uA6QTqXl53gw/STFyleQ1K8g="
+            "gUsVqb9Zjg+oVN1wup9uA6QTqXl53gw/STFyleQ1K8g=",
+            Relocation.of("caffeine", "com{}github{}benmanes{}caffeine")
     ),
 
     /* okhttp + OKIO */
@@ -102,8 +102,8 @@ public enum Dependency {
     MYSQL_DRIVER(
             "mysql",
             "mysql-connector-java",
-            "5.1.48",
-            "VuJsqqOCH1rkr0T5x09mz4uE6gFRatOAPLsOkEm27Kg=",
+            "8.0.21",
+            "L2LYhicKdevI6P2JEn1KMMzHEfAiVq3iz7cJCBcTIAM=",
             Relocation.of("mysql", "com{}mysql")
     ),
 
@@ -191,7 +191,7 @@ public enum Dependency {
         );
         this.version = version;
         this.checksum = Base64.getDecoder().decode(checksum);
-        this.relocations = ImmutableList.copyOf(relocations);
+        this.relocations = Arrays.asList(relocations);
     }
 
     private static String rewriteEscaping(String s) {
@@ -236,30 +236,20 @@ public enum Dependency {
         Dependency[] dependencies = values();
         DependencyRepository[] repos = DependencyRepository.values();
 
-        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newCachedThreadPool();
-
         for (Dependency dependency : dependencies) {
+            System.out.println(dependency);
             for (DependencyRepository repo : repos) {
-                pool.submit(() -> {
-                    try {
-                        byte[] hash = createDigest().digest(repo.downloadRaw(dependency));
-                        if (!dependency.checksumMatches(hash)) {
-                            System.out.println("NO MATCH - " + repo.name() + " - " + dependency.name() + ": " + Base64.getEncoder().encodeToString(hash));
-                        } else {
-                            System.out.println("OK - " + repo.name() + " - " + dependency.name());
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                try {
+                    byte[] hash = createDigest().digest(repo.downloadRaw(dependency));
+                    if (!dependency.checksumMatches(hash)) {
+                        System.out.println("NO MATCH - " + repo.name() + " - " + dependency.name() + ": " + Base64.getEncoder().encodeToString(hash));
+                    } else {
+                        System.out.println("OK - " + repo.name() + " - " + dependency.name());
                     }
-                });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
-
-        pool.shutdown();
-        try {
-            pool.awaitTermination(1, java.util.concurrent.TimeUnit.HOURS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

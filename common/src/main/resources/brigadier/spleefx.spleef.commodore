@@ -1,0 +1,70 @@
+spleef {
+    arena {
+        create {
+            key brigadier:string single_word {
+                ffa {
+                     arenaDisplayName brigadier:string greedy_phrase;
+                }
+                teams {
+                     arenaDisplayName brigadier:string greedy_phrase;
+                }
+            }
+        }
+        settings {
+            arena brigadier:string single_word {
+                enable;
+                disable;
+                deathLevel {
+                    value brigadier:integer 1;
+                }
+            }
+        }
+        remove {
+            arena brigadier:string single_word;
+        }
+        delete {
+            arena brigadier:string single_word;
+        }
+        finishingloc {
+            arena brigadier:string single_word;
+        }
+        removefinishingloc {
+            arena brigadier:string single_word;
+        }
+        regenerate {
+            arena brigadier:string single_word;
+        }
+        spawnpoint {
+            arena brigadier:string single_word {
+                teamOrIndex brigadier:string single_word;
+            }
+        }
+        lobby {
+            arena brigadier:string single_word {
+                teamOrIndex brigadier:string single_word;
+            }
+        }
+    }
+    editbuilding {
+        arena brigadier:string single_word;
+    }
+    forcestart;
+    help {
+        command brigadier:string single_word;
+    }
+    join {
+        arena brigadier:string single_word;
+    }
+    joingui;
+    leave;
+    listarenas;
+    list;
+    stats {
+        player brigadier:string single_word {
+            mode;
+        }
+    }
+    whydisabled {
+        arena brigadier:string single_word;
+    }
+}
