@@ -99,11 +99,7 @@ public class ConfigConverter implements Runnable {
         if (!config.exists()) return;
         try {
             List<String> lines = Files.readAllLines(config.toPath());
-            if (Protocol.PROTOCOL == 8) {
-                lines.replaceAll(s -> s.replace("BLOCK_LEVER_CLICK", "CLICK"));
-            } else {
-                lines.replaceAll(s -> s.replace("\"CLICK\"", "\"BLOCK_LEVER_CLICK\""));
-            }
+            lines.replaceAll(s -> s.replace("\"CLICK\"", "\"BLOCK_LEVER_CLICK\""));
             if (lines.stream().noneMatch(s -> s.contains("Economy:"))) {
                 lines.addAll(Arrays.asList(ECO.split("\n")));
             }

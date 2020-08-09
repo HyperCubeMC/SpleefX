@@ -34,27 +34,33 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.inventory.ItemFlag;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * A listener for handling double jumps
  */
 public class DoubleJumpHandler implements Listener {
+    private SpleefX plugin;
 
     /**
      * The delay handler
      */
     private DelayExecutor<GameAbility> delayExecutor;
 
+    private static HashMap<Player, Boolean> isPlayerDoubleJumpingMap = new HashMap<Player, Boolean>();
+
     /**
      * Creates a new handler
      *
      * @param delayExecutor The delay handler
      */
-    public DoubleJumpHandler(DelayExecutor<GameAbility> delayExecutor) {
+    public DoubleJumpHandler(SpleefX plugin, DelayExecutor<GameAbility> delayExecutor) {
+        this.plugin = plugin;
         this.delayExecutor = delayExecutor;
     }
 
@@ -85,6 +91,16 @@ public class DoubleJumpHandler implements Listener {
         }
     }
 
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Player player = event.getPlayer();
+            if (isPlayerDoubleJumping(player) && player.isOnGround()) {
+                isPlayerDoubleJumpingMap.put(player, false);
+            }
+        }, 5L);
+    }
+
     /**
      * Double-jumps the player in the specified arena
      *
@@ -107,6 +123,7 @@ public class DoubleJumpHandler implements Listener {
             PlayerDoubleJumpEvent event = new PlayerDoubleJumpEvent(player, v, arena);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
+            isPlayerDoubleJumpingMap.put(player, true);
             player.setVelocity(arena.getExtension().getDoubleJumpSettings().getLaunchVelocity().getVector(player));
             if (!ap.isSpectating())
                 player.setAllowFlight(false);
@@ -127,6 +144,19 @@ public class DoubleJumpHandler implements Listener {
         } catch (ClassCastException e) {
             SpleefX.logger().warning("Arena type " + arena.getExtension().getDisplayName() + " has an unsupported arena engine implementation. Double jumps will not work.");
         }
+    }
+
+    /**
+     * Checks if a player is double jumping
+     * @param player - The player to check
+     * @return Boolean - Whether the player is double jumping or not
+     */
+    public static boolean isPlayerDoubleJumping(Player player) {
+        if (isPlayerDoubleJumpingMap.get(player) != null) {
+            return isPlayerDoubleJumpingMap.get(player);
+        }
+        // Not in the map if we're at this point, player is not double jumping, so return false
+        return false;
     }
 
     /**

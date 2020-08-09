@@ -71,10 +71,7 @@ public class ItemHolder {
         ItemStack item;
         DyeColor color = this.color == null ? null : DyeColor.valueOf(this.color.toUpperCase());
         if (color != null)
-            if (PROTOCOL >= 13) // The flattening, in 1.13+
-                item = new ItemStack(Objects.requireNonNull(Material.matchMaterial(color + "_" + type.toUpperCase())));
-            else
-                item = new ItemStack(Objects.requireNonNull(Material.matchMaterial(type.toUpperCase())), 1, color.getWoolData());
+            item = new ItemStack(Objects.requireNonNull(Material.matchMaterial(color + "_" + type.toUpperCase())));
         else
             item = new ItemStack(Objects.requireNonNull(Material.matchMaterial(type.toUpperCase())));
         ItemFactory f = ItemFactory.create(item).setAmount(count).addEnchantments(enchantments)

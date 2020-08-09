@@ -7,5 +7,7 @@
 /legacy/build/classes/java/main/
 /modern/build/
 /modern/build/classes/java/main/
+/1_16_R1/build/
+/.idea/
 .DS_STORE
 _MACOSX

@@ -14,6 +14,7 @@ import io.github.spleefx.command.parent.*;
 import io.github.spleefx.command.plugin.PluginCommandBuilder;
 import io.github.spleefx.command.sub.base.StatsCommand.MenuListener;
 import io.github.spleefx.compatibility.CompatibilityHandler;
+import io.github.spleefx.compatibility.anticheat.SpartanHook;
 import io.github.spleefx.compatibility.worldedit.SchematicManager;
 import io.github.spleefx.converter.*;
 import io.github.spleefx.data.DataProvider;
@@ -152,8 +153,6 @@ public final class SpleefX extends JavaPlugin implements Listener {
     public void loadMissing() {
         downloadIfMissing("ProtocolLib", "https://github.com/dmulloy2/ProtocolLib/releases/download/4.5.1/ProtocolLib.jar");
         downloadIfMissing("helper", "https://ci.lucko.me/job/helper/lastSuccessfulBuild/artifact/helper/target/helper.jar");
-        if (Protocol.PROTOCOL == 8)
-            LibraryLoader.load(new Dependency("com.google.code.gson", "gson", "2.8.5", "https://repo1.maven.org/maven2"));
     }
 
     @SneakyThrows
@@ -179,21 +178,13 @@ public final class SpleefX extends JavaPlugin implements Listener {
         loadMissing();
         if (CompatibilityHandler.shouldDisable()) {
             SpleefX.logger().severe("Unsupported server protocol: 1." + Protocol.EXACT);
-            SpleefX.logger().severe("Please use one of the following: 1.8.8, 1.8.9, 1.12.2, 1.13.2, 1.14.X, 1.15.X for the plugin to function");
+            SpleefX.logger().severe("Please use 1.16.x or later for the plugin to function!");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
         if (CompatibilityHandler.missingWorldEdit()) {
-            String v = "6.1.9";
-            String d = "https://dev.bukkit.org/projects/worldedit/files/2597538/download";
-            if (Protocol.isNewerThan(13)) { // 1.13+
-                v = "7.0.0";
-                d = "https://dev.bukkit.org/projects/worldedit/files/2723275/download";
-            }
-            if (Protocol.EXACT >= 14.4) { // 1.14.4 or greater
-                v = "latest";
-                d = "https://dev.bukkit.org/projects/worldedit/files/latest";
-            }
+            String v = "latest";
+            String d = "https://dev.bukkit.org/projects/worldedit/files/latest";
             SpleefX.logger().severe("No WorldEdit found. Please download WorldEdit (" + v + "), from " + d);
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -290,8 +281,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
             p.registerEvents(new MenuListener(), this);
             p.registerEvents(new SpectatingListener(), this);
             p.registerEvents(new JoinWarningListener(), this);
-            if (Protocol.PROTOCOL != 8)
-                p.registerEvents(new PickupListener(), this);
+            p.registerEvents(new PickupListener(), this);
 
             if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
                 p.registerEvents(new ArenaListener.WGListener(this), this);
@@ -330,10 +320,14 @@ public final class SpleefX extends JavaPlugin implements Listener {
                 dataProvider.saveEntries(this);
                 //PluginSettings.save();
             }, 24000, 24000); // 20 minutes
-            getServer().getPluginManager().registerEvents(new DoubleJumpHandler(abilityDelays), this);
+            getServer().getPluginManager().registerEvents(new DoubleJumpHandler(this, abilityDelays), this);
             getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
             getServer().getPluginManager().registerEvents(new GameMenu.MenuListener(), this);
             getServer().getPluginManager().registerEvents(new BoosterFactory.BoosterListener(), this);
+            // AntiCheat hooks
+            if (getServer().getPluginManager().getPlugin("Spartan") != null) {
+                new SpartanHook(this);
+            }
             PERKS.values().stream().filter(v -> v instanceof Listener).forEach(v -> getServer().getPluginManager().registerEvents((Listener) v, this));
             abilityDelays.start();
             activeBoosterLoader.getActiveBoosters().forEach((player, booster) -> {
@@ -366,8 +360,6 @@ public final class SpleefX extends JavaPlugin implements Listener {
                 return m;
             }));
             //scheduler = new SpleefXScheduler(this);
-            if (Protocol.PROTOCOL == 8) // 1.8
-                new ProtocolLibSpectatorAdapter(this);
         } catch (Exception e) {
             try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
                 e.printStackTrace(pw);

@@ -88,9 +88,8 @@ public class DebugSubcommand extends PluginSubcommand {
                         .map("Name", pdf.getName())
                         .map("Version", pdf.getVersion())
                         .map("Authors", pdf.getAuthors())
-                        .map("Main", pdf.getMain());
-                if (Protocol.PROTOCOL >= 13)
-                    b.map("API Version", pdf.getAPIVersion());
+                        .map("Main", pdf.getMain())
+                        .map("API Version", pdf.getAPIVersion());
                 plugins.add(b.buildJsonObject());
             }
 

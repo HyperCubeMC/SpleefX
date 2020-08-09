@@ -72,7 +72,7 @@ public class CompatibilityHandler {
      * Creates a new compatibility handler
      */
     public CompatibilityHandler() {
-        if (Protocol.getCurrentProtocol() < 8) {
+        if (Protocol.getCurrentProtocol() < 16) {
             disable = true;
             return;
         }/*
@@ -87,15 +87,9 @@ public class CompatibilityHandler {
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuardExtraFlags"))
             worldGuardHook = new WGExtraFlagsHook();
 
-        if (Protocol.isOlderThan(12)) {
-            materialCompatibility = create("legacy.MaterialCompatibilityImpl", () -> null);
-            if (worldGuardHook == null && Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
-                worldGuardHook = create("legacy.DefaultWorldGuardHook", () -> WorldGuardHook.FALLBACK);
-        } else { // 1.13+
-            if (worldGuardHook == null && Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
-                worldGuardHook = create("modern.DefaultWorldGuardHook", () -> WorldGuardHook.FALLBACK);
-            materialCompatibility = create("modern.MaterialCompatibilityImpl", () -> null);
-        }
+        if (worldGuardHook == null && Bukkit.getPluginManager().isPluginEnabled("WorldGuard"))
+            worldGuardHook = create("modern.DefaultWorldGuardHook", () -> WorldGuardHook.FALLBACK);
+        materialCompatibility = create("modern.MaterialCompatibilityImpl", () -> null);
     }
 
     /**

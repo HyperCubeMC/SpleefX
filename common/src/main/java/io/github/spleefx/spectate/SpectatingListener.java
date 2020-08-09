@@ -128,7 +128,6 @@ public class SpectatingListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (Protocol.PROTOCOL == 8) return; // 1.8.x
         if (event.getCause() == TeleportCause.SPECTATE)
             if (event.getPlayer().getSpectatorTarget() == null)
                 Bukkit.getPluginManager().callEvent(new PlayerExitSpectateEvent(event.getPlayer()));

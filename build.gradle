@@ -5,17 +5,16 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
 }
 
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 def projectName = "SpleefX"
-def projectVersion = "3.9-BETA"
+def projectVersion = "4.0-BETA"
 
 subprojects {
-
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
