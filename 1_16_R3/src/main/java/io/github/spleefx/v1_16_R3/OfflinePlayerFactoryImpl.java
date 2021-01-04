@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.spleefx.v1_16_R1;
+package io.github.spleefx.v1_16_R3;
 
 import com.mojang.authlib.GameProfile;
 import io.github.spleefx.data.leaderboard.OfflinePlayerFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

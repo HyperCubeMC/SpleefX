@@ -3,22 +3,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot:1.16.1-R0.1-SNAPSHOT") {
-        exclude module: 'gson'
-        exclude module: 'guava'
-    }
+    compileOnly "org.spigotmc:spigot:1.16.4-R0.1-SNAPSHOT"
 
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.0.0-SNAPSHOT") {
-        exclude module: 'gson'
-        exclude module: 'guava'
-    }
-    compileOnly("com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT") {
-        exclude module: 'gson'
-        exclude module: 'guava'
-    }
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.0") {
-        exclude module: 'gson'
-        exclude module: 'guava'
-    }
+    compileOnly "com.sk89q.worldedit:worldedit-bukkit:7.0.0-SNAPSHOT"
+    compileOnly "com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT"
+    compileOnly "com.sk89q.worldguard:worldguard-bukkit:7.0.0"
     compileOnly project(':common')
 }

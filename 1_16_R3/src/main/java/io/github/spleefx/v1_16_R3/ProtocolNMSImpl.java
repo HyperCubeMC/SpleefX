@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.spleefx.v1_16_R1;
+package io.github.spleefx.v1_16_R3;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
@@ -21,17 +21,17 @@ import io.github.spleefx.compatibility.ProtocolNMS;
 import io.github.spleefx.compatibility.chat.ComponentJSON;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.game.ExplosionSettings;
-import net.minecraft.server.v1_16_R1.*;
-import net.minecraft.server.v1_16_R1.Explosion.Effect;
-import net.minecraft.server.v1_16_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_16_R1.LootTableInfo.Builder;
-import net.minecraft.server.v1_16_R1.PacketPlayOutTitle.EnumTitleAction;
+import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_16_R3.Explosion.Effect;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_16_R3.LootTableInfo.Builder;
+import net.minecraft.server.v1_16_R3.PacketPlayOutTitle.EnumTitleAction;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockExplodeEvent;
 
@@ -172,7 +172,7 @@ public class ProtocolNMSImpl implements ProtocolNMS {
             world.getMethodProfiler().enter("explosion_blocks");
             if (block.a(explosion)) {
                 TileEntity tileentity = block.isTileEntity() ? world.getTileEntity(blockposition) : null;
-                Builder loottableinfo_builder = (new Builder(world)).a(world.random).set(LootContextParameters.POSITION, blockposition).set(LootContextParameters.TOOL, ItemStack.b).setOptional(LootContextParameters.BLOCK_ENTITY, tileentity).setOptional(LootContextParameters.THIS_ENTITY, null);
+                Builder loottableinfo_builder = (new Builder(world)).a(world.random).set(LootContextParameters.ORIGIN, Vec3D.a(blockposition)).set(LootContextParameters.TOOL, ItemStack.b).setOptional(LootContextParameters.BLOCK_ENTITY, tileentity).setOptional(LootContextParameters.THIS_ENTITY, null);
                 if (yield < 1.0F) {
                     loottableinfo_builder.set(LootContextParameters.EXPLOSION_RADIUS, 1.0F / yield);
                 }
