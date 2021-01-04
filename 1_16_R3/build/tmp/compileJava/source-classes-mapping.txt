@@ -1,4 +1,0 @@
-io/github/spleefx/v1_16_R3/OfflinePlayerFactoryImpl.java
- io.github.spleefx.v1_16_R3.OfflinePlayerFactoryImpl
-io/github/spleefx/v1_16_R3/ProtocolNMSImpl.java
- io.github.spleefx.v1_16_R3.ProtocolNMSImpl

@@ -47,8 +47,8 @@ subprojects {
         // Add JetBrains annotations
         compileOnly group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
         // Add lombok annotation processing
-        compileOnly 'org.projectlombok:lombok:1.18.12'
-        annotationProcessor 'org.projectlombok:lombok:1.18.12'
+        compileOnly 'org.projectlombok:lombok:1.18.16'
+        annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
     }
 
